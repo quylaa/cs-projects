@@ -91,6 +91,33 @@ void change_list(vector<string>& resturants, string op)
 	}
 }
 
+void tournament(vector<string> resturants)
+{
+	cin.ignore();
+	cout << endl << "!! THE BATTLE BEGINS !!" << endl;
+	while (resturants.size() > 1) {
+		int rounds = resturants.size() / 2;
+		for (int r = resturants.size() - 1; r >= 0; r -= 2) {
+			string choice;
+			cout << endl << "\t" << resturants.at(r) << "\tvs.\t" << resturants.at(r-1) << endl;
+			do {
+				cout << "MAKE YOUR CHOICE: ";
+				getline(cin, choice);
+				if (choice != resturants.at(r) && choice != resturants.at(r-1)) {
+					cout << endl << "INCORRECT CHOICE. TRY AGAIN" << endl;
+				}
+			} while (choice != resturants.at(r) && choice != resturants.at(r-1));
+			if (choice == resturants.at(r)) {
+				resturants.erase(resturants.begin() + r);
+			}	else {
+				resturants.erase(resturants.begin() + (r - 1));
+			}
+			cout<< endl << "!! " << choice << " ELIMINATED !!" << endl;
+		}
+	}
+	cout << endl  << endl << "!! WINNER: " << resturants.at(0) << " !!" << endl << endl;
+}
+
 int menu(vector<string>& resturants)
 {
 	int opt;
@@ -129,7 +156,7 @@ int menu(vector<string>& resturants)
 		if (check_len(resturants) != 0) {
 			cout << endl << "!! The number of resturants must be a power of 2 !!" << endl;
 		} else {
-			do_nothing();
+			tournament(resturants);
 		}
 		break;
 	case 6:
