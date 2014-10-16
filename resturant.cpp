@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 #include <istream>
+#include <algorithm>
+#include <cmath>
 
 using namespace std;
 
@@ -23,6 +25,23 @@ void init_resturants(vector<string>& resturants)
 	resturants.push_back("Red Robin");
 }
 
+int check_len(vector<string> resturants)
+{
+	int len = resturants.size();
+	for (int p = 1; p <= 7; p++) {
+		if (pow(2, p) == len) {
+			return 0;
+		}
+	}
+	return -1;
+}
+
+void shuffle(vector<string>& resturants)
+{
+	random_shuffle(resturants.begin(), resturants.end());
+	cout << endl << "~~ List shuffled! ~~" << endl;
+}
+
 void print_resturants(vector<string> resturants)
 {
 	for (size_t t = 0; t < resturants.size(); t++) {
@@ -39,13 +58,10 @@ int check_list(vector<string> resturants, string to_check)
 {
 	for (size_t s = 0; s < resturants.size(); s++) {
 		if (to_check == resturants.at(s)) {
-			if (s == 0) {
-				return -1;
-			}
 			return s;
 		}
 	}
-	return 0;
+	return -1;
 }
 
 void change_list(vector<string>& resturants, string op)
@@ -54,9 +70,9 @@ void change_list(vector<string>& resturants, string op)
 	string place;
 	cout << endl << "Please type the name of the resturant: ";
 	getline(cin, place);
+	int test = check_list(resturants, place);
 	if (op == "add") {
-		int test = check_list(resturants, place);
-		if (test == 0) {
+		if (test == -1) {
 			resturants.push_back(place);
 			cout << endl << "~~ Added " << place << " to resturant list. ~~" << endl;
 		}
@@ -65,12 +81,7 @@ void change_list(vector<string>& resturants, string op)
 		}
 	}
 	else if (op == "remove") {
-		int test = check_list(resturants, place);
-		if (test == -1) {
-			resturants.erase(resturants.begin());
-			cout << endl << "~~ Removed " << place << " from resturant list. ~~" << endl;
-		}
-		else if (test != 0) {
+		if (test != -1) {
 			resturants.erase(resturants.begin()+test);
 			cout << endl << "~~ Removed " << place << " from resturant list. ~~" << endl;
 		}
@@ -91,7 +102,11 @@ int menu(vector<string>& resturants)
 	cout << "~~ Add a resturant [2]                ~~" << endl;
 	cout << "~~ Remove a resturant [3]             ~~" << endl;
 	cout << "~~ Shuffle the list [4]               ~~" << endl;
-	cout << "~~ Begin the tournament [5]           ~~" << endl;
+	if (check_len(resturants) != 0) {
+		cout << "~~ Begin tournament (INVALID AMT) [5] ~~" << endl;
+	} else {
+		cout << "~~ Begin the tournament [5]           ~~" << endl;
+	}
 	cout << "~~ Quit the game [6]                  ~~" << endl;
 	cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
 
@@ -108,10 +123,14 @@ int menu(vector<string>& resturants)
 		change_list(resturants, "remove");
 		break;
 	case 4:
-		do_nothing();
+		shuffle(resturants);
 		break;
 	case 5:
-		do_nothing();
+		if (check_len(resturants) != 0) {
+			cout << endl << "!! The number of resturants must be a power of 2 !!" << endl;
+		} else {
+			do_nothing();
+		}
 		break;
 	case 6:
 		return opt;
