@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <vector>
 #include <string>
+#include <istream>
 
 using namespace std;
 
@@ -47,27 +48,31 @@ int check_list(vector<string> resturants, string to_check)
 	return 0;
 }
 
-void change_list(vector<string>& resturants, string new_place, string op)
+void change_list(vector<string>& resturants, string op)
 {
+	cin.ignore();
+	string place;
+	cout << endl << "Please type the name of the resturant: ";
+	getline(cin, place);
 	if (op == "add") {
-		int test = check_list(resturants, new_place);
+		int test = check_list(resturants, place);
 		if (test == 0) {
-			resturants.push_back(new_place);
-			cout << endl << "~~ Added " << new_place << " to resturant list. ~~" << endl;
+			resturants.push_back(place);
+			cout << endl << "~~ Added " << place << " to resturant list. ~~" << endl;
 		}
 		else {
 			cout << endl << "~~ Error: Resturant already in list ~~" << endl;
 		}
 	}
 	else if (op == "remove") {
-		int test = check_list(resturants, new_place);
-		if (test != 1) {
-			resturants.erase(resturants.begin()+test);
-			cout << endl << "~~ Removed " << new_place << " from resturant list. ~~" << endl;
-		}
-		else if (test == -1) {
+		int test = check_list(resturants, place);
+		if (test == -1) {
 			resturants.erase(resturants.begin());
-			cout << endl << "~~ Removed " << new_place << " from resturant list. ~~" << endl;
+			cout << endl << "~~ Removed " << place << " from resturant list. ~~" << endl;
+		}
+		else if (test != 0) {
+			resturants.erase(resturants.begin()+test);
+			cout << endl << "~~ Removed " << place << " from resturant list. ~~" << endl;
 		}
 		else {
 			cout << endl << "~~ Error: Resturant not in list ~~" << endl;
@@ -97,14 +102,10 @@ int menu(vector<string>& resturants)
 		print_resturants(resturants);
 		break;
 	case 2:
-		cout << endl << "Please type the name of the resturant you want to add: ";
-		cin >> place;
-		change_list(resturants, place, "add");
+		change_list(resturants, "add");
 		break;
 	case 3:
-		cout << endl << "Please type the name of the resturant you want to remove: ";
-		cin >> place;
-		change_list(resturants, place, "remove");
+		change_list(resturants, "remove");
 		break;
 	case 4:
 		do_nothing();
