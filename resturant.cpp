@@ -1,3 +1,19 @@
+// Written by Aleks Christensen
+//
+// Test Cases
+//
+// Case 1:
+// Input: 7
+// Output: ?? Invalid Menu Option ??
+//
+// Case 2:
+// Input: 2, Carl's Jr.
+// Output: ~~ Added Carl's Jr. to resturant list. ~~
+//
+// Case 3:
+// Input: 3, Papa John's
+// Output: ~~ Error: Resturant not in list. ~~
+
 #include <iostream>
 #include <iomanip>
 #include <vector>
