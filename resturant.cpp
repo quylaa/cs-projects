@@ -3,14 +3,21 @@
 #include <vector>
 #include <string>
 #include <istream>
-#include <algorithm>
+#include <sstream>
 #include <cmath>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
-void do_nothing()
+int getInt(const int defaultValue = -1)
 {
-	cout << endl << "?? This function is not yet implemented ??" << endl;
+	string input;
+	cin >> input;
+	stringstream stream(input);
+	int result = defaultValue;
+	if (stream >> result) return result;
+	else return result;
 }
 
 void init_resturants(vector<string>& resturants)
@@ -38,12 +45,24 @@ int check_len(vector<string> resturants)
 
 void shuffle(vector<string>& resturants)
 {
-	random_shuffle(resturants.begin(), resturants.end());
+	size_t len = resturants.size();
+	string t;
+	for (size_t p = 0; p < resturants.size(); p++) {
+		int place = rand() % len;
+		if (place == p) {
+			int place = rand() % len;
+		}
+		t = resturants.at(p);
+		resturants.at(p) = resturants.at(place);
+		resturants.at(place) = t;
+	}
+
 	cout << endl << "~~ List shuffled! ~~" << endl;
 }
 
 void print_resturants(vector<string> resturants)
 {
+	cout << endl;
 	for (size_t t = 0; t < resturants.size(); t++) {
 		if (t == (resturants.size() - 1)) {
 			cout << resturants.at(t) << endl;
@@ -91,39 +110,54 @@ void change_list(vector<string>& resturants, string op)
 	}
 }
 
+int find_rounds(int size){
+	int rounds = 0;
+	while (size > 1) {
+		size /= 2;
+		rounds ++;
+	}
+	return rounds;
+}
+
 void tournament(vector<string> resturants)
 {
+	int total_rounds = find_rounds(resturants.size());
+	int current_round = 1;
+	int current_match;
 	cin.ignore();
 	cout << endl << "!! THE BATTLE BEGINS !!" << endl;
 	while (resturants.size() > 1) {
 		int rounds = resturants.size() / 2;
+		current_match = 1;
 		for (int r = resturants.size() - 1; r >= 0; r -= 2) {
+			cout << endl << "!! Round " << current_round << " / " << total_rounds << ", Match " << current_match << " of " << rounds << " !!" << endl;
 			string choice;
-			cout << endl << "\t" << resturants.at(r) << "\tvs.\t" << resturants.at(r-1) << endl;
+			cout << endl << "\t" << resturants.at(r) << "\tvs.\t" << resturants.at(r-1) << endl << endl;
 			do {
-				cout << "MAKE YOUR CHOICE: ";
+				cout << "CHOOSE YOUR FAVORITE: ";
 				getline(cin, choice);
 				if (choice != resturants.at(r) && choice != resturants.at(r-1)) {
-					cout << endl << "INCORRECT CHOICE. TRY AGAIN" << endl;
+					cout << endl << "!! INVALID CHOICE. TRY AGAIN !!" << endl;
 				}
 			} while (choice != resturants.at(r) && choice != resturants.at(r-1));
 			if (choice == resturants.at(r)) {
-				resturants.erase(resturants.begin() + r);
-			}	else {
+				cout<< endl << "!! " << resturants.at(r - 1) << " ELIMINATED !!" << endl;
 				resturants.erase(resturants.begin() + (r - 1));
 			}
-			cout<< endl << "!! " << choice << " ELIMINATED !!" << endl;
+			else {
+				cout<< endl << "!! " << resturants.at(r) << " ELIMINATED !!" << endl;
+				resturants.erase(resturants.begin() + r);
+			}
+			current_match++;
 		}
+		current_round++;
 	}
-	cout << endl  << endl << "!! WINNER: " << resturants.at(0) << " !!" << endl << endl;
+	cout << endl << endl << "!! WINNER: " << resturants.at(0) << " !!" << endl << endl;
 }
 
 int menu(vector<string>& resturants)
 {
-	int opt;
-	string place;
-
-	cout << endl << "!! Welcome to Resturant Rodeo !!" << endl << endl;
+	cout << endl;
 	cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
 	cout << "~~ Display all resturants [1]         ~~" << endl;
 	cout << "~~ Add a resturant [2]                ~~" << endl;
@@ -138,7 +172,8 @@ int menu(vector<string>& resturants)
 	cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
 
 	cout << "Choose an option: ";
-	cin >> opt;
+	int opt = getInt();
+
 	switch (opt) {
 	case 1:
 		print_resturants(resturants);
@@ -163,7 +198,7 @@ int menu(vector<string>& resturants)
 		return opt;
 		break;
 	default:
-		do_nothing();
+		cout << endl << "?? Invalid Menu Option ??" << endl;
 		break;
 	}
 	return opt;
@@ -171,8 +206,10 @@ int menu(vector<string>& resturants)
 
 int main()
 {
+	srand(time(0));
 	vector<string> resturants;
 	init_resturants(resturants);
+	cout << endl << "!! Welcome to Resturant Rodeo !!" << endl << endl;
 	while (true) {
 		int i = menu(resturants);
 		if (i == 6) { break; }
