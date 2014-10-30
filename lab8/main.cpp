@@ -1,3 +1,20 @@
+// Written by Aleks Christensen
+
+// Test Cases
+//
+// Case 1
+// Input: 1
+// Output: ~~ You have no cars in your inventory ~~
+//
+// Case 2
+// Input: 3, Ford, 8525.99, Green
+// Output: ~~ Car Bought ~~
+//
+// Case 3
+// Input: 6, cars1.txt
+// Output: ~~ File successfully loaded ~~
+
+
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -13,6 +30,10 @@ using namespace std;
 const int NAME_LOC = 0;
 const int COLOR_LOC = 1;
 const int PRICE_LOC = 2;
+const int FILE_BAL = 0;
+const int FILE_NAME = 0;
+const int FILE_COLOR = 1;
+const int FILE_PRICE = 2;
 
 int getInt(const int defaultValue = -1)
 {
@@ -24,51 +45,172 @@ int getInt(const int defaultValue = -1)
   else return result;
 }
 
-void doNothing()
+int showInv(vector<Car*>& cars)
 {
-  cout << endl << "!! This function is not yet implemented !!" << endl;
+  size_t numCars = cars.size();
+  if (numCars == 0) {
+    cout << endl << "~~ You have no cars in your inventory ~~" << endl;
+    return 0;
+  } else {
+    cout << endl << "-------------------------------" << endl;
+    for (size_t curCar = 0; curCar < cars.size(); ++curCar) {
+      Car car = (*cars.at(curCar));
+      cout << car.toString();
+      cout << "-------------------------------" << endl;
+    }
+    return 0;
+  }
 }
 
-int showInv(vector<shared_ptr<Car>>& cars)
+int buyCar(double& balance, vector<Car*>& cars)
 {
-  cout << endl << "-------------------------------" << endl;
-  for (size_t cur_car = 0; cur_car < cars.size(); ++cur_car) {
-    //string name = (*cars)->at(cur_car).at(NAME_LOC);
-    //string color = cars.at(cur_car).at(COLOR_LOC);
-    //double price = stod(cars.at(cur_car).at(PRICE_LOC));
-    //Car car(name, color, price);
-    Car car = (*cars.at(cur_car));
-    cout << car.toString();
-    cout << "-------------------------------" << endl;
+
+  string carName;
+  string color;
+  double price;
+
+  cout << endl << "Please enter the name of the car to buy: ";
+  cin >> carName;
+  vector<Car*>::iterator carList;
+  for(carList = cars.begin(); carList != cars.end(); ++carList) {
+    if (carName == (*carList)->getName()) {
+      cout << endl << "!! Car already in inventory !!" << endl;
+      return -1;
+    }
   }
+
+  cout << "Now enter the price of the car you want to buy: $";
+  cin >> price;
+  if (price > balance) {
+    cout << endl << "!! You do not have enough money to buy this car !!" << endl;
+    return -1;
+  }
+
+  cout << "And now the color of the car: ";
+  cin >> color;
+
+  balance -= price;
+  Car* newCar = new Car(carName, color, price);
+  cars.push_back(newCar);
+  cout << endl << "~~ Car bought ~~" << endl;
   return 0;
 }
 
-int menu(int opt, double& balance, vector<shared_ptr<Car>>& cars)
+int sellCar(double& balance, vector<Car*>& cars)
+{
+  string carName;
+
+  cout << endl << "Please enter the name of the car you wish to sell: ";
+  cin >> carName;
+  vector<Car*>::iterator carList;
+  for (carList = cars.begin(); carList != cars.end(); ++carList) {
+    if ((*carList)->getName() == carName) {
+      balance += (*carList)->getPrice();
+      delete * carList;
+      carList = cars.erase(carList);
+      cout << endl << "~~ Car sold ~~" << endl;
+      return 0;
+    }
+  }
+  cout << endl << "!! Car not in inventory !!" << endl;
+  return -1;
+}
+
+int paintCar(vector<Car*>& cars)
+{
+  string newColor;
+  string carName;
+  cout << endl << "Please enter the name of the car you wish to paint: ";
+  cin >> carName;
+  vector<Car*>::iterator carList;
+  for(carList = cars.begin(); carList != cars.end(); ++carList) {
+    if ((*carList)->getName() == carName) {
+      cout << "Now enter the color you wish to paint the car: ";
+      cin >> newColor;
+      (*carList)->paint(newColor);
+      cout << endl << "~~ Painted " << carName << " " << newColor << " ~~" << endl;
+      return 0;
+    }
+  }
+  cout << endl << "!! Car not in inventory !!" << endl;
+  return -1;
+}
+
+int loadFile(double& balance, vector<Car*>& cars)
+{
+  cin.ignore();
+  string filename;
+  vector<string> lines;
+  cout << endl << "Please enter the full filename of the file you wish to load [example.txt]: ";
+  getline(cin, filename);
+  ifstream file(filename);
+  if (file) {
+    for (string line; getline(file, line);) {
+      lines.push_back(line);
+    }
+    balance += stod(lines.at(FILE_BAL));
+    for (size_t carLines = 1; carLines < lines.size(); ++carLines) {
+      istringstream iss(lines.at(carLines));
+      vector<string> aspects{ istream_iterator < string > {iss}, istream_iterator < string > {} };
+      Car* newCar = new Car(aspects.at(FILE_NAME), aspects.at(FILE_COLOR), stod(aspects.at(FILE_PRICE)));
+      cars.push_back(newCar);
+    }
+    cout << endl << "~~ File successfully loaded ~~" << endl;
+    file.close();
+    return 0;
+  } else {
+    cout << endl << "!! Could not open file. Try entering the full file path. !!" << endl;
+    return -1;
+  }
+}
+
+int saveFile(double balance, vector<Car*> cars)
+{
+  cin.ignore();
+  string filename;
+  cout << endl << "Please enter the name of the file you wish to save as [example.txt]: ";
+  getline(cin, filename);
+  ofstream file(filename);
+  if(file) {
+    file << balance << endl;
+    vector<Car*>::iterator carList;
+    for (carList = cars.begin(); carList != cars.end(); ++carList) {
+      stringstream aspects;
+      aspects << (*carList)->getName() << " " << (*carList)->getColor() << " " << (*carList)->getPrice();
+      file << aspects.str() << endl;
+    }
+    file.close();
+    cout << endl << "~~ File successfully saved ~~" << endl;
+    return 0;
+  } else {
+    cout << endl << "!! File cannot be saved !!" << endl;
+    return -1;
+  }
+}
+
+int menu(int opt, double& balance, vector<Car*>& cars)
 {
   switch (opt) {
     case 1: // Show inventory
-      // doNothing();
       showInv(cars);
       break;
     case 2: // Show balance
-      // doNothing();
       cout << endl << "~~ Current balance is $" << setprecision(10) << balance << " ~~" << endl;
       break;
     case 3: // Buy car
-      doNothing();
+      buyCar(balance, cars);
       break;
     case 4: // Sell car
-      doNothing();
+      sellCar(balance, cars);
       break;
     case 5: // Paint car
-      doNothing();
+      paintCar(cars);
       break;
     case 6: // Load file
-      doNothing();
+      loadFile(balance, cars);
       break;
     case 7: // Save file
-      doNothing();
+      saveFile(balance, cars);
       break;
     case 8: // Quit
       break;
@@ -82,23 +224,8 @@ int menu(int opt, double& balance, vector<shared_ptr<Car>>& cars)
 int main()
 {
   int opt;
-  double balance = 1000000.0;
-  //vector<vector<string>> inventory;
-  vector<shared_ptr<Car>> cars;
-
-  //Car* ford = new Car("Ford","Red",12849.13);
-  auto ford = make_shared<Car>("Ford", "Red", 4226.99);
-  auto tesla = make_shared<Car>("Tesla", "White", 12368.99);
-  cars.push_back(ford);
-  cars.push_back(tesla);
-  // vector<string> car1;
-  // car1.push_back("Ford");
-  // car1.push_back("Red");
-  // car1.push_back("12853.84");
-  // inventory.push_back(car1);
-  // double p = stod(car1.at(2));
-  // cout << p << " / ";
-  // cout << setprecision(2) << fixed << p << endl;
+  double balance = 10000.00;
+  vector<Car*> cars;
 
   cout << endl << "~~ Car Inventory ~~" << endl;
   while (true) {
