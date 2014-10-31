@@ -1,17 +1,31 @@
 // Written by Aleks Christensen
+
+// Test Cases
+//
+// Case 1
+// Input: 2, John
+// Output: ~~ Successfully added John to the roster ~~
+//
+// Case 2
+// Input: 4
+// Output: !! No players waiting for battle !!
+//
+// Case 3
+//
+// Input: 3, John
+// Output: ~~ John added to next battle ~~
+
 #include <iostream>
-#include <iomanip>
 #include <vector>
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <ctime>
 #include "Player.h"
+#define FIRST 0
+#define SECOND 1
 
 using namespace std;
-
-const int FIRST = 0;
-const int SECOND = 1;
 
 int getInt(const int defaultValue = -1)
 {
@@ -62,7 +76,7 @@ void listNext(vector<Player*> players)
     }
   }
   else {
-    cout << endl << "!! No players in roster !!" << endl;
+    cout << endl << "!! No players waiting for battle !!" << endl;
   }
 }
 

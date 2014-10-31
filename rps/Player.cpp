@@ -33,7 +33,7 @@ double Player::getWinRecord()
 
 void Player::addRecord(string op)
 {
-  matches += 1;
+  matches ++;
   if (op == "win") {
     wins++;
   }
@@ -55,7 +55,8 @@ string Player::toString()
   if (matches == 0) {
     info << "Win/Loss Ratio: N/A" << endl;
   } else {
-    info << "Win/Loss Ratio: " << (wins / matches) * 100 << "%" << endl;
+    double ratio = (double(wins) / double(matches)) * 100.0;
+    info << "Win/Loss Ratio: " << setprecision(0) << fixed << ratio << "%" << endl;
   }
   return info.str();
 }
