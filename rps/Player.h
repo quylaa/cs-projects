@@ -29,18 +29,18 @@ class Player
      *
      * Returns the player's name
      */
-    string getName();
+    string getName() const;
     /* getRPSThrow
      *
      * Returns the player's choice in a match
      */
-    string getRPSThrow();
+    string getRPSThrow() const;
     /*
      * getWinRecord
      *
      * Returns the player's W:L ratio
      */
-    double getWinRecord();
+    double getWinRecord() const;
     /* addRecord
      *
      * Adds a match and either a win, loss, or draw to a player's record
@@ -51,6 +51,6 @@ class Player
      *
      * Returns a string of all the player's information
      */
-    string toString();
+    string toString() const;
 
 };

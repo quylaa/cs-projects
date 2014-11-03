@@ -15,18 +15,18 @@ Player::Player(string nameIn)
 }
 Player::~Player(){}
 
-string Player::getName()
+string Player::getName() const
 {
   return name;
 }
 
-string Player::getRPSThrow()
+string Player::getRPSThrow() const
 {
   int r = rand() % 3;
   return throws[r];
 }
 
-double Player::getWinRecord()
+double Player::getWinRecord() const
 {
   return wins / losses;
 }
@@ -45,7 +45,7 @@ void Player::addRecord(string op)
   }
 }
 
-string Player::toString()
+string Player::toString() const
 {
   stringstream info;
   info << "Name: " << name << endl;
