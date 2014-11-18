@@ -148,6 +148,8 @@ int battle(vector<Player*>& nextBattle)
     if (p1Name == p2Name) {
       cout << endl << "This match is a draw because the two contestants are the same" << endl;
       p1->addRecord("draw");
+      nextBattle.erase(nextBattle.begin());
+      nextBattle.erase(nextBattle.begin());
       return 0;
     }
     cout << p1Name << " throws " << p1Throw << endl;
