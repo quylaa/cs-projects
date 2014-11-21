@@ -19,3 +19,11 @@ string Commercial::toString() const
   discount ? (out << "Discounted\tDiscount: " << (rate * 100)) << "%" : (out << "Not Discounted");
   return out.str();
 }
+
+double Commercial::getTax()
+{
+  double tax, disRate;
+  rental ? tax = 0.012 : tax = 0.01;
+  discount ? disRate = rate : disRate = 0.0;
+  return (value * tax) - ((value * tax) * disRate);
+}

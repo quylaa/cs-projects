@@ -4,9 +4,9 @@
 using namespace std;
 
 Residential::Residential(int propId, bool rented, double estValue, string addressIn,
- bool vacancy) : Property(propId, rented, estValue, addressIn)
+ bool occupied) : Property(propId, rented, estValue, addressIn)
 {
-  vacant = vacancy;
+  vacancy = occupied;
 }
 Residential::~Residential(){};
 
@@ -15,6 +15,13 @@ string Residential::toString() const
   string info = Property::toString();
   stringstream out;
   out << info;
-  vacant ? (out << "Vacant") : (out << "Occupied");
+  vacancy ? (out << "Occupied") : (out << "Vacant");
   return out.str();
+}
+
+double Residential::getTax()
+{
+  double tax;
+  vacancy ? tax = 0.006 : tax = 0.009;
+  return (value * tax);
 }
