@@ -16,5 +16,5 @@ class Commercial : public Property
     virtual ~Commercial();
     // ----------------------------------------------------
     // toString() - returns string of attributes
-    string toString() const;
+    virtual string toString() const;
 };

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <sstream>
+#include <iostream>
 
 
 using namespace std;
@@ -23,5 +24,5 @@ class Property
     virtual ~Property();
     // ----------------------------------------------------
     // toString() - returns a string of the attributes
-    string toString() const;
+    virtual string toString() const;
 };

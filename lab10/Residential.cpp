@@ -12,7 +12,9 @@ Residential::~Residential(){};
 
 string Residential::toString() const
 {
-  stringstream info(Property::toString());
-  vacant ? (info << "Vacant") : (info << "Occupied");
-  return info.str();
+  string info = Property::toString();
+  stringstream out;
+  out << info;
+  vacant ? (out << "Vacant") : (out << "Occupied");
+  return out.str();
 }

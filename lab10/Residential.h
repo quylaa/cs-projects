@@ -14,5 +14,5 @@ class Residential : public Property
     virtual ~Residential();
     // ----------------------------------------------------
     // toString() - returns string of attributes
-    string toString() const;
+    virtual string toString() const;
 };

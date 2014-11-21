@@ -13,7 +13,9 @@ Commercial::~Commercial(){};
 
 string Commercial::toString() const
 {
-  stringstream info(Property::toString());
-  discount ? (info << "Discounted\tDiscount: " << (rate * 100)) : (info << "Not Discounted");
-  return info.str();
+  string info = Property::toString();
+  stringstream out;
+  out << info;
+  discount ? (out << "Discounted\tDiscount: " << (rate * 100)) << "%" : (out << "Not Discounted");
+  return out.str();
 }
