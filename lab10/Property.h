@@ -28,5 +28,5 @@ class Property
     // toString() - returns a string of the attributes
     virtual string toString() const;
     // getTax() - returns the taxed amount due on the property
-    virtual double getTax();
+    virtual double getTax() = 0;
   };
