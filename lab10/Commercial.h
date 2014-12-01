@@ -16,5 +16,7 @@ class Commercial : public Property
     virtual ~Commercial();
     // ----------------------------------------------------
     // toString() - returns string of attributes
-    string toString() const;
+    virtual string toString() const;
+    // getTax() - returns the taxed amount due on the property
+    virtual double getTax();
 };

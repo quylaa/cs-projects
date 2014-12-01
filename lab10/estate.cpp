@@ -42,7 +42,16 @@ void errorCheck(int err)
   }
 }
 
-int print(vector<Property*> properties, vector<int> which)
+void ignore(vector<string> tokens)
+{
+  cout << "Ignoring bad `" << tokens.at(TYPE_LOC) << "` in input file: ";
+  for (size_t t = 0; t < tokens.size(); ++t) {
+    cout << tokens.at(t) << " ";
+  }
+  cout << endl;
+}
+
+int print(vector<Property*> properties)
 {
   size_t numProps = properties.size();
   if (numProps == 0) {
@@ -57,7 +66,7 @@ int print(vector<Property*> properties, vector<int> which)
   }
 }
 
-int loadFile(vector<Property*>& properties, vector<int>& which)
+int loadFile(vector<Property*>& properties)
 {
   string fileName;
   int start;
@@ -71,10 +80,9 @@ int loadFile(vector<Property*>& properties, vector<int>& which)
       vector<string> tokens{istream_iterator<string>{iss}, istream_iterator<string>{}};
       if (tokens.at(TYPE_LOC) == "Residential") start = RES; // Address starts at location 4 for Residential locations
       else if (tokens.at(TYPE_LOC) == "Commercial") start = COM; // Start at 5 for Commercial locations
-      else {
-        cout << "Ignoring bad `" << tokens.at(TYPE_LOC) << "` in input file" << endl;
-        continue;
-      }
+      else { ignore(tokens); continue; }
+      if (tokens.at(RENTED_LOC) != "1" && tokens.at(RENTED_LOC) != "0") { ignore(tokens); continue; }
+      if (tokens.at(VACANT_LOC) != "1" && tokens.at(VACANT_LOC) != "0") { ignore(tokens); continue; }
       ostringstream address;
       for (size_t i = start; i < tokens.size(); ++i) {
         if (i == tokens.size() - 1) {
@@ -85,16 +93,20 @@ int loadFile(vector<Property*>& properties, vector<int>& which)
         }
       }
       if (start == RES) {
-        Residential* place = new Residential(id, stoi(tokens.at(RENTED_LOC)),
-          stoi(tokens.at(VALUE_LOC)), address.str(), stoi(tokens.at(VACANT_LOC)));
-        properties.push_back(place);
-        which.push_back(RES);
+        try{
+          Residential* place = new Residential(id, stoi(tokens.at(RENTED_LOC)),
+            stoi(tokens.at(VALUE_LOC)), address.str(), stoi(tokens.at(VACANT_LOC)));
+          properties.push_back(place);
+        }
+        catch (const invalid_argument& e) { ignore(tokens); continue; } // If anything is invalid, the whole thing will fail and be ignored
       }
       else {
-        Commercial* place = new Commercial(id, stoi(tokens.at(RENTED_LOC)), stoi(tokens.at(VALUE_LOC)),
-          address.str(), stoi(tokens.at(DISCOUNT_LOC)), stod(tokens.at(RATE_LOC)));
-        properties.push_back(place);
-        which.push_back(COM);
+        try{
+          Commercial* place = new Commercial(id, stoi(tokens.at(RENTED_LOC)), stoi(tokens.at(VALUE_LOC)),
+            address.str(), stoi(tokens.at(DISCOUNT_LOC)), stod(tokens.at(RATE_LOC)));
+          properties.push_back(place);
+        }
+        catch (const invalid_argument& e) { ignore(tokens); continue; }
       }
       id++;
     }
@@ -103,13 +115,24 @@ int loadFile(vector<Property*>& properties, vector<int>& which)
   else { return -2; } // Error code -2 will be invalid file
 }
 
+void printReport(vector<Property*> properties)
+{
+  cout << endl << "NOW PRINTING TAX REPORT" << endl;
+  for (size_t prop = 0; prop < properties.size(); ++prop) {
+    cout << "** Taxes due for property at: " << properties.at(prop)->getAttr("addr") << endl;
+    cout << "\tProperty ID:\t\t\t" << properties.at(prop)->getAttr("id") << endl;
+    cout << "\tEstimated Value:\t\t$" << properties.at(prop)->getAttr("value") << endl;
+    cout << "\tTaxes due:\t\t\t$" << properties.at(prop)->getTax() << endl;
+  }
+}
+
 int main()
 {
   vector<Property*> properties;
-  vector<int> which;
 
-  errorCheck(loadFile(properties, which));
-  errorCheck(print(properties, which));
+  errorCheck(loadFile(properties));
+  errorCheck(print(properties));
+  printReport(properties);
   system("pause");
   return 0;
 }
