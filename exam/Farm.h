@@ -5,15 +5,16 @@
 
 #include "Property.h"
 
-class Residential : public Property
+class Farm : public Property
 {
   protected:
-    bool vacancy;
+    bool discount;
+    double rate;
 
   public:
     // Constructor
-    Residential(int propId, bool rented, double estValue, int payed, string addressIn, bool occupied);
-    virtual ~Residential();
+    Farm(int propId, bool rented, double estValue, int payed, string addressIn);
+    virtual ~Farm();
     // ----------------------------------------------------
     // toString() - returns string of attributes
     string toString() const;

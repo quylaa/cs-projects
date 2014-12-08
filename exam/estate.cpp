@@ -12,19 +12,22 @@
 #include "Property.h"
 #include "Residential.h"
 #include "Commercial.h"
+#include "Farm.h"
 
 // namespace std is declared in Property.h, which then becomes inherited by everything else
 
 // declaring location of string difference between property types
-const int RES = 4;
-const int COM = 5;
+const int FRM = 4;
+const int RES = 5;
+const int COM = 6;
 // declaring constant locations of data in token vectors
 const int TYPE_LOC = 0;
 const int RENTED_LOC = 1;
 const int VALUE_LOC = 2;
-const int VACANT_LOC = 3;
-const int DISCOUNT_LOC = 3;
-const int RATE_LOC = 4;
+const int SINCE_LOC = 3;
+const int VACANT_LOC = 4;
+const int DISCOUNT_LOC = 4;
+const int RATE_LOC = 5;
 // declaring error codes
 const int FINE = 0;
 const int INV_FILE = -1;
@@ -83,11 +86,14 @@ int loadFile(vector<Property*>& properties) // loads file into vector
     for (string line; getline(file, line);) { // get one line at a time
       istringstream iss(line); // make a string stream out of the line
       vector<string> tokens{istream_iterator<string>{iss}, istream_iterator<string>{}}; // break up the stringstream into words by spaces and put them into a vector
-      if (tokens.at(TYPE_LOC) == "Residential") start = RES; // Address starts at location 4 for Residential locations
-      else if (tokens.at(TYPE_LOC) == "Commercial") start = COM; // Start at 5 for Commercial locations
+      if (tokens.at(TYPE_LOC) == "Residential") start = RES; // Address starts at location 5 for Residential locations
+      else if (tokens.at(TYPE_LOC) == "Commercial") start = COM; // Start at 6 for Commercial locations
+      else if (tokens.at(TYPE_LOC) == "Farm") start = FRM; // Start at 4 for Farm locations
       else { ignore(tokens); continue; } // if the property type is unknown, ignore it and move on
       if (tokens.at(RENTED_LOC) != "1" && tokens.at(RENTED_LOC) != "0") { ignore(tokens); continue; } // if invalid data is at a location,
-      if (tokens.at(VACANT_LOC) != "1" && tokens.at(VACANT_LOC) != "0") { ignore(tokens); continue; } // ignore the line and move on
+      if (start == RES || start == COM) {
+        if (tokens.at(VACANT_LOC) != "1" && tokens.at(VACANT_LOC) != "0") { ignore(tokens); continue; } // ignore the line and move on
+      }
       ostringstream address; // stores the property's address
       for (size_t i = start; i < tokens.size(); ++i) { // iterate through whatever's after the property data in the token vector
         if (i == tokens.size() - 1) { // and store it to the address stringstream
@@ -100,16 +106,24 @@ int loadFile(vector<Property*>& properties) // loads file into vector
       if (start == RES) { // if the property is residential
         try{
           Residential* place = new Residential(id, stoi(tokens.at(RENTED_LOC)), // make a new residential object pointer
-            stoi(tokens.at(VALUE_LOC)), address.str(), stoi(tokens.at(VACANT_LOC)));
+            stoi(tokens.at(VALUE_LOC)), stoi(tokens.at(SINCE_LOC)), address.str(), stoi(tokens.at(VACANT_LOC)));
           properties.push_back(place); // and store it to the properties vector
         }
         catch (const invalid_argument& e) { ignore(tokens); continue; } // If anything is invalid, the whole thing will fail and be ignored
       }
-      else { // if it's not residential, it'll be commercial
+      else if(start == COM) { // if it's commercial
         try{
           Commercial* place = new Commercial(id, stoi(tokens.at(RENTED_LOC)), stoi(tokens.at(VALUE_LOC)), // make the object pointer
-            address.str(), stoi(tokens.at(DISCOUNT_LOC)), stod(tokens.at(RATE_LOC)));
+          stoi(tokens.at(SINCE_LOC)), address.str(), stoi(tokens.at(DISCOUNT_LOC)), stod(tokens.at(RATE_LOC)));
           properties.push_back(place); // and store it
+        }
+        catch (const invalid_argument& e) { ignore(tokens); continue; } // If anything is invalid, the whole thing will fail and be ignored
+      }
+      else if (start == FRM) { // if it's a farm
+        try{
+          Farm* place = new Farm(id, stoi(tokens.at(RENTED_LOC)), stoi(tokens.at(VALUE_LOC)), // make the object pointer
+          stoi(tokens.at(SINCE_LOC)), address.str());
+          properties.push_back(place);
         }
         catch (const invalid_argument& e) { ignore(tokens); continue; } // If anything is invalid, the whole thing will fail and be ignored
       }
@@ -120,22 +134,23 @@ int loadFile(vector<Property*>& properties) // loads file into vector
   else { return INV_FILE; } // Error code -2 will be invalid file
 }
 
-void printReport(vector<Property*> properties)
+void printReport(vector<Property*> properties) // prints out tax report for each property
 {
   cout << endl << "NOW PRINTING TAX REPORT" << endl;
   for (size_t prop = 0; prop < properties.size(); ++prop) {
     cout << "** Taxes due for property at: " << properties.at(prop)->getAttr("addr") << endl;
     cout << "\tProperty ID:\t\t\t" << properties.at(prop)->getAttr("id") << endl;
     cout << "\tEstimated Value:\t\t$" << properties.at(prop)->getAttr("value") << endl;
+    cout << "\tLast Payment:\t\t\t" << properties.at(prop)->getAttr("since") << " days ago" << endl;
     cout << "\tTaxes due:\t\t\t$" << properties.at(prop)->getTax() << endl;
+    cout << "\tTaxes are due in:\t\t" << properties.at(prop)->getDays() << " days" << endl;
   }
 }
 
-int main()
+int main() // main
 {
   vector<Property*> properties;
 
-  // errorCheck(loadFile(properties));
   if (loadFile(properties) != FINE) {errorCheck(INV_FILE); system("pause"); return 0;}
   if (print(properties) != FINE) {errorCheck(EMPTY); system("pause"); return 0;}
   printReport(properties);

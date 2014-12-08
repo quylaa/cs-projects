@@ -16,13 +16,14 @@ class Property
     int id;
     string address;
     bool rental;
+    int since;
     double value;
 
   public:
     /* Constructor of Property class
      * addressIn will be stored to address
      */
-    Property(int propId, bool rented, double estValue, string addressIn);
+    Property(int propId, bool rented, double estValue, int payed, string addressIn);
     virtual ~Property();
     // ----------------------------------------------------
     // getAttr() - get specific attribute
@@ -31,4 +32,6 @@ class Property
     virtual string toString() const;
     // getTax() - returns the taxed amount due on the property
     virtual double getTax() = 0;
+    // getDays() - returns number of days until the taxes on the property are due
+    virtual int getDays() = 0;
   };
