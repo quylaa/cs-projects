@@ -1,5 +1,0 @@
-Residential 0 23746 1 2400 Elm St
-Commercial 1 473821 1 0.48 18463 Ash St
-Residential Here
-Residential 0 3283213 0 14 N East Way
-Commercial 1 23472 0 0.32 W South Ln

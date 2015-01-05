@@ -1,6 +1,0 @@
-Residential 1 649330 0 N 300 W 554 St
-Residential 0 55339 0 80 Free Ln
-Commercial 2 88932 1 12 Rich Ave
-Residential 1 5674234 1 884 Francis Ave
-Commercial 0 437283 1 0.42 1892 Hitchhiker Rd
-Commercial 1 23462321 0 0.34 1112 Infinite Way

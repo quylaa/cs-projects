@@ -1,7 +1,0 @@
-Commercial 1 238467 1 0.12 South of Colorado
-Residential 1 32642 0 Downtown, LA
-Residential 0 234231 IDK, USA
-Commercial Stores Open Soon!
-Commercial 0 348723 0 0.79 12 Googleplex Ln
-Commercial 1 27493 0 0.64 1800 Rich St.
-Residential 0 25432 1 Vacation Resort, LTD
