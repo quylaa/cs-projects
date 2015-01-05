@@ -1,8 +1,6 @@
 // Written by Aleks Christensen
 #include "Commercial.h"
 
-using namespace std;
-
 Commercial::Commercial(int propId, bool rented, double estValue, string addressIn,
  bool discounted, double taxRate) : Property(propId, rented, estValue, addressIn)
 {

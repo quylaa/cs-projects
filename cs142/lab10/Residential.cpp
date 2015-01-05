@@ -1,8 +1,6 @@
 // Written by Aleks Christensen
 #include "Residential.h"
 
-using namespace std;
-
 Residential::Residential(int propId, bool rented, double estValue, string addressIn,
  bool occupied) : Property(propId, rented, estValue, addressIn)
 {

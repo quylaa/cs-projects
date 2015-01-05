@@ -1,8 +1,6 @@
 // Written by Aleks Christensen
 #include "Property.h"
 
-using namespace std;
-
 Property::Property(int propId, bool rented, double estValue, string addressIn)
 {
   id = propId;
@@ -29,9 +27,4 @@ string Property::toString() const
   rental ? (info << "Rental\t\t") : (info << "Not Rental\t\t");
   info << "Estimated Value: " << value << "\t\t";
   return info.str();
-}
-
-double Property::getTax()
-{
-  return 0.0;
 }

@@ -11,29 +11,32 @@
 #include "Residential.h"
 #include "Commercial.h"
 
-using namespace std;
+// namespace std is declared in Property.h, which then becomes inherited by everything else
 
+// declaring location of string difference between property types
 const int RES = 4;
 const int COM = 5;
+// declaring constant locations of data in token vectors
 const int TYPE_LOC = 0;
 const int RENTED_LOC = 1;
 const int VALUE_LOC = 2;
 const int VACANT_LOC = 3;
 const int DISCOUNT_LOC = 3;
 const int RATE_LOC = 4;
+// declaring error codes
+const int FINE = 0;
+const int INV_FILE = -1;
+const int EMPTY = -2;
 
-void errorCheck(int err)
+void errorCheck(int err) // checks return value of function and displays error message
 {
   switch (err) {
     case 0:
       break;
-    case -2:
+    case -1:
       cout << endl << "Could not open file!" << endl;
       break;
-    case -3:
-      cout << "Invalid property attribute format!" << endl;
-      break;
-    case -4:
+    case -2:
       cout << endl << "You have nothing!" << endl;
       break;
     default:
@@ -42,7 +45,7 @@ void errorCheck(int err)
   }
 }
 
-void ignore(vector<string> tokens)
+void ignore(vector<string> tokens) // prints the bad property line
 {
   cout << "Ignoring bad `" << tokens.at(TYPE_LOC) << "` in input file: ";
   for (size_t t = 0; t < tokens.size(); ++t) {
@@ -51,68 +54,68 @@ void ignore(vector<string> tokens)
   cout << endl;
 }
 
-int print(vector<Property*> properties)
+int print(vector<Property*> properties) // prints current inventory of properties along with their attributes
 {
   size_t numProps = properties.size();
   if (numProps == 0) {
-    return -4; // Error code -4 will be empty vector
+    return EMPTY; // Error code -4 will be empty vector
   }
   else {
     cout << endl;
     for (size_t curProp = 0; curProp < properties.size(); ++curProp) {
       cout << properties.at(curProp)->toString() << endl;
     }
-    return 0;
+    return FINE;
   }
 }
 
-int loadFile(vector<Property*>& properties)
+int loadFile(vector<Property*>& properties) // loads file into vector
 {
   string fileName;
-  int start;
-  int id = 0;
+  int start; // var to store where the address starts
+  int id = 0; // property id, increments each time a new property is stored
   cout << "Please enter the location of a file with property data\n>";
   getline(cin, fileName);
-  ifstream file(fileName);
-  if (file) {
-    for (string line; getline(file, line);) {
-      istringstream iss(line);
-      vector<string> tokens{istream_iterator<string>{iss}, istream_iterator<string>{}};
+  ifstream file(fileName); // open file
+  if (file) { // if the file doesn't exist, none of this will happen
+    for (string line; getline(file, line);) { // get one line at a time
+      istringstream iss(line); // make a string stream out of the line
+      vector<string> tokens{istream_iterator<string>{iss}, istream_iterator<string>{}}; // break up the stringstream into words by spaces and put them into a vector
       if (tokens.at(TYPE_LOC) == "Residential") start = RES; // Address starts at location 4 for Residential locations
       else if (tokens.at(TYPE_LOC) == "Commercial") start = COM; // Start at 5 for Commercial locations
-      else { ignore(tokens); continue; }
-      if (tokens.at(RENTED_LOC) != "1" && tokens.at(RENTED_LOC) != "0") { ignore(tokens); continue; }
-      if (tokens.at(VACANT_LOC) != "1" && tokens.at(VACANT_LOC) != "0") { ignore(tokens); continue; }
-      ostringstream address;
-      for (size_t i = start; i < tokens.size(); ++i) {
-        if (i == tokens.size() - 1) {
-          address << tokens.at(i);
+      else { ignore(tokens); continue; } // if the property type is unknown, ignore it and move on
+      if (tokens.at(RENTED_LOC) != "1" && tokens.at(RENTED_LOC) != "0") { ignore(tokens); continue; } // if invalid data is at a location,
+      if (tokens.at(VACANT_LOC) != "1" && tokens.at(VACANT_LOC) != "0") { ignore(tokens); continue; } // ignore the line and move on
+      ostringstream address; // stores the property's address
+      for (size_t i = start; i < tokens.size(); ++i) { // iterate through whatever's after the property data in the token vector
+        if (i == tokens.size() - 1) { // and store it to the address stringstream
+          address << tokens.at(i); // we don't want a trailing space
         }
         else {
           address << tokens.at(i) << " ";
         }
       }
-      if (start == RES) {
+      if (start == RES) { // if the property is residential
         try{
-          Residential* place = new Residential(id, stoi(tokens.at(RENTED_LOC)),
+          Residential* place = new Residential(id, stoi(tokens.at(RENTED_LOC)), // make a new residential object pointer
             stoi(tokens.at(VALUE_LOC)), address.str(), stoi(tokens.at(VACANT_LOC)));
-          properties.push_back(place);
+          properties.push_back(place); // and store it to the properties vector
         }
         catch (const invalid_argument& e) { ignore(tokens); continue; } // If anything is invalid, the whole thing will fail and be ignored
       }
-      else {
+      else { // if it's not residential, it'll be commercial
         try{
-          Commercial* place = new Commercial(id, stoi(tokens.at(RENTED_LOC)), stoi(tokens.at(VALUE_LOC)),
+          Commercial* place = new Commercial(id, stoi(tokens.at(RENTED_LOC)), stoi(tokens.at(VALUE_LOC)), // make the object pointer
             address.str(), stoi(tokens.at(DISCOUNT_LOC)), stod(tokens.at(RATE_LOC)));
-          properties.push_back(place);
+          properties.push_back(place); // and store it
         }
-        catch (const invalid_argument& e) { ignore(tokens); continue; }
+        catch (const invalid_argument& e) { ignore(tokens); continue; } // If anything is invalid, the whole thing will fail and be ignored
       }
-      id++;
+      id++; // increment the property id
     }
-    return 0;
+    return FINE;
   }
-  else { return -2; } // Error code -2 will be invalid file
+  else { return INV_FILE; } // Error code -2 will be invalid file
 }
 
 void printReport(vector<Property*> properties)
@@ -130,8 +133,9 @@ int main()
 {
   vector<Property*> properties;
 
-  errorCheck(loadFile(properties));
-  errorCheck(print(properties));
+  // errorCheck(loadFile(properties));
+  if (loadFile(properties) != FINE) {errorCheck(INV_FILE); system("pause"); return 0;}
+  if (print(properties) != FINE) {errorCheck(EMPTY); system("pause"); return 0;}
   printReport(properties);
   system("pause");
   return 0;
