@@ -1,6 +1,6 @@
 // Written by Aleks Christensen
 
-#pragma once
+// #pragma once
 #include "Fighter.h"
 
 class Archer : public Fighter
@@ -9,8 +9,8 @@ class Archer : public Fighter
         int bonus;
 
     public:
-        Archer(string info){}
-        virtual ~Archer(){}
+        Archer(string info);
+        virtual ~Archer();
 
         int getDamage();
 

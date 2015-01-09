@@ -1,6 +1,6 @@
 // Written by Aleks Christensen
 
-#pragma once
+// #pragma once
 #include "Fighter.h"
 
 class Robot : public Fighter
@@ -11,8 +11,8 @@ class Robot : public Fighter
         int curEng;
 
     public:
-        Robot(string info){}
-        virtual ~Robot(){}
+        Robot(string info);
+        virtual ~Robot();
 
         int getDamage();
 

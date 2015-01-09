@@ -1,6 +1,6 @@
 // Written by Aleks Christensen
 
-#pragma once
+// #pragma once
 #include "Fighter.h"
 
 class Cleric : public Fighter
@@ -9,8 +9,8 @@ class Cleric : public Fighter
         int mana;
 
     public:
-        Cleric(string info){}
-        virtual ~Cleric(){}
+        Cleric(string info);
+        virtual ~Cleric();
 
         int getDamage();
 

@@ -6,12 +6,11 @@
 class Arena : public ArenaInterface
 {
     private:
-        string name;
         vector<FighterInterface*> fighters;
 
     public:
-        Arena(string name){}
-        virtual ~Arena(){}
+        Arena();
+        virtual ~Arena();
 
         bool addFighter(string info);
 

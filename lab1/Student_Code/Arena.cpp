@@ -5,11 +5,10 @@
 #include "Archer.h"
 #include "Cleric.h"
 
-Arena::Arena(string aname) : ArenaInterface(){
-    name = aname;
+Arena::Arena() : ArenaInterface(){
     vector<FighterInterface*> fighters;
-};
-Arena::~Arena(){};
+}
+Arena::~Arena(){}
 
 bool Arena::addFighter(string info)
 {

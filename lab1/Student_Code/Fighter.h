@@ -1,6 +1,6 @@
 // Written by Aleks Christensen
 
-#pragma once
+// #pragma once
 #include <sstream>
 #include "FighterInterface.h"
 
@@ -23,8 +23,8 @@ class Fighter : public FighterInterface
         int mgc;
 
     public:
-        Fighter(string info = ""){}
-        virtual ~Fighter(){}
+        Fighter(string info);
+        virtual ~Fighter();
 
         /*
         *	getName()
