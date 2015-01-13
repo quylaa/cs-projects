@@ -1,6 +1,7 @@
 // Written by Aleks Christensen
 
-// #pragma once
+#ifndef ROBOT_DEF
+#define ROBOT_DEF
 #include "Fighter.h"
 
 class Robot : public Fighter
@@ -18,7 +19,6 @@ class Robot : public Fighter
 
         void reset();
 
-        void regenerate();
-
         bool useAbility();
 };
+#endif

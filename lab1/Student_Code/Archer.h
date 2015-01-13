@@ -1,6 +1,7 @@
 // Written by Aleks Christensen
 
-// #pragma once
+#ifndef ARCHER_DEF
+#define ARCHER_DEF
 #include "Fighter.h"
 
 class Archer : public Fighter
@@ -16,7 +17,6 @@ class Archer : public Fighter
 
         void reset();
 
-        void regenerate();
-
         bool useAbility();
 };
+#endif

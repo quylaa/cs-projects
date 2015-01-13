@@ -31,9 +31,6 @@ bool Arena::addFighter(string info)
       Cleric* clr = new Cleric(info);
       fighters.push_back(clr);
     }
-    //Fighter* ftr = new Fighter(info);
-    //fighters.push_back(ftr);
-    //delete ftr;
     return true;
 }
 
@@ -50,18 +47,17 @@ bool Arena::removeFighter(string name)
     return false;
 }
 
-FighterInterface* Arena::getFighter(string name) const
+FighterInterface* Arena::getFighter(string name)
 {
-    vector<FighterInterface*>::iterator roster;
-    //for (roster = fighters.begin(); roster != fighters.end(); ++roster) {
-    //    if ((*roster)->getName() == name) {
-    //        FighterInterface* ftr = (*roster);
-    //    }
-    //}
-    //return ftr;
+    for (size_t roster = 0; roster < fighters.size(); ++roster) {
+       if (fighters.at(roster)->getName() == name) {
+           FighterInterface* ftr = fighters.at(roster);
+           return ftr;
+       }
+    }
 }
 
-int Arena::getSize() const
+int Arena::getSize()
 {
     return fighters.size();
 }

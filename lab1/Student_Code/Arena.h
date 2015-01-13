@@ -16,7 +16,7 @@ class Arena : public ArenaInterface
 
         bool removeFighter(string);
 
-        FighterInterface* getFighter(string name) const;
+        FighterInterface* getFighter(string name);
 
-        int getSize() const;
+        int getSize();
 };

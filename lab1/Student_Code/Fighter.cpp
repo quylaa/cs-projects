@@ -16,32 +16,32 @@ Fighter::Fighter(string info) : FighterInterface()
 }
 Fighter::~Fighter(){}
 
-string Fighter::getName() const
+string Fighter::getName()
 {
     return name;
 }
 
-int Fighter::getMaximumHP() const
+int Fighter::getMaximumHP()
 {
     return maxHP;
 }
 
-int Fighter::getCurrentHP() const
+int Fighter::getCurrentHP()
 {
     return curHP;
 }
 
-int Fighter::getStrength() const
+int Fighter::getStrength()
 {
     return str;
 }
 
-int Fighter::getSpeed() const
+int Fighter::getSpeed()
 {
     return spd;
 }
 
-int Fighter::getMagic() const
+int Fighter::getMagic()
 {
     return mgc;
 }

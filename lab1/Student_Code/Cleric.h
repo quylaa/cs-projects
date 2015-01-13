@@ -1,6 +1,7 @@
 // Written by Aleks Christensen
 
-// #pragma once
+#ifndef CLERIC_DEF
+#define CLERIC_DEF
 #include "Fighter.h"
 
 class Cleric : public Fighter
@@ -20,3 +21,4 @@ class Cleric : public Fighter
 
         bool useAbility();
 };
+#endif

@@ -1,6 +1,7 @@
 // Written by Aleks Christensen
 
-// #pragma once
+#ifndef FIGHTER_DEF
+#define FIGHTER_DEF
 #include <sstream>
 #include "FighterInterface.h"
 
@@ -31,42 +32,42 @@ class Fighter : public FighterInterface
         *
         *	Returns the name of this fighter.
         */
-        string getName() const;
+        string getName();
 
         /*
         *	getMaximumHP()
         *
         *	Returns the maximum hit points of this fighter.
         */
-        int getMaximumHP() const;
+        int getMaximumHP();
 
         /*
         *	getCurrentHP()
         *
         *	Returns the current hit points of this fighter.
         */
-        int getCurrentHP() const;
+        int getCurrentHP();
 
         /*
         *	getStrength()
         *
         *	Returns the strength stat of this fighter.
         */
-        int getStrength() const;
+        int getStrength();
 
         /*
         *	getSpeed()
         *
         *	Returns the speed stat of this fighter.
         */
-        int getSpeed() const;
+        int getSpeed();
 
         /*
         *	getMagic()
         *
         *	Returns the magic stat of this fighter.
         */
-        int getMagic() const;
+        int getMagic();
 
         /*
         *	getDamage()
@@ -137,3 +138,4 @@ class Fighter : public FighterInterface
         */
         virtual bool useAbility() = 0;
 };
+#endif
