@@ -2,7 +2,12 @@
 
 #ifndef FIGHTER_DEF
 #define FIGHTER_DEF
+
+#include <string>
 #include <sstream>
+#include <iterator>
+#include <algorithm>
+#include <cmath>
 #include "FighterInterface.h"
 
 const int NAME_LOC = 0;

@@ -19,6 +19,10 @@ bool Arena::addFighter(string info)
     if (!stoi(tokens.at(STR_LOC))) return false;
     if (!stoi(tokens.at(SPD_LOC))) return false;
     if (!stoi(tokens.at(MGC_LOC))) return false;
+
+    for (size_t man = 0; man < fighters.size(); ++man) {
+        if (fighters.at(man)->getName() == tokens.at(NAME_LOC)) return false;
+    }
     if (tokens.at(TYPE_LOC) == "R") {
       Robot* rob = new Robot(info);
       fighters.push_back(rob);

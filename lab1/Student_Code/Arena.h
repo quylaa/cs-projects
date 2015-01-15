@@ -1,6 +1,7 @@
 // Written by Aleks Christensen
 
-#pragma once
+#ifndef ARENA_DEF
+#define ARENA_DEF
 #include "ArenaInterface.h"
 
 class Arena : public ArenaInterface
@@ -20,3 +21,4 @@ class Arena : public ArenaInterface
 
         int getSize();
 };
+#endif
