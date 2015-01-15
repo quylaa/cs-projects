@@ -23,17 +23,21 @@ bool Arena::addFighter(string info)
     for (size_t man = 0; man < fighters.size(); ++man) {
         if (fighters.at(man)->getName() == tokens.at(NAME_LOC)) return false;
     }
+    fighters.resize(fighters.size() + 1);
     if (tokens.at(TYPE_LOC) == "R") {
       Robot* rob = new Robot(info);
       fighters.push_back(rob);
+      cout << "Fighter added" << endl;
     }
     if (tokens.at(TYPE_LOC) == "A") {
       Archer* arc = new Archer(info);
       fighters.push_back(arc);
+      cout << "Fighter added" << endl;
     }
     if (tokens.at(TYPE_LOC) == "C") {
       Cleric* clr = new Cleric(info);
       fighters.push_back(clr);
+      cout << "Fighter added" << endl;
     }
     return true;
 }
@@ -43,8 +47,10 @@ bool Arena::removeFighter(string name)
     vector<FighterInterface*>::iterator roster;
     for (roster = fighters.begin(); roster != fighters.end(); ++roster) {
         if ((*roster)->getName() == name) {
+            cout << "Fighter found; removing..." << endl;
             delete * roster;
             roster = fighters.erase(roster);
+            cout << "Fighter removed" << endl;
             return true;
         }
     }
