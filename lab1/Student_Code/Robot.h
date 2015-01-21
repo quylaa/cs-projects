@@ -20,5 +20,11 @@ class Robot : public Fighter
         void reset();
 
         bool useAbility();
+
+        int getCurEng();
+
+        int getMaxEng();
+
+        int getBonus();
 };
 #endif

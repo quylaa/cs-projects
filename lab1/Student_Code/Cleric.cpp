@@ -40,3 +40,8 @@ bool Cleric::useAbility()
         return true;
     }
 }
+
+int Cleric::getMana()
+{
+    return mana;
+}

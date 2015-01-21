@@ -13,6 +13,7 @@ Robot::~Robot(){}
 int Robot::getDamage()
 {
     return (str + bonus);
+    this->bonus = 0;
 }
 
 void Robot::reset()
@@ -23,6 +24,7 @@ void Robot::reset()
 
 bool Robot::useAbility()
 {
+    if (this->bonus != 0) return false;
     if (curEng < ROBOT_ABILITY_COST) return false;
     else {
         double bonDmg = (str * pow((curEng / maxEng), 4));
@@ -30,4 +32,19 @@ bool Robot::useAbility()
         curEng -= ROBOT_ABILITY_COST;
         return true;
     }
+}
+
+int Robot::getCurEng()
+{
+    return curEng;
+}
+
+int Robot::getMaxEng()
+{
+    return maxEng;
+}
+
+int Robot::getBonus()
+{
+    return bonus;
 }

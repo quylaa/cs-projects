@@ -18,5 +18,7 @@ class Archer : public Fighter
         void reset();
 
         bool useAbility();
+
+        int getBonus();
 };
 #endif

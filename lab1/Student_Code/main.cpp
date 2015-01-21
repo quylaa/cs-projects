@@ -20,14 +20,14 @@ bool doThing(char opt, Arena* stadium)
         getline(cin, info);
 		
 		if (info.empty()) {
-			cout << "!! Incorrect syntax; Fighter not added !!" << endl << endl;
+			cout << endl << "!! Incorrect syntax; Fighter not added !!" << endl << endl;
 			return false;
 		}
 
         if (stadium->addFighter(info)) {
-            cout << "!! Fighter added successfully !!" << endl << endl;
+            cout << endl << "!! Fighter added successfully !!" << endl << endl;
         } else {
-            cout << "!! Incorrect syntax; Fighter not added !!" << endl << endl;
+            cout << endl << "!! Fighter not added; Check syntax, may be duplicate !!" << endl << endl;
         }
 
     } else if (tolower(opt) == 'r') {
@@ -65,7 +65,7 @@ bool doThing(char opt, Arena* stadium)
                 cout << "> Select an option: ";
                 char in;
                 cin >> in;
-                if (tolower(in) == 'n') cout << ftr->getName() << endl;
+                if (tolower(in) == 'n') cout << endl << "!! " << ftr->getName() << " !!" << endl;
                 else if (tolower(in) == 'x') cout << endl << "!! " << ftr->getMaximumHP() << " !!" << endl;
 				else if (tolower(in) == 'c') cout << endl << "!! " << ftr->getCurrentHP() << " !!" << endl;
 				else if (tolower(in) == 's') cout << endl << "!! " << ftr->getStrength() << " !!" << endl;
@@ -74,24 +74,24 @@ bool doThing(char opt, Arena* stadium)
 				else if (tolower(in) == 'd') cout << endl << "!! " << ftr->getDamage() << " !!" << endl;
                 else if (tolower(in) == 'a') {
                     int dmg;
-                    cout << endl << endl << "> Enter amount of damage to deal: ";
+                    cout << endl << "> Enter amount of damage to deal: ";
                     cin >> dmg;
                     ftr->takeDamage(dmg);
-					cout << endl << endl << "!! Current HP: " << ftr->getCurrentHP() << " !!" << endl << endl;
+					cout << endl << "!! Current HP: " << ftr->getCurrentHP() << " !!" << endl << endl;
                 }
                 else if (tolower(in) == 'r') {
                     ftr->reset();
-					cout << endl << endl << "!! Fighter reset !!" << endl << endl;
+					cout << endl << "!! Fighter reset !!" << endl << endl;
                 }
                 else if (tolower(in) == 'e') {
                     ftr->regenerate();
-					cout << endl << endl << "!! Fighter regenerated !!" << endl << endl;
+					cout << endl << "!! Fighter regenerated !!" << endl << endl;
                 }
                 else if (tolower(in) == 'u') {
                     if (ftr->useAbility()) {
-						cout << endl << endl << "!! Ability used !!" << endl << endl;
+						cout << endl << "!! Ability used !!" << endl << endl;
                     } else {
-						cout << endl << endl << "!! Could not use ability !!" << endl << endl;
+						cout << endl << "!! Could not use ability !!" << endl << endl;
                     }
                 }
                 else if (tolower(in) == 'q') break;
@@ -106,6 +106,9 @@ bool doThing(char opt, Arena* stadium)
 int main()
 {
     Arena* stadium = new Arena();
+    stadium->addFighter("Rob R 220 25 18 15");
+    stadium->addFighter("Bard A 180 18 32 14");
+    stadium->addFighter("Mona C 320 12 14 36");
 
     while (true) {
         cout << "<< Arena >>" << endl << endl;

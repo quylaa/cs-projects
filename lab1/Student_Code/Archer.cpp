@@ -24,3 +24,8 @@ bool Archer::useAbility()
     bonus++;
     return true;
 }
+
+int Archer::getBonus()
+{
+    return bonus;
+}

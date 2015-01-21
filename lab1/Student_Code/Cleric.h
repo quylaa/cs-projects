@@ -20,5 +20,7 @@ class Cleric : public Fighter
         void regenerate();
 
         bool useAbility();
+
+        int getMana();
 };
 #endif
