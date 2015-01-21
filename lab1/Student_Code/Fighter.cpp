@@ -53,7 +53,7 @@ int Fighter::getDamage()
 
 void Fighter::takeDamage(int damage)
 {
-    int dmg = damage - (spd / 4);
+    int dmg = (damage - (spd / 4));
     if (dmg < 1) dmg = 1;
     curHP -= dmg;
 }

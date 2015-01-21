@@ -13,17 +13,23 @@ Arena::~Arena(){}
 bool Arena::addFighter(string info)
 {
     istringstream iss(info);
-    vector<string> tokens{ istream_iterator<string>{iss}, istream_iterator<string>{} };
-    if (tokens.at(TYPE_LOC) != "R" && tokens.at(TYPE_LOC) != "A" && tokens.at(TYPE_LOC) != "C") return false;
-    if (!stoi(tokens.at(HP_LOC))) return false;
+    vector<string> tokens{ istream_iterator<string>{iss}, istream_iterator<string>{} }; // extract words from input string into vector
+    if (tokens.size() != 6) return false; // if vector is too small, reject input
+    if (tokens.at(TYPE_LOC) != "R" && tokens.at(TYPE_LOC) != "A" && tokens.at(TYPE_LOC) != "C") return false; // if fighter type is invalid, reject input
+    if (!stoi(tokens.at(HP_LOC))) return false; // if any of the numbers do not cast to int, reject input
     if (!stoi(tokens.at(STR_LOC))) return false;
     if (!stoi(tokens.at(SPD_LOC))) return false;
     if (!stoi(tokens.at(MGC_LOC))) return false;
 
-    for (size_t man = 0; man < fighters.size(); ++man) {
+    for (size_t man = 0; man < fighters.size(); ++man) { // check to see if fighter already exists with that name
         if (fighters.at(man)->getName() == tokens.at(NAME_LOC)) return false;
     }
-    if (tokens.at(TYPE_LOC) == "R") {
+
+    for (int stat = HP_LOC; stat < tokens.size(); ++stat) { // if any stats are doubles, reject input
+      if (stod(tokens.at(stat)) != stoi(tokens.at(stat))) return false;
+    }
+
+    if (tokens.at(TYPE_LOC) == "R") { // create fighter
       Robot* rob = new Robot(info);
       fighters.push_back(rob);
     }
@@ -45,7 +51,6 @@ bool Arena::removeFighter(string name)
         if ((*roster)->getName() == name) {
             delete * roster;
             roster = fighters.erase(roster);
-            cout << "Fighter removed" << endl;
             return true;
         }
     }
@@ -60,8 +65,8 @@ FighterInterface* Arena::getFighter(string name)
            return ftr;
        }
     }
-	FighterInterface* null = new Robot("NULL R 0 0 0 0");
-	return null;
+	// FighterInterface* null = new Robot("NULL R 0 0 0 0");
+	// return null;
 }
 
 int Arena::getSize()

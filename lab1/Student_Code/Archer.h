@@ -13,6 +13,8 @@ class Archer : public Fighter
         Archer(string info);
         virtual ~Archer();
 
+        int getSpeed();
+
         int getDamage();
 
         void reset();

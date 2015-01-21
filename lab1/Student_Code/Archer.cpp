@@ -8,9 +8,13 @@ Archer::Archer(string info) : Fighter(info)
 }
 Archer::~Archer(){}
 
+int Archer::getSpeed()
+{
+    return (spd + bonus);
+}
+
 int Archer::getDamage()
 {
-	cout << bonus << endl;
     return (spd + bonus);
 }
 

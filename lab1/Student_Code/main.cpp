@@ -26,8 +26,10 @@ bool doThing(char opt, Arena* stadium)
 
         if (stadium->addFighter(info)) {
             cout << endl << "!! Fighter added successfully !!" << endl << endl;
+            return true;
         } else {
             cout << endl << "!! Fighter not added; Check syntax, may be duplicate !!" << endl << endl;
+            return false;
         }
 
     } else if (tolower(opt) == 'r') {
@@ -96,10 +98,14 @@ bool doThing(char opt, Arena* stadium)
                 }
                 else if (tolower(in) == 'q') break;
             }
-        } else {
-			cout << endl << "!! Fighter does not exist !!" << endl << endl;
-            return false;
+            return true;
         }
+    } else if (tolower(opt) == 's') {
+        cout << "Arena size: " << stadium->getSize() << endl;
+        return true;
+    } else {
+	    cout << endl << "!! Fighter does not exist !!" << endl << endl;
+        return false;
     }
 }
 
@@ -115,6 +121,7 @@ int main()
         cout << "(A)dd fighter" << endl;
         cout << "(R)emove fighter" << endl;
         cout << "Fighter (M)enu" << endl;
+        cout << "Arena (S)ize" << endl;
         cout << "(Q)uit" << endl << endl;
 		cout << "> ";
         char in;
