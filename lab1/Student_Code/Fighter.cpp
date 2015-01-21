@@ -65,8 +65,8 @@ void Fighter::reset()
 
 void Fighter::regenerate()
 {
-    int inc = str / 4;
+    int inc = str / 6;
     if (inc < 1) inc = 1;
     curHP += inc;
-    if (curHP < maxHP) curHP = maxHP;
+    if (curHP > maxHP) curHP = maxHP;
 }
