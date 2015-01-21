@@ -8,8 +8,7 @@ class Robot : public Fighter
 {
     private:
         int bonus;
-        int maxEng;
-        int curEng;
+        int eng;
 
     public:
         Robot(string info);
@@ -20,11 +19,5 @@ class Robot : public Fighter
         void reset();
 
         bool useAbility();
-
-        int getCurEng();
-
-        int getMaxEng();
-
-        int getBonus();
 };
 #endif

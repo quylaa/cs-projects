@@ -10,6 +10,7 @@ Archer::~Archer(){}
 
 int Archer::getDamage()
 {
+	cout << bonus << endl;
     return (spd + bonus);
 }
 
@@ -23,9 +24,4 @@ bool Archer::useAbility()
 {
     bonus++;
     return true;
-}
-
-int Archer::getBonus()
-{
-    return bonus;
 }

@@ -5,46 +5,33 @@
 Robot::Robot(string info) : Fighter(info)
 {
     bonus = 0;
-    maxEng = 2 * mgc;
-    curEng = maxEng;
+	eng = 2 * mgc;
 }
 Robot::~Robot(){}
 
 int Robot::getDamage()
 {
-    return (str + bonus);
-    this->bonus = 0;
+	int dmg = str + bonus;
+	bonus = 0;
+    return dmg;
 }
 
 void Robot::reset()
 {
     Fighter::reset();
-    curEng = maxEng;
+	eng = 2 * mgc;
+	bonus = 0;
 }
 
 bool Robot::useAbility()
 {
-    if (this->bonus != 0) return false;
-    if (curEng < ROBOT_ABILITY_COST) return false;
+    if (bonus != 0) return false;
+    if (eng < ROBOT_ABILITY_COST) return false;
     else {
-        double bonDmg = (str * pow((curEng / maxEng), 4));
+		double bonDmg = eng / (2.0 * mgc);
+        bonDmg = (str * pow(bonDmg, 4));
         bonus = bonDmg;
-        curEng -= ROBOT_ABILITY_COST;
+        eng -= ROBOT_ABILITY_COST;
         return true;
     }
-}
-
-int Robot::getCurEng()
-{
-    return curEng;
-}
-
-int Robot::getMaxEng()
-{
-    return maxEng;
-}
-
-int Robot::getBonus()
-{
-    return bonus;
 }

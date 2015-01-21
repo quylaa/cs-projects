@@ -30,7 +30,7 @@ void Cleric::regenerate()
 
 bool Cleric::useAbility()
 {
-    if (mana < CLERIC_ABILITY_COST) return false;
+	if (mana < CLERIC_ABILITY_COST) return false;
     else {
         int inc = mgc / 3;
         if (inc < 1) inc = 1;
@@ -39,9 +39,4 @@ bool Cleric::useAbility()
         mana -= CLERIC_ABILITY_COST;
         return true;
     }
-}
-
-int Cleric::getMana()
-{
-    return mana;
 }
