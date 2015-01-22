@@ -22,7 +22,7 @@ void Cleric::reset()
 void Cleric::regenerate()
 {
   Fighter::regenerate();
-  int inc = mana / 5;
+  int inc = mgc / 5;
   if (inc < 1) inc = 1;
   mana += inc;
   if (mana > (mgc * 5)) mana = mgc * 5;

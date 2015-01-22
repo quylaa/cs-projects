@@ -4,28 +4,23 @@
 
 Archer::Archer(string info) : Fighter(info)
 {
-    bonus = 0;
+    baseSpd = spd;
 }
 Archer::~Archer(){}
 
-int Archer::getSpeed()
-{
-    return (spd + bonus);
-}
-
 int Archer::getDamage()
 {
-    return (spd + bonus);
+    return spd;
 }
 
 void Archer::reset()
 {
     Fighter::reset();
-    bonus = 0;
+    spd = baseSpd;
 }
 
 bool Archer::useAbility()
 {
-    bonus++;
+    spd++;
     return true;
 }

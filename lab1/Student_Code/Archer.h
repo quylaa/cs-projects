@@ -7,13 +7,11 @@
 class Archer : public Fighter
 {
     private:
-        int bonus;
+        int baseSpd;
 
     public:
         Archer(string info);
         virtual ~Archer();
-
-        int getSpeed();
 
         int getDamage();
 
