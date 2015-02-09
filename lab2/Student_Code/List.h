@@ -1,8 +1,9 @@
 // Written by Aleks Christensen
 
-#ifndef LIST_DEF
-#define LIST_DEF
+#ifndef LIST_DEF_
+#define LIST_DEF_
 
+#include "Node.h"
 #include <string>
 
 template<class T>
@@ -21,8 +22,8 @@ class List : public LinkedListInterface
 
     public:
         
-        List(void){};
-        virtual ~List(void)();
+        List<T>(void): listSize(INIT_SIZE), list(new T[INIT_SIZE]), numItems(0) {};
+        virtual ~List<T>(void){};
 
 
         /*
