@@ -5,7 +5,7 @@
 #include "List.h"
 //#include "Node.h"
 
-template <typename T> List<T>::List() : numItems(0), head(new Node("head")) {}
+template <typename T> List<T>::List() : numItems(0), head(new Node(0)) {}
 /*{
     //listSize = 0;
     numItems = 0;
@@ -111,13 +111,14 @@ template <typename T> void List<T>::insertAfter(T value, T insertionNode)
             ins = 0;
         }
     }*/
-    Node* cur, ins = head;
+    Node* cur = head;
+    Node* ins = head;
     while (cur != NULL) {
         if (cur->data == value) {
             dupe = true;
         }
         if (cur->data == insertionNode) {
-            Node* ins = cur;
+            ins = cur;
         }
         cur = cur->next;
     }
@@ -142,7 +143,7 @@ template <typename T> void List<T>::insertAfter(T value, T insertionNode)
             Node* newNode = new Node(value, ins->next);
             ins->next = newNode;
             delete newNode;
-            delete cur;
+            delete ins;
             numItems++;
         }
     }
@@ -160,7 +161,7 @@ template <typename T> void List<T>::remove(T value)
     }*/
     Node* cur = head;
     while (cur != NULL) {
-        if (cur->data == "head") {
+        if (cur->data == head->data) {
             break;
         }
         if (cur->next->data == value) {
@@ -184,7 +185,7 @@ template <typename T> void List<T>::clear()
     numItems = 0;
     listSize = INIT_SIZE;*/
     Node* cur = head->next;
-    while (cur->data != "head") {
+    while (cur->data != head->data) {
         if (cur->next->next == NULL) {
             cur->next == NULL;
             delete cur->next->next;
@@ -214,7 +215,8 @@ template <typename T> int List<T>::size()
     return numItems;
 }
             
-
+template class List<int>;
+template class List<string>;
 
 
 
