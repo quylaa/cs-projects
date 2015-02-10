@@ -3,20 +3,37 @@
 #ifndef LIST_H_
 #define LIST_H_
 
-#include <string>
+#include <cstddef>
+#include "LinkedListInterface.h"
+//#include <string>
 
-template<class T> 
-class List : public LinkedListInterface
+template<typename T> 
+class List : public LinkedListInterface<T>
 {
     private:
+
+        struct Node
+        {
+            // Data of node
+            T data;
+            // Next node in list
+            Node* next;
+
+            Node(const T& dataItem, Node* nextPtr = NULL) :
+                data(dataItem), next(nextPtr) {};
+        };
+
+
         // Initial size of list
         //static const size_t INIT_SIZE = 10;
         // Number of items in list
         size_t numItems;
         // Total size of list
-        size_t listSize;
+        //size_t listSize;
         // List itself
         //T* list;
+        // Head of list
+        Node* head;
 
 
     public:
@@ -76,10 +93,4 @@ class List : public LinkedListInterface
 };
 
 #endif
-
-
-
-
-
-
 

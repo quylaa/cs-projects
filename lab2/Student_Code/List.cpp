@@ -1,21 +1,21 @@
 // Written by Aleks Christensen
 
 #include <stdexcept>
-#include "LinkedListInterface.h"
+//#include "LinkedListInterface.h"
 #include "List.h"
-#include "Node.h"
+//#include "Node.h"
 
-template <class T> List<T>::List(void) : LinkedListInterface(void)
-{
+template <typename T> List<T>::List() : numItems(0), head(new Node("head")) {}
+/*{
     //listSize = 0;
     numItems = 0;
 
-    Node *head = new Node("head");
+    Node* head = new Node("head");
     //numItems++;
-}
-template <class T> List<T>::~List<T>(void){}
+}*/
+template <typename T> List<T>::~List<T>(void){}
 
-template <class T> void List<T>::insertHead(T value)
+template <typename T> void List<T>::insertHead(T value)
 {
     //if (numItems == 0) {
     //    list[0] = new Node::Node("head");
@@ -52,7 +52,7 @@ template <class T> void List<T>::insertHead(T value)
     delete cur;
 }
 
-template <class T> void List<T>::insertTail(T value)
+template <typename T> void List<T>::insertTail(T value)
 {
     /*if (numItems == 0) {
         list[0] = new Node("head");
@@ -95,7 +95,7 @@ template <class T> void List<T>::insertTail(T value)
     }
 }
 
-template <class T> void List<T>::insertAfter(T value, T insertionNode)
+template <typename T> void List<T>::insertAfter(T value, T insertionNode)
 {
     /*if (numItems == 0) {
         list[0] = new Node("head");
@@ -111,7 +111,7 @@ template <class T> void List<T>::insertAfter(T value, T insertionNode)
             ins = 0;
         }
     }*/
-    Node* cur = head;
+    Node* cur, ins = head;
     while (cur != NULL) {
         if (cur->data == value) {
             dupe = true;
@@ -138,15 +138,17 @@ template <class T> void List<T>::insertAfter(T value, T insertionNode)
             list[ins]->next = list[numItems];
             numItems++;
         }*/
-        Node* newNode = new Node(value, ins->next);
-        ins->next = newNode;
-        delete newNode;
-        delete cur;
-        numItems++;
+        if (ins != head) {
+            Node* newNode = new Node(value, ins->next);
+            ins->next = newNode;
+            delete newNode;
+            delete cur;
+            numItems++;
+        }
     }
 }
 
-template <class T> void List<T>::remove(T value)
+template <typename T> void List<T>::remove(T value)
 {
     /*for (size_t i = 0; i < numItems; i++) {
         if (list[i]->data == value) {
@@ -175,7 +177,7 @@ template <class T> void List<T>::remove(T value)
 
 }
 
-template <class T> void List<T>::clear()
+template <typename T> void List<T>::clear()
 {
     /*delete list;
     list(new T[INIT_SIZE]);
@@ -192,7 +194,7 @@ template <class T> void List<T>::clear()
     }
 }
 
-template <class T> T List<T>::at(int index)
+template <typename T> T List<T>::at(int index)
 {
     if (index < 0 || index > numItems) {
         throw std::out_of_range("err");
@@ -207,7 +209,7 @@ template <class T> T List<T>::at(int index)
     }
 }
 
-template <class T> int List<T>::size()
+template <typename T> int List<T>::size()
 {
     return numItems;
 }
