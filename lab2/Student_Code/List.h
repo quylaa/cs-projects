@@ -1,29 +1,28 @@
 // Written by Aleks Christensen
 
-#ifndef LIST_DEF_
-#define LIST_DEF_
+#ifndef LIST_H_
+#define LIST_H_
 
-#include "Node.h"
 #include <string>
 
-template<class T>
+template<class T> 
 class List : public LinkedListInterface
 {
     private:
         // Initial size of list
-        static const size_t INIT_SIZE = 10;
+        //static const size_t INIT_SIZE = 10;
         // Number of items in list
         size_t numItems;
         // Total size of list
         size_t listSize;
         // List itself
-        T* list;
+        //T* list;
 
 
     public:
         
-        List<T>(void): listSize(INIT_SIZE), list(new T[INIT_SIZE]), numItems(0) {};
-        virtual ~List<T>(void){};
+        List<T>(void);
+        virtual ~List<T>(void);
 
 
         /*

@@ -3,8 +3,9 @@
 #ifndef NODE_H_
 #define NODE_H_
 
-//#include <string>
+#include <cstddef>
 
+template <class T>
 struct Node
 {
     // Data of node
@@ -13,7 +14,7 @@ struct Node
     Node* next;
 
     Node(const T& dataItem, Node* nextPtr = NULL) :
-        data(dataItem), next(nextPtr) {}
+        data(dataItem), next(nextPtr) {};
 };
 
 #endif
