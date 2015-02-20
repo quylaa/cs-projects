@@ -10,6 +10,12 @@ ExpMan::ExpMan(){}
 
 ExpMan::~ExpMan(){}
 
+bool ExpMan::isNumber(const string exp)
+{
+    return !exp.empty() && find_if(exp.begin(), 
+            exp.end(), [](char c) { return !isdigit(c); }) == exp.end();
+}
+
 void ExpMan::untilMatch(char sep)
 {
     char trigger;
@@ -63,22 +69,37 @@ int ExpMan::getPrecedence(char op)
     return -1;
 }
 
-bool ExpMan::isValid(string expression)
+bool ExpMan::isInfixValid(string expression)
 {
     char e;
     stack<char> things;
     if (expression.size() < 5) return false; // the shortest possible valid expression (2 + 2) is 5 characters long, anything shorter is invalid
     for (size_t i = 0; i < expression.size(); i++) {
         e = expression[i];
-        if (!ExpMan::isSeparator(e) && !ExpMan::isOperator(e) && !isdigit(e) && e != ' ' && e != '0') return false;
+        if (!ExpMan::isSeparator(e) && !ExpMan::isOperator(e) && 
+                !isdigit(e) && e != ' ' && e != '0') return false;
         if (e == ' ') continue;
         if (isdigit(e)) things.push(e);
         if (ExpMan::isOperator(e)) {
             char next = expression[i+2];
-            if (!isdigit(next) && next != '(' && next != '{' && next != '[') return false;
+            if (!isdigit(next) && next != '(' && 
+                    next != '{' && next != '[') return false;
         }
     }
     return true;
+}
+
+bool ExpMan::isPostfixValid(string expression)
+{
+    istringstream iss(expression);
+    vector<string> tokens{istream_iterator<string>{iss}, istream_iterator<string>{}};
+
+    int numNums = 0;
+    for (size_t i = 0; i < tokens.size(); i++) {
+        if (ExpMan::isNumber(tokens.at(i))) numNums++;
+    }
+    if (numNums > 0) return true;
+    return false;
 }
 
 bool ExpMan::isBalanced(string expression)
@@ -132,11 +153,9 @@ string ExpMan::infixToPostfix(string infixExpression)
 
     stringstream out;
 
-    if (!ExpMan::isValid(infixExpression)) return "invalid";
+    if (!ExpMan::isInfixValid(infixExpression)) return "invalid";
 
-    if (!ExpMan::isBalanced(infixExpression)) {
-        return "invalid";
-    }
+    if (!ExpMan::isBalanced(infixExpression)) return "invalid";
 
     istringstream iss(infixExpression);
     vector<string> tokens{istream_iterator<string>{iss}, istream_iterator<string>{}};
@@ -156,7 +175,8 @@ string ExpMan::infixToPostfix(string infixExpression)
             out << exp << ' ';
         }
         else if (ExpMan::isOperator(exp)) {
-            while (!ops.empty() && ExpMan::getPrecedence(exp) <= ExpMan::getPrecedence(ops.top())) {
+            while (!ops.empty() && 
+                    ExpMan::getPrecedence(exp) <= ExpMan::getPrecedence(ops.top())) {
                 out << ops.top() << ' ';
                 ops.pop();
             }
@@ -195,8 +215,69 @@ string ExpMan::infixToPostfix(string infixExpression)
 
 string ExpMan::postfixToInfix(string postfixExpression)
 {
-    return "invalid";
+    //stringstream infix;
+    
+    if (!ands.empty()) {
+        while (!ands.empty()) {
+            ands.pop();
+        }
+    }
+
+    if (!ExpMan::isPostfixValid(postfixExpression)) return "invalid";
+
+    istringstream iss(postfixExpression);
+    vector<string> tokens{istream_iterator<string>{iss}, istream_iterator<string>{}};
+
+    for (size_t i = 0; i < tokens.size(); i++) {
+        
+        /*if (tokens.at(i).size() > 1) {
+            //infix << tokens.at(i) << ' ';
+            ands.push(stoi(tokens.at(i)));
+            continue;
+        }*/
+
+        //const char* conv = tokens.at(i).c_str();
+        //char exp = (*conv);
+        string exp = tokens.at(i);
+
+        //if (exp == ' ') continue;
+        //if (isdigit(exp) || exp == '0') ands.push(exp - '0');
+        if (ExpMan::isNumber(exp)) ands.push(exp);
+        else if (ExpMan::isOperator((*exp.c_str()))) {
+            string first, second;
+            if (!ands.empty()) {
+                first = ands.top();
+                ands.pop();
+            } else return "invalid";
+            if (!ands.empty()) {
+                second = ands.top();
+                ands.pop();
+            } else return "invalid";
+
+            stringstream temp;
+            temp << "( " << first << " " << exp << " " << second << " )";
+            ands.push(temp.str());
+        }
+    }
+    istringstream oss(ands.top());
+    vector<string> postfix{istream_iterator<string>{oss}, istream_iterator<string>{}};
+
+    reverse(postfix.begin(), postfix.end());
+    stringstream out;
+    //output = ands.top();
+    ands.pop();
+    if (!ands.empty()) return "invalid";
+    //reverse(output.begin(), output.end());
+    for (size_t j = 0; j < postfix.size(); j++) {
+        if (postfix.at(j) == "(") out << ") ";
+        else if (postfix.at(j) == ")") out << "( ";
+        else out << postfix.at(j) << " ";
+    }
+    string put = out.str();
+    put.pop_back();
+    return put;
 }
+
 string ExpMan::postfixEvaluate(string postfixExpression)
 {
     return "invalid";

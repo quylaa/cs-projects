@@ -10,8 +10,8 @@ class ExpMan : public ExpressionManagerInterface
 {
     private:
         stack<char> ops;
-        stack<char> temp;
-        //stack<char> output;
+        stack<string> ands;
+        stack<string> post;
         string output;
 
         char separators[6] = {'(', ')', '{', '}', '[', ']'};   
@@ -23,6 +23,8 @@ class ExpMan : public ExpressionManagerInterface
         ExpMan();
         ~ExpMan();
 
+        bool isNumber(const string exp);
+
         void untilMatch(char sep);
 
         void printStack(stack<char> stak);
@@ -33,7 +35,9 @@ class ExpMan : public ExpressionManagerInterface
 
         int getPrecedence(char op);
 
-        bool isValid(string expression);
+        bool isInfixValid(string expression);
+
+        bool isPostfixValid(string expression);
 
         bool isBalanced(string expression);
 
