@@ -16,7 +16,7 @@ bool ExpMan::isNumber(const string exp)
             exp.end(), [](char c) { return !isdigit(c); }) == exp.end();
 }
 
-void ExpMan::untilMatch(char sep)
+void ExpMan::untilMatch(char sep) // pops operators off the stack until matching parenthesis is found
 {
     char trigger;
 
@@ -35,16 +35,7 @@ void ExpMan::untilMatch(char sep)
     ops.pop();
 }
 
-void ExpMan::printStack(stack<char> stak)
-{
-    while (!stak.empty()) {
-        cout << stak.top();
-        stak.pop();
-    }
-    cout << endl;
-}
-
-bool ExpMan::isSeparator(char exp)
+bool ExpMan::isSeparator(char exp) // returns true if given char is a parenthesis, bracket, or brace
 {
     for (size_t i = 0; i < sizeof(separators); i++) {
         if (exp == separators[i]) return true;
@@ -52,7 +43,7 @@ bool ExpMan::isSeparator(char exp)
     return false;
 }
 
-bool ExpMan::isOperator(char op)
+bool ExpMan::isOperator(char op) // returns true if given char is +, -, *, /, or %
 {
     for (size_t i = 0; i < sizeof(operators); i++) {
         if (op == operators[i]) return true;
@@ -60,7 +51,7 @@ bool ExpMan::isOperator(char op)
     return false;
 }
 
-int ExpMan::getPrecedence(char op)
+int ExpMan::getPrecedence(char op) // returns precedence of given operator
 { 
     for (size_t i = 0; i < sizeof(operators); i++) {
         if (op == operators[i]) return precedence[i];
@@ -68,7 +59,7 @@ int ExpMan::getPrecedence(char op)
     return -1;
 }
 
-bool ExpMan::isInfixValid(string expression)
+bool ExpMan::isInfixValid(string expression) // returns true if given infix expression is valid
 {
     char e;
     stack<char> things;
@@ -76,10 +67,10 @@ bool ExpMan::isInfixValid(string expression)
     for (size_t i = 0; i < expression.size(); i++) {
         e = expression[i];
         if (!ExpMan::isSeparator(e) && !ExpMan::isOperator(e) && 
-                !isdigit(e) && e != ' ' && e != '0') return false;
-        if (e == ' ') continue;
+                !isdigit(e) && e != ' ' && e != '0') return false; // if given char is not an acceptable character, fail
+        if (e == ' ') continue; // skip spaces
         if (isdigit(e)) things.push(e);
-        if (ExpMan::isOperator(e)) {
+        if (ExpMan::isOperator(e)) { // check if trying to add to a close brace/parenthesis/bracket
             char next = expression[i+2];
             if (!isdigit(next) && next != '(' && 
                     next != '{' && next != '[') return false;
@@ -88,21 +79,21 @@ bool ExpMan::isInfixValid(string expression)
     return true;
 }
 
-bool ExpMan::isPostfixValid(string expression)
+bool ExpMan::isPostfixValid(string expression) // returns true if given postfix expression if valid
 {
     istringstream iss(expression);
     vector<string> tokens{istream_iterator<string>{iss}, istream_iterator<string>{}};
 
     int numNums = 0;
     for (size_t i = 0; i < tokens.size(); i++) {
-        if (ExpMan::isNumber(tokens.at(i))) numNums++;
-        if (ExpMan::isSeparator((*tokens.at(i).c_str()))) return false;
+        if (ExpMan::isNumber(tokens.at(i))) numNums++; // count amount of numbers
+        if (ExpMan::isSeparator((*tokens.at(i).c_str()))) return false; // there should be no separators in a postfix expression
     }
-    if (numNums > 0) return true;
+    if (numNums > 0) return true; // if there are no numbers, something's wrong with the user
     return false;
 }
 
-bool ExpMan::isBalanced(string expression)
+bool ExpMan::isBalanced(string expression) // checks if the given expression's separators are balanced
 {
     if (!ops.empty()) {
         while (!ops.empty()) {
@@ -148,7 +139,7 @@ bool ExpMan::isBalanced(string expression)
 
 
 
-string ExpMan::infixToPostfix(string infixExpression)
+string ExpMan::infixToPostfix(string infixExpression) // convert infix expression to postfix
 {
 
     stringstream out;
@@ -212,7 +203,7 @@ string ExpMan::infixToPostfix(string infixExpression)
     return output;
 }
 
-string ExpMan::postfixToInfix(string postfixExpression)
+string ExpMan::postfixToInfix(string postfixExpression) // convert postfix expression to infix
 {
     if (!ands.empty()) {
         while (!ands.empty()) {
@@ -263,7 +254,7 @@ string ExpMan::postfixToInfix(string postfixExpression)
     return put;
 }
 
-string ExpMan::postfixEvaluate(string postfixExpression)
+string ExpMan::postfixEvaluate(string postfixExpression) // evaluate given postfix expression
 {
     if (!ExpMan::isPostfixValid(postfixExpression)) return "invalid";
 
