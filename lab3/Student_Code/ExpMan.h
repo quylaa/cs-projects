@@ -11,7 +11,7 @@ class ExpMan : public ExpressionManagerInterface
     private:
         stack<char> ops;
         stack<string> ands;
-        stack<string> post;
+        stack<int> num;
         string output;
 
         char separators[6] = {'(', ')', '{', '}', '[', ']'};   

@@ -29,7 +29,6 @@ void ExpMan::untilMatch(char sep)
     }
 
     while (ops.top() != trigger) {
-        //output.push(ops.top());
         output.push_back(ops.top());
         ops.pop();
     }
@@ -97,6 +96,7 @@ bool ExpMan::isPostfixValid(string expression)
     int numNums = 0;
     for (size_t i = 0; i < tokens.size(); i++) {
         if (ExpMan::isNumber(tokens.at(i))) numNums++;
+        if (ExpMan::isSeparator((*tokens.at(i).c_str()))) return false;
     }
     if (numNums > 0) return true;
     return false;
@@ -207,7 +207,6 @@ string ExpMan::infixToPostfix(string infixExpression)
         }
     }
 
-    //cout << "output: " << out.str() << endl;
     output = out.str();
     output.pop_back();
     return output;
@@ -215,8 +214,6 @@ string ExpMan::infixToPostfix(string infixExpression)
 
 string ExpMan::postfixToInfix(string postfixExpression)
 {
-    //stringstream infix;
-    
     if (!ands.empty()) {
         while (!ands.empty()) {
             ands.pop();
@@ -230,18 +227,8 @@ string ExpMan::postfixToInfix(string postfixExpression)
 
     for (size_t i = 0; i < tokens.size(); i++) {
         
-        /*if (tokens.at(i).size() > 1) {
-            //infix << tokens.at(i) << ' ';
-            ands.push(stoi(tokens.at(i)));
-            continue;
-        }*/
-
-        //const char* conv = tokens.at(i).c_str();
-        //char exp = (*conv);
         string exp = tokens.at(i);
 
-        //if (exp == ' ') continue;
-        //if (isdigit(exp) || exp == '0') ands.push(exp - '0');
         if (ExpMan::isNumber(exp)) ands.push(exp);
         else if (ExpMan::isOperator((*exp.c_str()))) {
             string first, second;
@@ -264,10 +251,8 @@ string ExpMan::postfixToInfix(string postfixExpression)
 
     reverse(postfix.begin(), postfix.end());
     stringstream out;
-    //output = ands.top();
     ands.pop();
     if (!ands.empty()) return "invalid";
-    //reverse(output.begin(), output.end());
     for (size_t j = 0; j < postfix.size(); j++) {
         if (postfix.at(j) == "(") out << ") ";
         else if (postfix.at(j) == ")") out << "( ";
@@ -280,5 +265,42 @@ string ExpMan::postfixToInfix(string postfixExpression)
 
 string ExpMan::postfixEvaluate(string postfixExpression)
 {
-    return "invalid";
+    if (!ExpMan::isPostfixValid(postfixExpression)) return "invalid";
+
+    istringstream iss(postfixExpression);
+    vector<string> tokens{istream_iterator<string>{iss}, istream_iterator<string>{}};
+
+    for (size_t i = 0; i < tokens.size(); i++) {
+
+        string exp = tokens.at(i);
+        
+        if (ExpMan::isNumber(exp)) num.push(stoi(exp));
+        else if (ExpMan::isOperator((*exp.c_str()))) {
+            int first, second, result;
+            if (!num.empty()) {
+                first = num.top();
+                num.pop();
+            } else return "invalid";
+            if (!num.empty()) {
+                second = num.top();
+                num.pop();
+            } else return "invalid";
+
+            if (exp == "+") result = second + first;
+            else if (exp == "-") result = second - first;
+            else if (exp == "*") result = second * first;
+            else if (exp == "/") {
+                if (first == 0) return "invalid";
+                else result = second / first;
+            }
+            else if (exp == "%") result = second % first;
+
+            num.push(result);
+        }
+    }
+    ostringstream out;
+    out << num.top();
+    num.pop();
+    if (!num.empty()) return "invalid";
+    return out.str();
 }
