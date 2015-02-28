@@ -83,7 +83,12 @@ class MyDeque
             if (!dupe(val))
             {
                 Node* newTop = new Node(val, NULL, top);
-                top = newTop;
+                if (top == NULL) top = newTop;
+                else
+                {
+                    top->prev = newTop;
+                    top = newTop;
+                }
                 if (bottom == NULL) bottom = newTop;
             }
         };
@@ -97,6 +102,7 @@ class MyDeque
                 {
                     top = newBottom;
                     bottom = newBottom;
+
                 } else 
                 {
                     bottom->next = newBottom;
@@ -116,8 +122,20 @@ class MyDeque
                     delete toDie;
                 } else if (toDie == bottom)
                 {
-                    bottom = bottom->prev;
-                    delete toDie;
+                    //bottom = bottom->prev;
+                    //delete toDie;
+                    Node* cur = top;
+                    while (cur != NULL)
+                    {
+                        cout << cur->data << "->";
+                        if (cur->next == bottom)
+                        {
+                            bottom = cur;
+                            delete toDie;
+                        }
+                        cur = cur->next;
+                    }
+                    cout << endl;
                 } else
                 {
                     toDie->prev->next = toDie->next;
@@ -131,9 +149,10 @@ class MyDeque
         {
             if (top != NULL)
             {
-                Node* temp = top;
-                top = top->next;
-                delete temp;
+                //Node* temp = top;
+                //top = top->next;
+                //delete temp;
+                remove(top->data);
             }
         };
 
@@ -141,9 +160,10 @@ class MyDeque
         {
             if (bottom != NULL)
             {
-                Node* temp = bottom;
-                bottom = bottom->prev;
-                delete temp;
+                //Node* temp = bottom;
+                //bottom = bottom->prev;
+                //delete temp;
+                remove(bottom->data);
             }
         };
 
@@ -163,6 +183,11 @@ class MyDeque
                 int i = 1;
                 while (cur->next != NULL)
                 {
+                    /*if (cur->data > 1000)
+                    {
+                        remove(cur->data);
+                        continue;
+                    }*/
                     cur = cur->next;
                     i++;
                 }

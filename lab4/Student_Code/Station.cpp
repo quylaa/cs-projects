@@ -161,7 +161,7 @@ bool Station::removeFromDequeRight()
     else if (deq->empty()) return false;
     else
     {
-        currentCar = deq-> showBottom();
+        currentCar = deq->showBottom();
         deq->popBottom();
         return true;
     }
