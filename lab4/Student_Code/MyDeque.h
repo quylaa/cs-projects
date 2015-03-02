@@ -122,20 +122,10 @@ class MyDeque
                     delete toDie;
                 } else if (toDie == bottom)
                 {
-                    //bottom = bottom->prev;
-                    //delete toDie;
+                    bottom = bottom->prev;
+                    bottom->next = NULL;
+                    delete toDie;
                     Node* cur = top;
-                    while (cur != NULL)
-                    {
-                        cout << cur->data << "->";
-                        if (cur->next == bottom)
-                        {
-                            bottom = cur;
-                            delete toDie;
-                        }
-                        cur = cur->next;
-                    }
-                    cout << endl;
                 } else
                 {
                     toDie->prev->next = toDie->next;
