@@ -1,7 +1,7 @@
 #include "Factory.h"
 
 //You may add #include statements here
-
+#include "List.h"
 /*
 	You will MODIFY THIS DOCUMENT.
 */
@@ -16,7 +16,7 @@
 */
 LinkedListInterface<int> * Factory::getLinkedListInt()
 {
-	return NULL;//Modify this line
+	return new List<int>();//Modify this line
 }
 
 /*
@@ -29,5 +29,5 @@ LinkedListInterface<int> * Factory::getLinkedListInt()
 */
 LinkedListInterface<string>* Factory::getLinkedListString()
 {
-	return NULL;//Modify this line
+	return new List<string>;//Modify this line
 }
