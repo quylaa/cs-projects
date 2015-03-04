@@ -22,7 +22,7 @@ class Circ : public CircularDLLInterface
 
             Node(const string& dataItem, Node* prevPtr = NULL, Node* nextPtr = NULL) :
                 data(dataItem), prev(prevPtr), next(nextPtr) {};
-        }
+        };
 
         // top of list
         Node* head;

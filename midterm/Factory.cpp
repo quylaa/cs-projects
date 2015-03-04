@@ -1,7 +1,7 @@
 #include "Factory.h"
 
 //You may add #include statements here
-
+#include "Circ.h"
 /*
 	You will MODIFY THIS DOCUMENT.
 */
@@ -16,6 +16,6 @@
 	you might say, "return new CircularDoubleLinkedList();".
 */
 CircularDLLInterface* Factory::getStudentList() {
-	return NULL;
+	return new Circ();
 }
 //=======================================================================================
