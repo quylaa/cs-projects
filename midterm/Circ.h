@@ -5,6 +5,9 @@
 
 #include <string>
 #include <cstddef>
+#include <ctime>
+#include <cstdlib>
+#include <iostream>
 #include "CircularDLLInterface.h"
 
 class Circ : public CircularDLLInterface
@@ -29,6 +32,11 @@ class Circ : public CircularDLLInterface
         // bottom of list
         Node* tail;
 
+        /*
+         * returns node at given index
+         */
+        Node* find(int index);
+
     public:
 
         Circ();
@@ -40,6 +48,23 @@ class Circ : public CircularDLLInterface
          * returns true if name exists, false otherwise
          */
         bool check(string name);
+
+        /*
+         * Shuffles the list
+         */
+        void shuffle();
+
+        /*
+         * Runs the simulated Josephus scenario
+         * 
+         * returns name of victor
+         */
+        string run(int count);
+
+        /*
+         * Same as run(), but says who dies
+         */
+        string runVerbose(int count);
 
         /*
          * Adds given name to beginning such that 

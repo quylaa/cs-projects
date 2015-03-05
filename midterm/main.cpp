@@ -60,13 +60,92 @@ void display(Circ* band)
  * Operations 3 * 4
  * Add name to roster, either prepending or appending
  */
-bool add(Circ* band);
+bool add(Circ* band)
+{
+    cin.ignore();
+    cout << "Please enter the name of the person to add: ";
+    string name;
+    getline(cin, name);
+    cout << endl << "Now enter the index to add this person: ";
+    int idx;
+    cin >> idx;
+
+    if (band->insertAt(name, idx))
+    {
+        cout << endl << "|-|- Person successfully added -|-|" << endl << endl;
+        return true;
+    }
+    else
+    {
+        //cout << endl << "!!-- Could not add person --!!" << endl;
+        return false;
+    }
+    //cout << endl << "Would you like to [p]repend, [a]ppend, or [i]nsert?\n>";
+    //char c;
+    //cin >> c;
+    //c = tolower(c);
+    //if (c == 'p')
+    //{
+        //if (band->insertHead(name)) 
+        //{
+           //cout << endl << "|-|- Person successfully added -|-|" << endl;
+           //return true;
+        //}
+        //else
+        //{
+           //cout << endl << "!!-- Could not add person --!!" << endl;
+           //return true;
+        //}
+    //}
+    //else if (c == 'a')
+    //{
+        //if (band->insertTail(name))
+        //{
+            //cout << endl << "|-|- Person successfully added -|-|" << endl;
+            //return true;
+        //}
+        //else
+        //{
+            //cout << endl << "!!-- Could not add person --!!" << endl;
+            //return true;
+        //}
+    //}
+    //else if (c == 'i')
+    //{
+        //cout << endl << "At what index would you like to insert this person: ";
+        //int idx;
+        //cin >> idx;
+        //if (band->insertAt(name, idx))
+        //{
+            //cout << endl << "|-|- Person successfully added -|-|" << endl;
+            //return true;
+        //}
+        //else
+        //{
+            //cout << endl << "!!-- Could not add person --!!" << endl;
+            //return true;
+        //}
+    //}
+    //else
+    //{
+        //cout << endl << "!!-- Could not understand input --!!" << endl;
+        //return true;
+    //}
+}
 
 /*
  * Operation 5
  * Remove name from roster by index
  */
-bool remove(Circ* band, int index);
+bool remove(Circ* band, int index)
+{
+    if (band->removeAt(index))
+    {
+        cout << "|-|- Successfully removed person -|-|" << endl << endl;
+        return true;
+    }
+    else return false;
+}
 
 /*
  * Operation 6
@@ -74,7 +153,7 @@ bool remove(Circ* band, int index);
  */
 void shuffle(Circ* band)
 {
-    int i = 1;
+    band->shuffle();
 }
 
 /*
@@ -83,7 +162,16 @@ void shuffle(Circ* band)
  */
 int safe(Circ* band, int count)
 {
-    return 1;
+    Circ* temp = new Circ();
+    for (int t = 0; t < band->size(); t++)
+    {
+        temp->insertHead(band->atFromHead(t));
+    }
+    string name = temp->run(count);
+    for (int i = 0; i < band->size(); i++)
+    {
+        if (band->atFromHead(i) == name) return i;
+    }
 }
 
 /*
@@ -92,7 +180,9 @@ int safe(Circ* band, int count)
  */
 bool dispatch(Circ* band, int count)
 {
-    return false;
+    string victor = band->runVerbose(count);
+    cout << endl << "The Survivor: " << victor << endl;
+    return true;
 }
 
 /* ------------------------------ */
@@ -123,7 +213,7 @@ bool menu(Circ* band)
         if (import(band)) return true;
         else
         {
-            cout << "!!-- Could not import file --!!" << endl;
+            cout << "!!-- Could not import file --!!" << endl << endl;
             return true;
         }
     }
@@ -134,59 +224,10 @@ bool menu(Circ* band)
     }
     else if (in == 'a')
     {
-        cin.ignore();
-        cout << "Please enter the name of the person to add: ";
-        string name;
-        getline(cin, name);
-        cout << endl << "Would you like to [p]repend, [a]ppend, or [i]nsert?\n>";
-        char c;
-        cin >> c;
-        c = tolower(c);
-        if (c == 'p')
-        {
-            if (band->insertHead(name)) 
-            {
-                cout << endl << "|-|- Person successfully added -|-|" << endl;
-                return true;
-            }
-            else
-            {
-                cout << endl << "!!-- Could not add person --!!" << endl;
-                return true;
-            }
-        }
-        else if (c == 'a')
-        {
-            if (band->insertTail(name))
-            {
-                cout << endl << "|-|- Person successfully added -|-|" << endl;
-                return true;
-            }
-            else
-            {
-                cout << endl << "!!-- Could not add person --!!" << endl;
-                return true;
-            }
-        }
-        else if (c == 'i')
-        {
-            cout << endl << "At what index would you like to insert this person: ";
-            int idx;
-            cin >> idx;
-            if (band->insertAt(name, idx))
-            {
-                cout << endl << "|-|- Person successfully added -|-|" << endl;
-                return true;
-            }
-            else
-            {
-                cout << endl << "!!-- Could not add person --!!" << endl;
-                return true;
-            }
-        }
+        if (add(band)) return true;
         else
         {
-            cout << endl << "!!-- Could not understand input --!!" << endl;
+            cout << "!!-- Could not add person --!!" << endl << endl;
             return true;
         }
     }
@@ -196,7 +237,7 @@ bool menu(Circ* band)
         
         cout << "Please enter the index of the person to remove: ";
         cin >> idx;
-        if (band->removeAt(idx))
+        if (remove(band, idx))
         {
             cout << endl << "|-|- Person successfully removed -|-|" << endl;
             return true;
