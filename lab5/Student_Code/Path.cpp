@@ -24,7 +24,7 @@ string Path::makeString()
     return smaze.str();
 }
 
-bool Path::traverse(Maze<int, 5, 5, 5> m, int x, int y, int z)
+bool Path::traverse(Maze<int, 5, 5, 5>& m, int x, int y, int z)
 {    
     ostringstream coord;
     coord << "(" << x << ", " << y << ", " << z << ")";
@@ -32,18 +32,35 @@ bool Path::traverse(Maze<int, 5, 5, 5> m, int x, int y, int z)
         solution.push_back("(4, 4, 4)");
         return true;
     }
-    int cur = m[z][y][x];
-    if (cur == 2) return false;
+    if (m[z][y][x] == 2) return false;
     m[z][y][x] = 2;
 
     solution.push_back(coord.str());
 
-    if ((z+1) < 5 && m[z+1][y][x] == 1) { if (traverse(m, x, y, z+1)) return true; }
-    if ((z-1) >= 0 && m[z-1][y][x] == 1) { if (traverse(m, x, y, z-1)) return true; }
-    if ((y+1) < 5 && m[z][y+1][x] == 1) { if (traverse(m, x, y+1, z)) return true; }
-    if ((y-1) >= 0 && m[z][y-1][x] == 1) { if (traverse(m, x, y-1, z)) return true; }
-    if ((x+1) < 5 && m[z][y][x+1] == 1) { if (traverse(m, x+1, y, z)) return true; } 
-    if ((x-1) >= 0 && m[z][y][x-1] == 1) { if (traverse(m, x-1, y, z)) return true; }
+    if ((z+1) < 5 && m[z+1][y][x] == 1) {
+        if (traverse(m, x, y, z+1)) return true;
+        else solution.pop_back();
+    }
+    if ((y+1) < 5 && m[z][y+1][x] == 1) {
+        if (traverse(m, x, y+1, z)) return true;
+        else solution.pop_back();
+    }
+    if ((x+1) < 5 && m[z][y][x+1] == 1) {
+        if (traverse(m, x+1, y, z)) return true;
+        else solution.pop_back();
+    }
+    if ((z-1) >= 0 && m[z-1][y][x] == 1) {
+        if (traverse(m, x, y, z-1)) return true;
+        else solution.pop_back();
+    }
+    if ((y-1) >= 0 && m[z][y-1][x] == 1) {
+        if (traverse(m, x, y-1, z)) return true;
+        else solution.pop_back();
+    }
+    if ((x-1) >= 0 && m[z][y][x-1] == 1) {
+        if (traverse(m, x-1, y, z)) return true;
+        else solution.pop_back();
+    }
 
     return false;
 }
@@ -120,8 +137,9 @@ bool Path::importMaze(string fileName)
 vector<string> Path::solveMaze()
 {
     vector<string> sol;
+    solution.clear();
 
-    Maze<int, 5, 5, 5> tmp;
+    Maze<int, 5, 5, 5> tmp = maze;
     if (traverse(tmp, 0, 0, 0)) {
         return solution;
     } else return sol;

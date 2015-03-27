@@ -38,7 +38,7 @@ class Path : public PathfinderInterface
          * Move through maze, attempting to find path
          * Returns true if path found, false otherwise
          */
-        bool traverse(Maze<int, 5, 5, 5> m, int x, int y, int z);
+        bool traverse(Maze<int, 5, 5, 5>& m, int x, int y, int z);
 
     public:
 
