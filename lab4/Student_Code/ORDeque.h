@@ -1,11 +1,11 @@
 // Written by Aleks Christensen
 
-#ifndef MYQUEUE_H_
-#define MYQUEUE_H_
+#ifndef ORDEQUE_H_
+#define ORDEQUE_H_
 
 #include <cstddef>
 
-class MyQueue
+class ORDeque
 {
     private:
         
@@ -29,8 +29,8 @@ class MyQueue
 
     public:
 
-        MyQueue();
-        ~MyQueue();
+        ORDeque();
+        ~ORDeque();
 
         int showTop();
         
@@ -51,8 +51,6 @@ class MyQueue
         void remove(int val);
 
         void popTop();
-
-        void popBottom();
 
         void clear();
 

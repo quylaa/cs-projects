@@ -2,12 +2,7 @@
 
 #include "Station.h"
 
-Station::Station(){
-    //stak->push(3);
-    //que->pushTop(8);
-    //deq->pushTop(2);
-    //deq->pushBottom(7);
-}
+Station::Station(){}
 Station::~Station(){}
 
 bool Station::checkId(int car) // check if given car id exists in any structure
@@ -18,6 +13,8 @@ bool Station::checkId(int car) // check if given car id exists in any structure
         if (stak->find(car)) return false;
         if (que->find(car)) return false;
         if (deq->find(car)) return false;
+        if (ird->find(car)) return false;
+        if (ord->find(car)) return false;
 	}
 	return true;
 }
@@ -182,4 +179,104 @@ int Station::showTopOfDequeRight()
 int Station::showSizeOfDeque()
 {
     return deq->size();
+}
+
+bool Station::addToIRDequeLeft()
+{
+    if (!currentCar) return false;
+    else if (ird->size() >= SIZE) return false;
+    else
+    {
+        ird->pushTop(currentCar);
+        currentCar = 0;
+        return true;
+    }
+}
+
+bool Station::removeFromIRDequeLeft()
+{
+    if (currentCar) return false;
+    else if (ird->empty()) return false;
+    else
+    {
+        currentCar = ird->showTop();
+        ird->popTop();
+        return true;
+    }
+}
+
+bool Station::removeFromIRDequeRight()
+{
+    if (currentCar) return false;
+    else if (ird->empty()) return false;
+    else
+    {
+        currentCar = ird->showBottom();
+        ird->popBottom();
+        return true;
+    }
+}
+
+int Station::showTopOfIRDequeLeft()
+{
+    if (ird->empty()) return -1;
+    else return ird->showTop();
+}
+
+int Station::showTopOfIRDequeRight()
+{
+    if (ird->empty()) return -1;
+    else return ird->showBottom();
+}
+
+int Station::showSizeOfIRDeque()
+{
+    return ird->size();
+}
+
+bool Station::addToORDequeLeft()
+{
+    if (!currentCar) return false;
+    else if (ord->size() >= SIZE) return false;
+    else
+    {
+        ord->pushTop(currentCar);
+        currentCar = 0;
+        return true;
+    }
+}
+
+bool Station::addToORDequeRight()
+{
+    if (!currentCar) return false;
+    else if (ord->size() >= SIZE) return false;
+    else
+    {
+        ord->pushBottom(currentCar);
+        currentCar = 0;
+        return true;
+    }
+}
+
+bool Station::removeFromORDequeLeft()
+{
+    if (currentCar) return false;
+    else if (ord->empty()) return false;
+    else
+    {
+        currentCar = ord->showTop();
+        ord->popTop();
+        return true;
+    }
+}
+
+int Station::showTopOfORDequeLeft()
+{
+    if (ord->empty()) return -1;
+    return ord->showTop();
+}
+
+int Station::showSizeOfORDeque()
+{
+    return ord->size();
 }

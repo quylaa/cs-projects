@@ -1,11 +1,11 @@
 // Written by Aleks Christensen
 
-#ifndef MYQUEUE_H_
-#define MYQUEUE_H_
+#ifndef IRDeque_H_
+#define IRDeque_H_
 
 #include <cstddef>
 
-class MyQueue
+class IRDeque
 {
     private:
         
@@ -29,8 +29,8 @@ class MyQueue
 
     public:
 
-        MyQueue();
-        ~MyQueue();
+        IRDeque();
+        ~IRDeque();
 
         int showTop();
         
@@ -45,8 +45,6 @@ class MyQueue
         Node* prevNode(int val);
 
         void pushTop(int val);
-
-        void pushBottom(int val);
 
         void remove(int val);
 

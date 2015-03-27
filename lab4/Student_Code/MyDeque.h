@@ -29,161 +29,34 @@ class MyDeque
 
     public:
 
-        MyDeque() : top(NULL), bottom(NULL) {};
-        ~MyDeque(){clear();};
+        MyDeque();
+        ~MyDeque();
 
-        int showTop()
-        {
-            return top->data;
-        };
+        int showTop();
         
-        int showBottom()
-        {
-            return bottom->data;
-        };
+        int showBottom();
 
-        bool empty()
-        {
-            if (size() == 0) return true;
-            else return false;
-        };
+        bool empty();
 
-        bool dupe(int val)
-        {
-            Node* cur = top;
-            while (cur != NULL)
-            {
-                if (cur->data == val) return true;
-                cur = cur->next;
-            }
-            return false;
-        };
+        bool dupe(int val);
 
-        Node* find(int val)
-        {
-            if (top != NULL) {
-                Node* cur = top;
-                while (cur->data != val) {
-                    if (cur->next == NULL) return NULL;
-                    cur = cur->next;
-                }
-                return cur;
-            } else return NULL;
-        };
+        Node* find(int val);
 
-        Node* prevNode(int val)
-        {
-            Node* cur = find(val);
-            if (cur != NULL) return cur->prev;
-            else return NULL;
-        };
+        Node* prevNode(int val);
 
-        void pushTop(int val)
-        {
-            if (!dupe(val))
-            {
-                Node* newTop = new Node(val, NULL, top);
-                if (top == NULL) top = newTop;
-                else
-                {
-                    top->prev = newTop;
-                    top = newTop;
-                }
-                if (bottom == NULL) bottom = newTop;
-            }
-        };
+        void pushTop(int val);
 
-        void pushBottom(int val)
-        {
-            if (!dupe(val))
-            {
-                Node* newBottom = new Node(val, bottom, NULL);
-                if (top == NULL)
-                {
-                    top = newBottom;
-                    bottom = newBottom;
+        void pushBottom(int val);
 
-                } else 
-                {
-                    bottom->next = newBottom;
-                    bottom = bottom->next;
-                }
-            }
-        };
+        void remove(int val);
 
-        void remove(int val)
-        {
-            Node* toDie = find(val);
-            if (toDie)
-            {
-                if (toDie == top)
-                {
-                    top = top->next;
-                    delete toDie;
-                } else if (toDie == bottom)
-                {
-                    bottom = bottom->prev;
-                    bottom->next = NULL;
-                    delete toDie;
-                    Node* cur = top;
-                } else
-                {
-                    toDie->prev->next = toDie->next;
-                    toDie->next->prev = toDie->prev;
-                    delete toDie;
-                }
-            }
-        };
+        void popTop();
 
-        void popTop()
-        {
-            if (top != NULL)
-            {
-                //Node* temp = top;
-                //top = top->next;
-                //delete temp;
-                remove(top->data);
-            }
-        };
+        void popBottom();
 
-        void popBottom()
-        {
-            if (bottom != NULL)
-            {
-                //Node* temp = bottom;
-                //bottom = bottom->prev;
-                //delete temp;
-                remove(bottom->data);
-            }
-        };
+        void clear();
 
-        void clear()
-        {
-            while (top != NULL)
-            {
-                popTop();
-            }
-        };
-
-        int size()
-        {
-            if (top != NULL)
-            {
-                Node* cur = top;
-                int i = 1;
-                while (cur->next != NULL)
-                {
-                    /*if (cur->data > 1000)
-                    {
-                        remove(cur->data);
-                        continue;
-                    }*/
-                    cur = cur->next;
-                    i++;
-                }
-                return i;
-            } else return 0;
-        };
+        int size();
 };
 
 #endif

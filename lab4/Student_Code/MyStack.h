@@ -25,84 +25,24 @@ class MyStack
 
     public:
 
-        MyStack() : top(NULL) {};
-        ~MyStack(){clear();};
+        MyStack();
+        ~MyStack();
 
-        int showTop()
-        {
-            return top->data;
-        };
+        int showTop();
 
-        bool empty()
-        {
-            if (size() == 0) return true;
-            else return false;
-        };
+        bool empty();
 
-        bool dupe(int val)
-        {
-            Node* cur = top;
-            while (cur != NULL)
-            {
-                if (cur->data == val) return true;
-                cur = cur->next;
-            }
-            return false;
-        };
+        bool dupe(int val);
 
-        Node* find(int val)
-        {
-            if (top != NULL) {
-                Node* cur = top;
-                while (cur->data != val) {
-                    if (cur->next == NULL) return NULL;
-                    cur = cur->next;
-                }
-                return cur;
-            } else return NULL;
-        };
+        Node* find(int val);
 
-        void push(int val)
-        {
-            if (!dupe(val))
-            {
-                Node* newTop = new Node(val, top);
-                top = newTop;
-            }
-        };
+        void push(int val);
 
-        void pop()
-        {
-            if (top != NULL)
-            {
-                Node* temp = top;
-                top = top->next;
-                delete temp;
-            }
-        };
+        void pop();
 
-        void clear()
-        {
-            while (top != NULL)
-            {
-                pop();
-            }
-        };
+        void clear();
 
-        int size()
-        {
-            if (top != NULL)
-            {
-                Node* cur = top;
-                int i = 1;
-                while (cur->next != NULL)
-                {
-                    cur = cur->next;
-                    i++;
-                }
-                return i;
-            } else return 0;
-        };
+        int size();
 };
 
 #endif
