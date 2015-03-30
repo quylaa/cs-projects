@@ -25,13 +25,39 @@ Circ::Node* Circ::find(int index)
     }
 }
 
+void Circ::linking()
+{
+    Node* cur = head;
+    while (cur != tail)
+    {
+        cout << cur->prev->data << "<-" << cur->data << "->" << cur->next->data << endl;
+        cur = cur->next;
+    }
+    cout << tail->prev->data << tail->data << "->" << tail->next->data << endl;
+}
+
+int Circ::getIndex(string name)
+{
+    if (Circ::empty()) return 0;
+    else
+    {
+        Node* cur = head;
+        for (int i = 0; i < (Circ::size() - 1); i++)
+        {
+            if (cur->data == name) return i;
+            cur = cur->next;
+        }
+        if (tail->data == name) return (Circ::size() - 1);
+    }
+}
+
 void Circ::shuffle()
 {
-    int s = Circ::size() - 1;
-    for (int i = 0; i < s; i++)
+    int s = Circ::size();
+    for (int i = 0; i < (s - 1); i++)
     {
         int swap = rand() % s;
-        if (swap = i) swap = rand() % s;
+        if (swap == i) swap = rand() % s;
         string temp = Circ::find(i)->data;
         Node* first = Circ::find(i);
         Node* second = Circ::find(swap);
@@ -59,7 +85,7 @@ bool Circ::check(string name)
     }
 }
 
-string Circ::run(int count)
+string Circ::test(int count)
 {
     Node* cur = head;
     while (Circ::size() > 1)
@@ -68,14 +94,15 @@ string Circ::run(int count)
         {
             cur = cur->next;
         }
-        cur->prev->next = cur->next;
-        cur->next->prev = cur->prev;
-        delete cur;
+        // cur->prev->next = cur->next;
+        // cur->next->prev = cur->prev;
+        Circ::removeAt(Circ::getIndex(cur->data));
+        // delete cur;
     }
     return cur->data;
 }
 
-string Circ::runVerbose(int count)
+string Circ::run(int count)
 {
     Node* cur = head;
     while (Circ::size() > 1)
@@ -99,9 +126,10 @@ bool Circ::insertHead(string name)
     {
         if (head == NULL)
         {
-            Node* newHead = new Node(name, NULL, NULL);
+            Node* newHead = new Node(name);
             head = newHead;
-            tail = newHead;
+            if (tail == NULL) tail = newHead;
+            // tail = newHead;
             return true;
         }
         else
@@ -122,8 +150,8 @@ bool Circ::insertTail(string name)
     {
         if (tail == NULL)
         {
-            Node* newTail = new Node(name, NULL, NULL);
-            head = newTail;
+            Node* newTail = new Node(name);
+            if (head == NULL) head = newTail;
             tail = newTail;
             return true;
         } else
@@ -151,7 +179,7 @@ bool Circ::insertAt(string name, int index)
             if (Circ::insertTail(name)) return true;
         } else
         {
-            Node* newItem = new Node(name, NULL, NULL);
+            Node* newItem = new Node(name);
             //Node* cur = head->next;
             Node* pos = Circ::find(index);
             newItem->prev = pos->prev;
@@ -185,11 +213,11 @@ bool Circ::removeHead()
             head = head->next;
             head->prev = tail;
             delete tmp;
-            if (Circ::size() == 1)
-            {
-                head = NULL;
-                tail = NULL;
-            }
+            // if (Circ::size() == 1)
+            // {
+            //     head = NULL;
+            //     tail = NULL;
+            // }
         }
         else
         {
@@ -210,42 +238,48 @@ bool Circ::removeTail()
         tail = tail->prev;
         tail->next = head;
         delete tmp;
-        if (Circ::size() == 1)
-        {
-            head = NULL;
-            tail = NULL;
-        }
+        // if (Circ::size() == 1)
+        // {
+        //     head = NULL;
+        //     tail = NULL;
+        // }
     }
 }
 
 bool Circ::removeAt(int index)
 {
+    int s = Circ::size();
     if (Circ::empty()) return false;
-    else if (index < 0 || Circ::size() <= index) return false;
+    else if (index < 0 || s <= index) return false;
     else
     {
         if (index == 0)
         {
             if (Circ::removeHead()) return true;
         }
-        else if (index == Circ::size() - 1)
+        else if (index == s - 1)
         {
             if (Circ::removeTail()) return true;
         }
         else
         {
-            Node* cur = head->next;
-            for (int i = 1; i < (Circ::size() - 1); i++)
-            {
-                if (index == i)
-                {
-                    cur->prev->next = cur->next;
-                    cur->next->prev = cur->prev;
-                    delete cur;
-                    return true;
-                }
-                cur = cur->next;
-            }
+            // Node* cur = head->next;
+            // for (int i = 1; i < (s - 1); i++)
+            // {
+            //     if (index == i)
+            //     {
+            //         cur->prev->next = cur->next;
+            //         cur->next->prev = cur->prev;
+            //         delete cur;
+            //         return true;
+            //     }
+            //     cur = cur->next;
+            // }
+            Node* toDie = Circ::find(index);
+            toDie->prev->next = toDie->next;
+            toDie->next->prev = toDie->prev;
+            delete toDie;
+            return true;
         }
     }
 }
@@ -282,16 +316,17 @@ int Circ::size()
 
 string Circ::atFromHead(int index)
 {
+    int s = Circ::size();
     if (Circ::empty()) return "invalid";
-    else if (index < 0 || Circ::size() <= index) return "invalid";
+    else if (index < 0 || s <= index) return "invalid";
     else
     {
         if (index == 0) return head->data;
-        else if (index == (Circ::size() - 1)) return tail->data;
+        else if (index == (s - 1)) return tail->data;
         else
         {
             Node* cur = head->next;
-            for (int i = 1; i < (Circ::size() - 1); i++)
+            for (int i = 1; i < (s - 1); i++)
             {
                 if (index == i) return cur->data;
                 cur = cur->next;
@@ -302,16 +337,17 @@ string Circ::atFromHead(int index)
 
 string Circ::atFromTail(int index)
 {
+    int s = Circ::size();
     if (Circ::empty()) return "invalid";
-    else if (index < 0 || Circ::size() <= index) return "invalid";
+    else if (index < 0 || s <= index) return "invalid";
     else
     {
         if (index == 0) return tail->data;
-        else if (index == (Circ::size() - 1)) return head->data;
+        else if (index == (s - 1)) return head->data;
         else
         {
             Node* cur = tail->prev;
-            for (int i = 1; i < (Circ::size() - 1); i++)
+            for (int i = 1; i < (s - 1); i++)
             {
                 if (index == i) return cur->data;
                 cur = cur->prev;

@@ -1,7 +1,5 @@
 *.obj
 *.exe
 *.txt
-*.a
 *.pdf
-*.sh
 *.DS_Store

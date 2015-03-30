@@ -23,7 +23,7 @@ bool import(Circ* band)
     {
         for (string line; getline(file, line);)
         {
-            line.erase(remove(line.begin(), line.end(), '\n'), line.end());
+            line.erase(remove(line.begin(), line.end(), '\r'), line.end());
             if(band->insertTail(line)) continue;
             else 
             {
@@ -49,7 +49,7 @@ void display(Circ* band)
     int s = band->size();
 
     cout << "\\\\-- Josephus' Band --\\\\" << endl;
-    for (int i = 0; i < (s - 1); i++)
+    for (int i = 0; i < s; i++)
     {
         cout << i << " - " << band->atFromHead(i) << endl;
     }
@@ -80,57 +80,6 @@ bool add(Circ* band)
         //cout << endl << "!!-- Could not add person --!!" << endl;
         return false;
     }
-    //cout << endl << "Would you like to [p]repend, [a]ppend, or [i]nsert?\n>";
-    //char c;
-    //cin >> c;
-    //c = tolower(c);
-    //if (c == 'p')
-    //{
-        //if (band->insertHead(name)) 
-        //{
-           //cout << endl << "|-|- Person successfully added -|-|" << endl;
-           //return true;
-        //}
-        //else
-        //{
-           //cout << endl << "!!-- Could not add person --!!" << endl;
-           //return true;
-        //}
-    //}
-    //else if (c == 'a')
-    //{
-        //if (band->insertTail(name))
-        //{
-            //cout << endl << "|-|- Person successfully added -|-|" << endl;
-            //return true;
-        //}
-        //else
-        //{
-            //cout << endl << "!!-- Could not add person --!!" << endl;
-            //return true;
-        //}
-    //}
-    //else if (c == 'i')
-    //{
-        //cout << endl << "At what index would you like to insert this person: ";
-        //int idx;
-        //cin >> idx;
-        //if (band->insertAt(name, idx))
-        //{
-            //cout << endl << "|-|- Person successfully added -|-|" << endl;
-            //return true;
-        //}
-        //else
-        //{
-            //cout << endl << "!!-- Could not add person --!!" << endl;
-            //return true;
-        //}
-    //}
-    //else
-    //{
-        //cout << endl << "!!-- Could not understand input --!!" << endl;
-        //return true;
-    //}
 }
 
 /*
@@ -160,19 +109,28 @@ void shuffle(Circ* band)
  * Operation 7
  * Calculate safe index from given count
  */
-int safe(Circ* band, int count)
+int safe(Circ* band, int count, int size)
 {
     Circ* temp = new Circ();
-    for (int t = 0; t < band->size(); t++)
+    // for (int t = 0; t < band->size(); t++)
+    // {
+    //     temp->insertHead(band->atFromHead(t));
+    // }
+    // string name = temp->run(count);
+    // for (int i = 0; i < band->size(); i++)
+    // {
+    //     if (band->atFromHead(i) == name) return i;
+    // }
+    string str;
+    for (int i = 0; i < size; i++)
     {
-        temp->insertHead(band->atFromHead(t));
+        (char)i;
+        str = i;
+        temp->insertTail(str);
     }
-    string name = temp->run(count);
-    for (int i = 0; i < band->size(); i++)
-    {
-        if (band->atFromHead(i) == name) return i;
-    }
+    return stoi(temp->test(count));
 }
+
 
 /*
  * Operation 8
@@ -180,7 +138,7 @@ int safe(Circ* band, int count)
  */
 bool dispatch(Circ* band, int count)
 {
-    string victor = band->runVerbose(count);
+    string victor = band->run(count);
     cout << endl << "The Survivor: " << victor << endl;
     return true;
 }
@@ -202,6 +160,8 @@ bool menu(Circ* band)
     cout << "# [S]huffle the band order   #" << endl;
     cout << "# [C]alculate safe position  #" << endl;
     cout << "# [E]xecute simulation       #" << endl;
+    cout << "# [P]rint list               #" << endl;
+    cout << "# C[l]ear list               #" << endl;
     cout << "# [Q]uit                     #" << endl;
     cout << endl << ">";
     cin >> in;
@@ -259,9 +219,14 @@ bool menu(Circ* band)
         cout << "Please enter the number to count by: ";
         int cnt;
         cin >> cnt;
+        cout << endl << "Now enter the desired size: ";
+        int sz;
+        cin >> sz;
 
-        int idx = safe(band, cnt);
-        cout << " ##-- Safe index: " << idx << " --##" << endl;
+        int idx = safe(band, cnt, sz);
+        cout << "##-- Safe index: " << idx << " --##" << endl;
+        cout << "##-- Initial size: " << sz << " --##" << endl;
+        cout << "##-- Count amount: " << cnt << " --##" << endl;
         return true;
     }
     else if (in == 'e')
@@ -272,9 +237,19 @@ bool menu(Circ* band)
 
         if (dispatch(band, cnt)) return true;
     }
+    else if (in == 'l')
+    {
+        band->clear();
+        return true;
+    }
     else if (in == 'q')
     {
         return false;
+    }
+    else if (in == 'p')
+    {
+        band->linking();
+        return true;
     }
     else {
         cout << "!!-- Could not interpret input --!!" << endl;

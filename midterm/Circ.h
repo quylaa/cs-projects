@@ -42,6 +42,15 @@ class Circ : public CircularDLLInterface
         Circ();
         ~Circ();
 
+
+        void linking();
+        /*
+         * Returns index of given name
+         * 
+         * 0 if nonexistant
+         */ 
+        int getIndex(string name);
+
         /*
          * Checks if given name is in list already
          *
@@ -55,16 +64,16 @@ class Circ : public CircularDLLInterface
         void shuffle();
 
         /*
+         * Uses given count and size, and returns safe index 
+         */
+        string test(int count);
+
+        /*
          * Runs the simulated Josephus scenario
-         * 
+         *
          * returns name of victor
          */
         string run(int count);
-
-        /*
-         * Same as run(), but says who dies
-         */
-        string runVerbose(int count);
 
         /*
          * Adds given name to beginning such that 

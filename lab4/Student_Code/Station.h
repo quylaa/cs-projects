@@ -1,20 +1,20 @@
 // Written by Aleks Christensen
 
-//#include <stack>
-//#include <queue>
-//#include <deque>
-#include "StationInterface.h"
-#include "List.h"
+#include "StationInterfaceExtra.h"
 #include "MyStack.h"
 #include "MyQueue.h"
 #include "MyDeque.h"
+#include "ORDeque.h"
+#include "IRDeque.h"
 
-class Station : public StationInterface
+class Station : public StationInterfaceExtra
 {
 	private:
 		MyStack* stak = new MyStack(); // Stack structure
 		MyQueue* que = new MyQueue(); // Queue structure
 		MyDeque* deq = new MyDeque(); // Deque structure
+		IRDeque* ird = new IRDeque(); // Input-restricted structure
+		ORDeque* ord = new ORDeque(); // Output-restricted structure
 
 		int currentCar; // ID of the current car
 
@@ -178,4 +178,89 @@ class Station : public StationInterface
 			 * @return the number of cars in the deque
 			 */
 			int showSizeOfDeque();
+
+			//Input-Restricted Deque----------------------------------------------
+			/**
+			 * Adds the current car to the IRDeque on the left side.  After this operation, there should be no current car.
+			 * Does nothing if there is no current car or if the IRDeque is already full.
+			 *
+			 * @return true if the car is successfully added to the IRDeque; false otherwise
+			 */
+			bool addToIRDequeLeft();
+
+			/**
+			 * Removes the leftmost car in the IRDeque and makes it the current car.
+			 * Does nothing if there is already a current car or if the IRDeque already empty.
+			 *
+			 * @return true if the car is successfully removed from the IRDeque; false otherwise
+			 */
+			bool removeFromIRDequeLeft();
+	
+			/**
+			 * Removes the rightmost car in the IRDeque and makes it the current car.
+			 * Does nothing if there is already a current car or if the IRDeque already empty.
+			 *
+			 * @return true if the car is successfully removed from the IRDeque; false otherwise
+			 */
+			bool removeFromIRDequeRight();
+	
+			/**
+			 * Returns the ID of the leftmost car in the IRDeque.
+			 *
+			 * @return the ID of the leftmost car in the IRDeque; -1 if the IRDeque is empty
+			 */
+			int showTopOfIRDequeLeft();
+	
+			/**
+			 * Returns the ID of the rightmost car in the IRDeque.
+			 *
+			 * @return the ID of the rightmost car in the IRDeque; -1 if the IRDeque is empty
+			 */
+			int showTopOfIRDequeRight();
+	
+			/**
+			 * Returns the number of cars in the IRDeque.
+			 *
+			 * @return the number of cars in the IRDeque
+			 */
+			int showSizeOfIRDeque();
+	
+			//Output-Restricted Deque---------------------------------------------
+			/**
+			 * Adds the current car to the ORDeque on the left side.  After this operation, there should be no current car.
+			 * Does nothing if there is no current car or if the ORDeque is already full.
+			 *
+			 * @return true if the car is successfully added to the ORDeque; false otherwise
+			 */
+			bool addToORDequeLeft();
+	
+			/**
+			 * Adds the current car to the ORDeque on the right side.  After this operation, there should be no current car.
+			 * Does nothing if there is no current car or if the ORDeque is already full.
+			 *
+			 * @return true if the car is successfully added to the ORDeque; false otherwise
+			 */
+			bool addToORDequeRight();
+	
+			/**
+			 * Removes the leftmost car in the ORDeque and makes it the current car.
+			 * Does nothing if there is already a current car or if the ORDeque already empty.
+			 *
+			 * @return true if the car is successfully removed from the ORDeque; false otherwise
+			 */
+			bool removeFromORDequeLeft();
+	
+			/**
+			 * Returns the ID of the leftmost car in the ORDeque.
+			 *
+			 * @return the ID of the leftmost car in the ORDeque; -1 if the ORDeque is empty
+			 */
+			int showTopOfORDequeLeft();
+	
+			/**
+			 * Returns the number of cars in the ORDeque.
+			 *
+			 * @return the number of cars in the ORDeque
+			 */
+			int showSizeOfORDeque();
 };
