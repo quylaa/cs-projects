@@ -2,6 +2,15 @@
 
 #include "GPA.h"
 
+set<Student*, Compare>::iterator GPA::findSet(unsigned long long int id)
+{
+    set<Student*, Compare>::iterator sit;
+    for (sit = sset.begin(); sit != sset.end(); sit++) {
+        if ((*sit)->getID() == id) return sit;
+    }
+    return sset.end();
+}
+
 GPA::GPA()
 {
 	init();
@@ -11,18 +20,24 @@ GPA::~GPA(){ clear(); }
 
 void GPA::init()
 {
-	scale.insert(pair<string, double>("A", 4.0))
-	scale.insert(pair<string, double>("A-", 3.7))
-	scale.insert(pair<string, double>("B+", 3.4))
-	scale.insert(pair<string, double>("B", 3.0))
-	scale.insert(pair<string, double>("B-", 2.7))
-	scale.insert(pair<string, double>("C+", 2.4)
-	scale.insert(pair<string, double>("C", 2.0))
-	scale.insert(pair<string, double>("C-", 1.7))
-	scale.insert(pair<string, double>("D+", 1.4))
-	scale.insert(pair<string, double>("D", 1.0))
-	scale.insert(pair<string, double>("D-", 0.7))
-	scale.insert(pair<string, double>("E", 0.0))
+	scale.insert(pair<string, double>("A", 4.0));
+	scale.insert(pair<string, double>("A-", 3.7));
+	scale.insert(pair<string, double>("B+", 3.4));
+	scale.insert(pair<string, double>("B", 3.0));
+	scale.insert(pair<string, double>("B-", 2.7));
+	scale.insert(pair<string, double>("C+", 2.4));
+	scale.insert(pair<string, double>("C", 2.0));
+	scale.insert(pair<string, double>("C-", 1.7));
+	scale.insert(pair<string, double>("D+", 1.4));
+	scale.insert(pair<string, double>("D", 1.0));
+	scale.insert(pair<string, double>("D-", 0.7));
+	scale.insert(pair<string, double>("E", 0.0));
+}
+
+bool GPA::isnum(string num)
+{
+    return !num.empty() && find_if(num.begin(), num.end(),
+            [](char c) { return !isdigit(c); }) == num.end();
 }
 
 vector<string> import(string fileName)
@@ -37,12 +52,12 @@ vector<string> import(string fileName)
 	return info;
 }
 
-map<unsigned long long int, Student*> GPA::getMap()
+map<unsigned long long int, StudentInterface*> GPA::getMap()
 {
 	return smap;
 }
 
-set<Student*, Compare> GPA::getSet()
+set<StudentInterface*, Comparator> GPA::getSet()
 {
 	return sset;
 }
@@ -53,10 +68,10 @@ bool GPA::importStudents(string mapFileName, string setFileName)
 	vector<string> setInfo = import(setFileName);
 
 	if (mapInfo.empty() || setInfo.empty()) return false;
-	if ((mapInfo % 4 != 0) || (setInfo % 4 != 0)) return false;
+	if ((mapInfo.size() % 4 != 0) || (setInfo.size() % 4 != 0)) return false;
 
 	for (size_t i = 0; i < mapInfo.size(); i += 4) {
-		if (!isdigit(mapInfo.at(i))) return false;
+		if (!isnum(mapInfo.at(i))) return false;
 
 		unsigned long long int newID = stoi(mapInfo.at(i));
 		string newName = mapInfo.at(i+1);
@@ -68,7 +83,7 @@ bool GPA::importStudents(string mapFileName, string setFileName)
 	}
 
 	for (size_t j = 0; j < setInfo.size(); j += 4) {
-		if (!isdigit(setInfo.at(j))) return false;
+		if (!isnum(setInfo.at(j))) return false;
 
 		unsigned long long int newID = stoi(setInfo.at(j));
 		string newName = setInfo.at(j+1);
@@ -88,21 +103,24 @@ bool GPA::importGrades(string fileName)
 	if (info.empty()) return false;
 
 	for (size_t i = 0; i < info.size(); i += 3) {
-		if (!isdigit(info.at(i))) return false;
+		if (!isnum(info.at(i))) return false;
 
 		unsigned long long int id = stoi(info.at(i));
-		double grade = grades.at(info.at(i+2));
+		double grade = scale.at(info.at(i+2));
 
-		Student* kid = smap.find(id)->second || sset.find(id);
+        Student* kid;
+        if (smap.find(id) != smap.end()) kid = smap.find(id)->second;
+        else if (findSet(id) != sset.end()) kid = (*findSet(id));
+        else return false;
 
 		kid->addGPA(grade);
-
-		return true;
 	}
+	return true;
 }
 
 string GPA::querySet(string fileName)
 {
+    set<Student*, Compare>::iterator sit;
 	vector<string> info = import(fileName);
 	if (info.empty()) return "";
 
@@ -110,12 +128,15 @@ string GPA::querySet(string fileName)
 	out.precision(2);
 
 	for (size_t i = 0; i < info.size(); i++) {
-		unsigned long long int id = info.at(i);
+		unsigned long long int id = stoi(info.at(i));
 		
-		Student* kid = sset.find(id);
+		Student* kid = (*findSet(id));
 
 		if (kid) {
-			out << kid->getID() << " " << kid->getGPA() << " " << kid->getName() << endl;
+        //for (sit = sset.begin(); sit != sset.end(); sit++) {
+        //    if ((*sit)->getID() == id) {
+                out << kid->getID() << " " << kid->getGPA() << " " << kid->getName() << endl;
+        //    }
 		} 
 	}
 
@@ -131,7 +152,7 @@ string GPA::queryMap(string fileName)
 	out.precision(2);
 
 	for (size_t i = 0; i < info.size(); i++) {
-		unsigned long long int id = info.at(i);
+		unsigned long long int id = stoi(info.at(i));
 
 		Student* kid = smap.find(id)->second;
 
@@ -146,12 +167,13 @@ void GPA::clear()
 {
 	map<unsigned long long int, Student*>::iterator mit;
 	for (mit = smap.begin(); mit != smap.end(); mit++) {
-		Student* expel = mit->second;
-		delete expel;
+		delete mit->second;
 	}
+    smap.clear();
 
 	set<Student*, Compare>::iterator sit;
 	for (sit = sset.begin(); sit != sset.end(); sit++) {
-		
+        delete *sit;
 	}
+    sset.clear();
 }

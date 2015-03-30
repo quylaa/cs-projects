@@ -7,6 +7,7 @@
 #include "Student.h"
 #include <vector>
 #include <fstream>
+#include <algorithm>
 
 class GPA : public GPAInterface
 {	
@@ -18,9 +19,13 @@ class GPA : public GPAInterface
 		// grade scale map
 		map<string, double> scale;
 
+        set<Student*, Compare>::iterator findSet(unsigned long long int id);
+
 		vector<string> import(string fileName);
 
 		void init();
+
+        bool isnum(string num);
 
 	public:
 		GPA();
@@ -29,12 +34,12 @@ class GPA : public GPAInterface
 		/*
 		 * Returns the map, key should be student ID
 		 */
-		map<unsigned long long int, Student*> getMap();
+		map<unsigned long long int, StudentInterface*> getMap();
 
 		/*
 		 * Returns set of students
 		 */
-		set<Student*, Compare> getSet();
+		set<StudentInterface*, Comparator> getSet();
 
 		/* Read in and parse through the given files. Each part of an entry in a
 		 * file is given on a separate line in the file. Student ID is first, name is
