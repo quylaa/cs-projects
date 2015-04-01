@@ -15,11 +15,11 @@ class GPA : public GPAInterface
 		// Student map
 		map<unsigned long long int, Student*> smap;
 		// Student set
-		set<Student*, Compare> sset;
+		set<Student*, Comparator> sset;
 		// grade scale map
 		map<string, double> scale;
 
-        set<Student*, Compare>::iterator findSet(unsigned long long int id);
+        set<Student*, Comparator>::iterator findSet(unsigned long long int id);
 
 		vector<string> import(string fileName);
 

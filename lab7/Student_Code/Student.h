@@ -60,13 +60,13 @@ class Student : public StudentInterface
 		string toString();
 };
 
-struct Compare
-{
-	bool operator()(Student* student1, Student* student2)
-	{
-		return student1->getName() < student2->getName();
-	}
-};
+// struct Compare
+// {
+// 	bool operator()(Student* student1, Student* student2)
+// 	{
+// 		return student1->getName() < student2->getName();
+// 	}
+// };
 
 
 #endif

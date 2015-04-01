@@ -2,9 +2,9 @@
 
 #include "GPA.h"
 
-set<Student*, Compare>::iterator GPA::findSet(unsigned long long int id)
+set<Student*, Comparator>::iterator GPA::findSet(unsigned long long int id)
 {
-    set<Student*, Compare>::iterator sit;
+    set<Student*, Comparator>::iterator sit;
     for (sit = sset.begin(); sit != sset.end(); sit++) {
         if ((*sit)->getID() == id) return sit;
     }
@@ -120,7 +120,7 @@ bool GPA::importGrades(string fileName)
 
 string GPA::querySet(string fileName)
 {
-    set<Student*, Compare>::iterator sit;
+    set<Student*, Comparator>::iterator sit;
 	vector<string> info = import(fileName);
 	if (info.empty()) return "";
 
@@ -171,7 +171,7 @@ void GPA::clear()
 	}
     smap.clear();
 
-	set<Student*, Compare>::iterator sit;
+	set<Student*, Comparator>::iterator sit;
 	for (sit = sset.begin(); sit != sset.end(); sit++) {
         delete *sit;
 	}
