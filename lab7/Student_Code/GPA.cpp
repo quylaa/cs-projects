@@ -2,13 +2,13 @@
 
 #include "GPA.h"
 
-set<Student*, Comparator>::iterator GPA::findSet(unsigned long long int id)
+StudentInterface* GPA::findSet(unsigned long long int id)
 {
-    set<Student*, Comparator>::iterator sit;
-    for (sit = sset.begin(); sit != sset.end(); sit++) {
-        if ((*sit)->getID() == id) return sit;
+    // set<StudentInterface*, Comparator>::iterator sit;
+    for (StudentInterface* sit : sset) {
+        if (sit->getID() == id) return sit;
     }
-    return sset.end();
+    return *sset.end();
 }
 
 GPA::GPA()
@@ -20,18 +20,18 @@ GPA::~GPA(){ clear(); }
 
 void GPA::init()
 {
-	scale.insert(pair<string, double>("A", 4.0));
-	scale.insert(pair<string, double>("A-", 3.7));
-	scale.insert(pair<string, double>("B+", 3.4));
-	scale.insert(pair<string, double>("B", 3.0));
-	scale.insert(pair<string, double>("B-", 2.7));
-	scale.insert(pair<string, double>("C+", 2.4));
-	scale.insert(pair<string, double>("C", 2.0));
-	scale.insert(pair<string, double>("C-", 1.7));
-	scale.insert(pair<string, double>("D+", 1.4));
-	scale.insert(pair<string, double>("D", 1.0));
-	scale.insert(pair<string, double>("D-", 0.7));
-	scale.insert(pair<string, double>("E", 0.0));
+	scale.insert(pair<string, double>("A", 4.00));
+	scale.insert(pair<string, double>("A-", 3.70));
+	scale.insert(pair<string, double>("B+", 3.40));
+	scale.insert(pair<string, double>("B", 3.00));
+	scale.insert(pair<string, double>("B-", 2.70));
+	scale.insert(pair<string, double>("C+", 2.40));
+	scale.insert(pair<string, double>("C", 2.00));
+	scale.insert(pair<string, double>("C-", 1.70));
+	scale.insert(pair<string, double>("D+", 1.40));
+	scale.insert(pair<string, double>("D", 1.00));
+	scale.insert(pair<string, double>("D-", 0.70));
+	scale.insert(pair<string, double>("E", 0.00));
 }
 
 bool GPA::isnum(string num)
@@ -40,7 +40,7 @@ bool GPA::isnum(string num)
             [](char c) { return !isdigit(c); }) == num.end();
 }
 
-vector<string> import(string fileName)
+vector<string> GPA::import(string fileName)
 {
 	vector<string> info;
 	fstream file(fileName);
@@ -108,9 +108,9 @@ bool GPA::importGrades(string fileName)
 		unsigned long long int id = stoi(info.at(i));
 		double grade = scale.at(info.at(i+2));
 
-        Student* kid;
+        StudentInterface* kid;
         if (smap.find(id) != smap.end()) kid = smap.find(id)->second;
-        else if (findSet(id) != sset.end()) kid = (*findSet(id));
+        else if (findSet(id) != *sset.end()) kid = findSet(id);
         else return false;
 
 		kid->addGPA(grade);
@@ -120,7 +120,6 @@ bool GPA::importGrades(string fileName)
 
 string GPA::querySet(string fileName)
 {
-    set<Student*, Comparator>::iterator sit;
 	vector<string> info = import(fileName);
 	if (info.empty()) return "";
 
@@ -130,13 +129,10 @@ string GPA::querySet(string fileName)
 	for (size_t i = 0; i < info.size(); i++) {
 		unsigned long long int id = stoi(info.at(i));
 		
-		Student* kid = (*findSet(id));
+		StudentInterface* kid = findSet(id);
 
 		if (kid) {
-        //for (sit = sset.begin(); sit != sset.end(); sit++) {
-        //    if ((*sit)->getID() == id) {
-                out << kid->getID() << " " << kid->getGPA() << " " << kid->getName() << endl;
-        //    }
+      out << kid->getID() << " " << kid->getGPA() << " " << kid->getName() << endl;
 		} 
 	}
 
@@ -154,7 +150,7 @@ string GPA::queryMap(string fileName)
 	for (size_t i = 0; i < info.size(); i++) {
 		unsigned long long int id = stoi(info.at(i));
 
-		Student* kid = smap.find(id)->second;
+		StudentInterface* kid = smap.find(id)->second;
 
 		if (kid) {
 			out << kid->getID() << " " << kid->getGPA() << " " << kid->getName() << endl;
@@ -165,15 +161,13 @@ string GPA::queryMap(string fileName)
 
 void GPA::clear()
 {
-	map<unsigned long long int, Student*>::iterator mit;
-	for (mit = smap.begin(); mit != smap.end(); mit++) {
-		delete mit->second;
+	for (pair<unsigned long long int, StudentInterface*> mit : smap) {
+		delete mit.second;
 	}
     smap.clear();
 
-	set<Student*, Comparator>::iterator sit;
-	for (sit = sset.begin(); sit != sset.end(); sit++) {
-        delete *sit;
+	for (StudentInterface* sit : sset) {
+        delete sit;
 	}
     sset.clear();
 }

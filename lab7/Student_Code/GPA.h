@@ -13,19 +13,19 @@ class GPA : public GPAInterface
 {	
 	private:
 		// Student map
-		map<unsigned long long int, Student*> smap;
+		map<unsigned long long int, StudentInterface*> smap;
 		// Student set
-		set<Student*, Comparator> sset;
+		set<StudentInterface*, Comparator> sset;
 		// grade scale map
 		map<string, double> scale;
 
-        set<Student*, Comparator>::iterator findSet(unsigned long long int id);
+    StudentInterface* findSet(unsigned long long int id);
 
 		vector<string> import(string fileName);
 
 		void init();
 
-        bool isnum(string num);
+    bool isnum(string num);
 
 	public:
 		GPA();

@@ -3,9 +3,21 @@
 #include "Student.h"
 
 Student::Student(unsigned long long int IDin, string nameIn, string addressIn, string phoneIn)
- : ID(IDin), name(nameIn), address(addressIn), phone(phoneIn), GPA("E") {}
+ : ID(IDin), name(nameIn), address(addressIn), phone(phoneIn), GPA(0.00) {}
 
 Student::~Student(){}
+
+void Student::recalc()
+{
+  double avg = 0.0;
+  for (double grade : classes) {
+    avg += grade;
+  }
+  avg = avg / classes.size();
+  GPA = avg;
+
+  cout << "rec: " << avg << " " << GPA << endl;
+}
 
 unsigned long long int Student::getID()
 {
@@ -19,19 +31,33 @@ string Student::getName()
 
 string Student::getGPA()
 {
-	return GPA;
+  if (GPA == 4.0) return "A";
+  else if (GPA < 4.0 && GPA >= 3.7) return "A-";
+  else if (GPA < 3.7 && GPA >= 3.4) return "B+";
+  else if (GPA < 3.4 && GPA >= 3.0) return "B";
+  else if (GPA < 3.0 && GPA >= 2.7) return "B-";
+  else if (GPA < 2.7 && GPA >= 2.4) return "C+";
+  else if (GPA < 2.4 && GPA >= 2.0) return "C";
+  else if (GPA < 2.0 && GPA >= 1.7) return "C-";
+  else if (GPA < 1.7 && GPA >= 1.4) return "D+";
+  else if (GPA < 1.4 && GPA >= 1.0) return "D";
+  else if (GPA < 1.0 && GPA >= 0.7) return "D-";
+  else if (GPA < 0.7 && GPA >= 0.0) return "E";
 }
 
 void Student::addGPA(double classGrade)
 {
-	double cur = stod(GPA);
-	cur += classGrade;
-	GPA = to_string(cur);
+  classes.push_back(classGrade);
+  recalc();
 }
 
 string Student::toString()
 {
 	ostringstream info;
-	info << ID << endl << name << endl << address << endl << phone << endl << GPA;
+  info.precision(3);
+  info << ID << endl << name << endl << address << endl << phone << endl;
+  if (GPA == 0) info << "0.00";
+  else info << setprecision(3) << GPA;
+  cout << setprecision(3) << "tos: " << GPA << endl;
 	return info.str();
 }
