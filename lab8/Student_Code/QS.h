@@ -5,11 +5,19 @@
 
 #include "QSInterface.h"
 #include <array>
+#include <cstddef>
 
 class QS : public QSInterface
 {
     private:
-        
+        // master array
+        int* ar;
+        // capacity of master array
+        unsigned int mcap;
+        // size of master array
+        unsigned int msize;
+        // subarray(?)
+        int* subar;
 
 
 
