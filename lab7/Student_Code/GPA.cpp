@@ -124,14 +124,14 @@ string GPA::querySet(string fileName)
 	if (info.empty()) return "";
 
 	ostringstream out;
-	out.precision(2);
+	//out.precision(2);
 
 	for (size_t i = 0; i < info.size(); i++) {
 		unsigned long long int id = stoi(info.at(i));
 		
 		StudentInterface* kid = findSet(id);
 
-		if (kid) {
+		if (kid != *sset.end()) {
       out << kid->getID() << " " << kid->getGPA() << " " << kid->getName() << endl;
 		} 
 	}

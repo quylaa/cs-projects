@@ -15,8 +15,6 @@ void Student::recalc()
   }
   avg = avg / classes.size();
   GPA = avg;
-
-  cout << "rec: " << avg << " " << GPA << endl;
 }
 
 unsigned long long int Student::getID()
@@ -31,7 +29,7 @@ string Student::getName()
 
 string Student::getGPA()
 {
-  if (GPA == 4.0) return "A";
+  /*if (GPA == 4.0) return "A";
   else if (GPA < 4.0 && GPA >= 3.7) return "A-";
   else if (GPA < 3.7 && GPA >= 3.4) return "B+";
   else if (GPA < 3.4 && GPA >= 3.0) return "B";
@@ -42,7 +40,10 @@ string Student::getGPA()
   else if (GPA < 1.7 && GPA >= 1.4) return "D+";
   else if (GPA < 1.4 && GPA >= 1.0) return "D";
   else if (GPA < 1.0 && GPA >= 0.7) return "D-";
-  else if (GPA < 0.7 && GPA >= 0.0) return "E";
+  else if (GPA < 0.7 && GPA >= 0.0) return "E";*/
+  stringstream g;
+  g << fixed << setprecision(2) << GPA;
+  return g.str();
 }
 
 void Student::addGPA(double classGrade)
@@ -53,11 +54,10 @@ void Student::addGPA(double classGrade)
 
 string Student::toString()
 {
-	ostringstream info;
-  info.precision(3);
+  ostringstream info;
+  //info.precision(3);
   info << ID << endl << name << endl << address << endl << phone << endl;
   if (GPA == 0) info << "0.00";
-  else info << setprecision(3) << GPA;
-  cout << setprecision(3) << "tos: " << GPA << endl;
-	return info.str();
+  else info << fixed << setprecision(2) << GPA;
+  return info.str();
 }
