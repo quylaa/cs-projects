@@ -124,7 +124,6 @@ string GPA::querySet(string fileName)
 	if (info.empty()) return "";
 
 	ostringstream out;
-	//out.precision(2);
 
 	for (size_t i = 0; i < info.size(); i++) {
 		unsigned long long int id = stoi(info.at(i));
@@ -150,7 +149,7 @@ string GPA::queryMap(string fileName)
 	for (size_t i = 0; i < info.size(); i++) {
 		unsigned long long int id = stoi(info.at(i));
 
-		StudentInterface* kid = smap.find(id)->second;
+		StudentInterface* kid = smap[id];
 
 		if (kid) {
 			out << kid->getID() << " " << kid->getGPA() << " " << kid->getName() << endl;
