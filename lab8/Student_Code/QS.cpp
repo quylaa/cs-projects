@@ -38,7 +38,11 @@ void QS::addToArray(int value)
 
 bool QS::createArray(int capacity)
 {
-    return false;
+    if (subar != NULL) return false;
+    else {
+        subar = new int[capacity];
+        return true;
+    }
 }
 
 void QS::clear()

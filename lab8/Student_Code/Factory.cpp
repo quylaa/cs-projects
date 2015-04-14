@@ -1,4 +1,5 @@
 #include "Factory.h"
+#include "QS.h"
 /*
 	You will MODIFY THIS DOCUMENT.
 */
@@ -13,5 +14,5 @@
 */
 QSInterface * Factory::getQS()
 {
-  return NULL;//Modify this line
+  return new QS();//Modify this line
 }
