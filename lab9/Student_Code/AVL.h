@@ -3,6 +3,7 @@
 #ifndef AVL_H_
 #define AVL_H_
 
+#include <iostream>
 #include "AVLInterface.h"
 #include "Node.h"
 
@@ -19,6 +20,8 @@ class AVL : public AVLInterface
         bool removen(int data, Node*& lroot);
 
         void replace(Node*& lroot, Node*& nroot);
+
+        void inorder(Node* top);
 
         // Rotate right
         Node* rotR(Node* lroot);
@@ -39,7 +42,7 @@ class AVL : public AVLInterface
         Node* LL(Node* lroot);
 
         // Balance tree
-        Node* balance(Node* lroot);
+        Node* balance(Node*& lroot);
 
         int diff(Node* lroot);
 

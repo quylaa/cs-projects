@@ -34,6 +34,7 @@ bool AVL::addn(int data, Node*& lroot)
 
 bool AVL::removen(int data, Node*& lroot)
 {
+    //cout << "removing " << data << endl;
     if (lroot == NULL) return false;
     if (data < lroot->getData()) {
         if (removen(data, lroot->left)) lroot = balance(lroot);
@@ -48,12 +49,14 @@ bool AVL::removen(int data, Node*& lroot)
         else replace(lroot, lroot->left);
 
         delete tmp;
+        //lroot = balance(lroot);
         return true;
     }
 }
 
 void AVL::replace(Node*& lroot, Node*& nroot)
 {
+    cout << "replacing " << lroot->data << " with " << nroot->data << endl;
     if (nroot->right) replace(lroot, nroot->right);
     else {
         lroot->data = nroot->data;
@@ -62,8 +65,17 @@ void AVL::replace(Node*& lroot, Node*& nroot)
     }
 }
 
+void AVL::inorder(Node* top)
+{
+    if (top == NULL) return;
+    inorder(top->left);
+    cout << top->data << " ";
+    inorder(top->right);
+}
+
 Node* AVL::rotR(Node* lroot)
 {
+    cout << "rotR around: " << lroot->data << endl;
     Node* tmp = lroot->left;
     lroot->left = tmp->right;
     tmp->right = lroot;
@@ -73,6 +85,7 @@ Node* AVL::rotR(Node* lroot)
 
 Node* AVL::rotL(Node* lroot)
 {
+    cout << "rotL around: " << lroot->data << endl;
     Node* tmp = lroot->right;
     lroot->right = tmp->left;
     tmp->left = lroot;
@@ -104,7 +117,7 @@ Node* AVL::LL(Node* lroot)
     return rotR(lroot);
 }
 
-Node* AVL::balance(Node* lroot)
+Node* AVL::balance(Node*& lroot)
 {
     int h = diff(lroot);
     if (h > 1) {
@@ -125,10 +138,24 @@ Node* AVL::getRootNode()
 
 bool AVL::add(int data)
 {
-    return addn(data, root);
+    //cout << "before add: " << data << endl;
+    //inorder(root);
+    //cout << endl;
+    bool t = addn(data, root);
+    //cout << "after add: " << data << endl;
+    //inorder(root);
+    //cout << endl;
+    return t;
 }
 
 bool AVL::remove(int data)
 {
-    return removen(data, root);
+    cout << "before remove: " << data << endl;
+    inorder(root);
+    cout << endl;
+    bool t = removen(data, root);
+    cout << "after remove: " << data << endl;
+    inorder(root);
+    cout << endl;
+    return t;
 }
