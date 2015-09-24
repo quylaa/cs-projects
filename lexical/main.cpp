@@ -26,7 +26,6 @@ string tokenize(string lines)
 int main(int argc, char* argv[])
 {
     string lines = getInput(argv[1]);
-    if (lines.empty()) return -1;
-    else cout << tokenize(lines);
+    cout << tokenize(lines);
     return 0;
 }
