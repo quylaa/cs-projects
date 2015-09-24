@@ -133,20 +133,8 @@ void FSMBox::multiComment(string input, string::iterator &tk)
 
 void FSMBox::isID(string input, string::iterator &tk)
 {
-    // string st;
-    // st.push_back(*(tk));
-    // ++tk;
     bool undef = false; // tracks if token is undefined
     int l = line; // remember initial line
-    // for (; tk != input.end(); ++tk) {
-    //     if (isalpha(*(tk)) || isdigit(*(tk))) st.push_back(*(tk));
-    //     else if (isspace(*(tk)) && *(tk) != '\n') break; // break on space
-    //     else if (*(tk) == '\n') { // break on newline and increment line counter
-    //         line++;
-    //         break;
-    //     }
-    //     else { --tk; break;} // illegal character, decrement counter to allow global for loop to work
-    // }
     string st = makeID(input, tk);
     if (undef == true) out << makeOutput(st, "UNDEFINED", line); // format as undef
     else {
