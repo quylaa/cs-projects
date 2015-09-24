@@ -22,16 +22,12 @@
 #include <algorithm>
 #include <string>
 #include <iterator>
+#include <cctype>
 
 using namespace std;
 
 class FSMBox
 {
-    // private:
-    //     enum token_chars_t {COMMA = ",", PERIOD = ".", Q_MARK = "'",
-    //     LEFT_PAREN = "(", RIGHT_PAREN = ")", COLON = ":", MULTIPLY = "*",
-    //     ADD = "+"};
-
     public:
 
         FSMBox();
@@ -46,18 +42,7 @@ class FSMBox
          * Inputs: input string to find tokens from, current line number
          *
          */
-
-        string tokens(string input, int line);
-
-        /*
-         * colon
-         *
-         * FSM that detects if input is a lone colon or a colon-dash
-         *
-         * Inputs: string with a colon
-         *
-         */
-        string colon(string c);
+        stringstream tokens(string input, int line);
 
         /*
          * makeOutput

@@ -1,32 +1,35 @@
 // Written by Aleks Christensen
 
-#include <vector>
+// #include <vector>
 #include <iostream>
 #include "fsmbox.h"
 
-vector<string> getInput(string fileName)
+stringstream getInput(string fileName)
 {
-    vector<string> lines;
+    stringstream iput;
     ifstream file(fileName);
     if (file) {
         for (string line; getline(file, line);) {
-            lines.push_back(line);
+            iput << line << endl;
         }
     }
-    return lines;
+    return iput;
 }
 
-string tokenize(vector<string> lines)
+string tokenize(stringstream lines)
 {
     FSMBox fsm;
-    stringstream out;
-    for (size_t i = 0; i < lines.size(); i++) {
-        out << fsm.tokens(lines.at(i), 2);
-    }
-    return out.str();
+    // for (size_t i = 0; i < lines.size(); i++) {
+    stringstream tokenstring = fsm.tokens(lines.at(i), 2);
+    // }
+    return tokenstring.str();
 }
 
 int main()
 {
-  return 0;
+    cin >> string fileName;
+    stringstream lines = getInput(fileName);
+    if (lines.rdbuf()->in_avail() == 0) return -1;
+    else cout << tokenize(lines) << endl;
+    return 0;
 }
