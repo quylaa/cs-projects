@@ -126,6 +126,7 @@ string FSMBox::makeOutput(string out, string token, int line)
 {
     stringstream o;
     o << "(" << token << ",\"" << out << "\"," << line << ")" << endl;
+    cout << "I FOUND A " << out << endl;
     return o.str();
 }
 
@@ -133,5 +134,6 @@ string FSMBox::makeOutput(char out, string token, int line)
 {
     stringstream o;
     o << "(" << token << ",\"" << out << "\"," << line << ")" << endl;
+    cout << "I FOUND A " << out << endl;
     return o.str();
 }

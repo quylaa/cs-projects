@@ -19,10 +19,11 @@
 
 #include <fstream>
 #include <sstream>
-#include <algorithm>
+// #include <algorithm>
 #include <string>
 #include <iterator>
 #include <cctype>
+#include <iostream>
 
 using namespace std;
 
