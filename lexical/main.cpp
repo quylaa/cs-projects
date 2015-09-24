@@ -23,11 +23,9 @@ string tokenize(string lines)
     return tokenstring;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-    string fileName;
-    cin >> fileName;
-    string lines = getInput(fileName);
+    string lines = getInput(argv[1]);
     if (lines.empty()) return -1;
     else cout << tokenize(lines);
     return 0;

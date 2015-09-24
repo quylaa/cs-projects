@@ -109,7 +109,7 @@ string FSMBox::tokens(string input)
                 else out << makeOutput(st, "ID", l);
             }
         }
-        else if (isdigit(*(tk))) { // capture whole digit as undef rather than individual digits
+        else if (isdigit(*(tk))) { // capture token with leading digit as undef rather than individual digits or chars
             string st;
             st.push_back(*(tk));
             ++tk;
