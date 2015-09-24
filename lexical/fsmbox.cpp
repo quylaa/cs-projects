@@ -10,7 +10,7 @@ string FSMBox::tokens(string input)
 {
     ostringstream out;
     int line = 1;
-    for (stringstream::iterator tk = input.begin(); tk != input.end(); ++tk) {
+    for (string::iterator tk = input.begin(); tk != input.end(); ++tk) {
         if ((*tk) == ',') out << makeOutput((*tk), "COMMA", line);
         else if ((*tk) == '.') out << makeOutput((*tk), "PERIOD", line) << endl;
         else if ((*tk) == '?') out << makeOutput((*tk), "Q_MARK", line) << endl;
@@ -21,7 +21,11 @@ string FSMBox::tokens(string input)
         // else if ((*tk) == ' ') out << makeOutput((*tk), "WHITESPACE", line) << endl;
         else if (isspace((*tk))) continue;
         else if ((*tk) == ':') {
-            if ((*tk+1) == '-') out << makeOutput(co, "COLON_DASH", line) << endl;
+            string co = (*tk);
+            if ((*tk+1) == '-') {
+                co.push_back(*tk+1);
+                out << makeOutput(co, "COLON_DASH", line) << endl;
+            }
             else out << makeOutput(co, "COLON", line) << endl;
         }
         else if ((*tk) == '\'') {
@@ -40,12 +44,12 @@ string FSMBox::tokens(string input)
             string st = "#";
             int l = line;
             if ((*tk+1) == '|') {
-                st.push_back("|");
+                st.push_back('|');
                 for (tk; tk != input.end(); ++tk) {
                     st.push_back((*tk));
                     if ((*tk) == '\n') line++;
                     if ((*tk) == '|' && (*tk+1) == '#') {
-                        st.push_back("#");
+                        st.push_back('#');
                         break;
                     }
                 }
@@ -66,9 +70,10 @@ string FSMBox::tokens(string input)
             }
         }
         else if (isalpha((*tk))) {
-            string st = (*tk);
+            string st;
+            st.push_back((*tk));
+            bool undef = false;
             for (tk; (*tk) != "\n"; ++tk) {
-                bool undef = false;
                 if (isalpha((*tk)) || isdigit((*tk))) st.push_back((*tk));
                 if (st == "Schemes") {
                     out << makeOutput(st, "SCHEMES", line) << endl;
@@ -107,7 +112,7 @@ string FSMBox::tokens(string input)
             }
             out << makeOutput(st, "UNDEFINED", line);
         }
-        return out;
+        return out.str();
     }
 }
 

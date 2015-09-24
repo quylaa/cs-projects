@@ -29,7 +29,8 @@ string tokenize(string lines)
 
 int main()
 {
-    cin >> string fileName;
+    string fileName;
+    cin >> fileName;
     string lines = getInput(fileName);
     if (lines.empty()) return -1;
     else cout << tokenize(lines) << endl;
