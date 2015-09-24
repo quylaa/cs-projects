@@ -12,20 +12,20 @@ string FSMBox::tokens(string input)
     string::iterator tk;
     int line = 1;
     for (tk = input.begin(); tk != input.end(); ++tk) {
-        if ((*tk) == '\n') {
+        if (*(tk) == '\n') {
             line++;
         }
-        else if ((*tk) == ',') out << makeOutput((*tk), "COMMA", line);
-        else if ((*tk) == '.') out << makeOutput((*tk), "PERIOD", line);
-        else if ((*tk) == '?') out << makeOutput((*tk), "Q_MARK", line);
-        else if ((*tk) == '(') out << makeOutput((*tk), "LEFT_PAREN", line);
-        else if ((*tk) == ')') out << makeOutput((*tk), "RIGHT_PAREN", line);
-        else if ((*tk) == '*') out << makeOutput((*tk), "MULTIPLY", line);
-        else if ((*tk) == '+') out << makeOutput((*tk), "ADD", line);
-        else if (isspace((*tk))) continue;
-        else if ((*tk) == ':') {
+        else if (*(tk) == ',') out << makeOutput(*(tk), "COMMA", line);
+        else if (*(tk) == '.') out << makeOutput(*(tk), "PERIOD", line);
+        else if (*(tk) == '?') out << makeOutput(*(tk), "Q_MARK", line);
+        else if (*(tk) == '(') out << makeOutput(*(tk), "LEFT_PAREN", line);
+        else if (*(tk) == ')') out << makeOutput(*(tk), "RIGHT_PAREN", line);
+        else if (*(tk) == '*') out << makeOutput(*(tk), "MULTIPLY", line);
+        else if (*(tk) == '+') out << makeOutput(*(tk), "ADD", line);
+        else if (isspace(*(tk))) continue;
+        else if (*(tk) == ':') {
             string co;
-            co.push_back((*tk));
+            co.push_back(*(tk));
             if (*(tk+1) == '-') {
                 co.push_back(*(tk+1));
                 out << makeOutput(co, "COLON_DASH", line);
@@ -33,35 +33,35 @@ string FSMBox::tokens(string input)
             }
             else out << makeOutput(co, "COLON", line);
         }
-        else if ((*tk) == '\'') {
+        else if (*(tk) == '\'') {
             string st = "'";
             ++tk;
             for (; tk != input.end(); ++tk) {
-                if ((*tk) == '\n') {
+                if (*(tk) == '\n') {
                     line++;
                     continue;
                 }
-                st.push_back((*tk));
-                if ((*tk) == '\'') break;
+                st.push_back(*(tk));
+                if (*(tk) == '\'') break;
             }
             if (tk == input.end()) {
                 out << makeOutput(st, "UNDEFINED", line);
             }
             else out << makeOutput(st, "STRING", line);
         }
-        else if ((*tk) == '#') {
+        else if (*(tk) == '#') {
             string st = "#";
             int l = line;
             ++tk;
-            if ((*tk) == '|') {
-                st.push_back((*tk));
+            if (*(tk) == '|') {
+                st.push_back(*(tk));
                 for (; tk != input.end(); ++tk) {
-                    if ((*tk) == '\n') {
+                    if (*(tk) == '\n') {
                         line++;
                         continue;
                     }
-                    st.push_back((*tk));
-                    if ((*tk) == '|' && (*tk+1) == '#') {
+                    st.push_back(*(tk));
+                    if (*(tk) == '|' && (*tk+1) == '#') {
                         st.push_back('#');
                         break;
                     }
@@ -73,29 +73,29 @@ string FSMBox::tokens(string input)
             }
             else {
                 for (;tk != input.end(); ++tk) {
-                    if ((*tk) == '\n') {
+                    if (*(tk) == '\n') {
                         line++;
                         break;
                     }
-                    st.push_back((*tk));
+                    st.push_back(*(tk));
                 }
                 out << makeOutput(st, "COMMENT", l);
             }
         }
-        else if (isalpha((*tk))) {
+        else if (isalpha(*(tk))) {
             string st;
-            st.push_back((*tk));
+            st.push_back(*(tk));
             ++tk;
             bool undef = false;
             for (; tk != input.end(); ++tk) {
-                if (isalpha((*tk)) || isdigit((*tk))) st.push_back((*tk));
-                else if (isspace((*tk))) break;
-                else if ((*tk) == '\n') {
+                if (isalpha(*(tk)) || isdigit(*(tk))) st.push_back(*(tk));
+                else if (isspace(*(tk))) break;
+                else if (*(tk) == '\n') {
                     line++;
                     break;
                 }
                 else {
-                    st.push_back((*tk));
+                    st.push_back(*(tk));
                     undef = true;
                 }
             }
@@ -110,11 +110,11 @@ string FSMBox::tokens(string input)
         }
         else {
             string st;
-            st.push_back((*tk));
+            st.push_back(*(tk));
             ++tk;
-            for (;(*tk) != '\n'; ++tk) {
-                if (isspace((*tk))) break;
-                st.push_back((*tk));
+            for (;*(tk) != '\n'; ++tk) {
+                if (isspace(*(tk))) break;
+                st.push_back(*(tk));
             }
             out << makeOutput(st, "UNDEFINED", line);
         }
