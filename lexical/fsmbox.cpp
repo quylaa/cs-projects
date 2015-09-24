@@ -12,9 +12,7 @@ string FSMBox::tokens(string input)
     string::iterator tk;
     int line = 1; // initialize line counter
     for (tk = input.begin(); tk != input.end(); ++tk) {
-        // cout << *(tk);
         if (*(tk) == '\n') { line++; continue; }// increment line counter when newline is found
-        // else if (*(tk) == '\000') break;
         else if (*(tk) == ',') out << makeOutput(*(tk), "COMMA", line);
         else if (*(tk) == '.') out << makeOutput(*(tk), "PERIOD", line);
         else if (*(tk) == '?') out << makeOutput(*(tk), "Q_MARK", line);
@@ -37,10 +35,6 @@ string FSMBox::tokens(string input)
             string st = "'"; // initialize string string (lol)
             ++tk; // increment pointer away from first quotation mark
             int l = line; // remember starting line number
-            // if (*(tk) == '\'') {
-            //     st.push_back(*(tk));
-            //     ++tk;
-            // }
             for (; tk != input.end(); ++tk) {
                 st.push_back(*(tk)); // add next char to string
                 if (*(tk) == '\n') line++; // if newline, increment counter
@@ -51,7 +45,6 @@ string FSMBox::tokens(string input)
                     }
                     else break; // otherwise it's the end of the string
                 }
-                // else if ((tk-1) == input.end()) break;
             }
             if (tk == input.end()) { // if EOF was found before end of string
                 out << makeOutput(st, "UNDEFINED", l); // format as undef
@@ -65,6 +58,7 @@ string FSMBox::tokens(string input)
             ++tk; // increment away from starting char
             if (*(tk) == '|') { // multiline comment
                 st.push_back(*(tk)); // place it in string
+                ++tk;
                 for (; tk != input.end(); ++tk) { // iterate until end token is found
                     if (*(tk) == '\n') line++; // if newline found, increment line
                     st.push_back(*(tk));
@@ -105,10 +99,6 @@ string FSMBox::tokens(string input)
                     break;
                 }
                 else { --tk; break;} // illegal character, decrement counter to allow global for loop to work
-                //else {
-                //    st.push_back(*(tk));
-                //    undef = true;
-                //}
             }
             if (undef == true) out << makeOutput(st, "UNDEFINED", line); // format as undef
             else {
@@ -119,14 +109,7 @@ string FSMBox::tokens(string input)
                 else out << makeOutput(st, "ID", l);
             }
         }
-        else { // any other token
-            // string st;
-            // st.push_back(*(tk));
-            // ++tk;
-            // for (;*(tk) != '\n'; ++tk) {
-            //     if (isspace(*(tk))) break;
-            //     st.push_back(*(tk));
-            // }
+        else {
             out << makeOutput(*(tk), "UNDEFINED", line);
         }
     }
