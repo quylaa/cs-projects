@@ -11,7 +11,8 @@ string FSMBox::tokens(string input)
     ostringstream out;
     int line = 1;
     for (string::iterator tk = input.begin(); tk != input.end(); ++tk) {
-        if ((*tk) == ',') out << makeOutput((*tk), "COMMA", line);
+        if ((*tk) == '\n') line++;
+        else if ((*tk) == ',') out << makeOutput((*tk), "COMMA", line);
         else if ((*tk) == '.') out << makeOutput((*tk), "PERIOD", line);
         else if ((*tk) == '?') out << makeOutput((*tk), "Q_MARK", line);
         else if ((*tk) == '(') out << makeOutput((*tk), "LEFT_PAREN", line);
@@ -108,7 +109,6 @@ string FSMBox::tokens(string input)
                     out << makeOutput(st, "ID", line);
             }
         }
-        else if ((*tk) == '\n') line++;
         else {
             string st;
             st.push_back((*tk));
@@ -126,7 +126,6 @@ string FSMBox::makeOutput(string out, string token, int line)
 {
     stringstream o;
     o << "(" << token << ",\"" << out << "\"," << line << ")" << endl;
-    cout << "I FOUND A " << out << endl;
     return o.str();
 }
 
@@ -134,6 +133,5 @@ string FSMBox::makeOutput(char out, string token, int line)
 {
     stringstream o;
     o << "(" << token << ",\"" << out << "\"," << line << ")" << endl;
-    cout << "I FOUND A " << out << endl;
     return o.str();
 }
