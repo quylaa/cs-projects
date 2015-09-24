@@ -96,19 +96,19 @@ string FSMBox::tokens(string input)
             else {
                 if (st == "Schemes") {
                     out << makeOutput(st, "SCHEMES", line);
-                    break;
+                    // break;
                 }
                 else if (st == "Facts") {
                     out << makeOutput(st, "FACTS", line);
-                    break;
+                    // break;
                 }
                 else if (st == "Rules") {
                     out << makeOutput(st, "RULES", line);
-                    break;
+                    // break;
                 }
                 else if (st == "Queries") {
                     out << makeOutput(st, "QUERIES", line);
-                    break;
+                    // break;
                 }
                 else out << makeOutput(st, "ID", line);
             }
