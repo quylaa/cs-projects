@@ -12,22 +12,40 @@ string FSMBox::tokens(string input)
     for (tk = input.begin(); tk != input.end(); ++tk) {
         if (*(tk) == '\n') { line++; continue; }// increment line counter when newline is found
         else if (isspace(*(tk))) continue;
-        else if (*(tk) == ',') out << makeOutput(*(tk), "COMMA", line);
-        else if (*(tk) == '.') out << makeOutput(*(tk), "PERIOD", line);
-        else if (*(tk) == '?') out << makeOutput(*(tk), "Q_MARK", line);
-        else if (*(tk) == '(') out << makeOutput(*(tk), "LEFT_PAREN", line);
-        else if (*(tk) == ')') out << makeOutput(*(tk), "RIGHT_PAREN", line);
-        else if (*(tk) == '*') out << makeOutput(*(tk), "MULTIPLY", line);
-        else if (*(tk) == '+') out << makeOutput(*(tk), "ADD", line);
-        else if (*(tk) == ':') isColon(input, tk);
-        else if (*(tk) == '\'') isString(input, tk);
-        else if (*(tk) == '#') isComment(input, tk);
-        else if (isalpha(*(tk))) isID(input, tk);
-        else out << makeOutput(*(tk), "UNDEFINED", line);
+        else doLoop(input, tk);
     }
     if (tk == input.end()) out << makeOutput("", "EOF", line); // format EOF
     out << "Total Tokens = " << num << endl; // num is initialized in header, tracks number of tokens
     return out.str();
+}
+
+void FSMBox::doLoop(string input, string::iterator &tk)
+{
+    if (isSymbol(*(tk))) doSymbol(*(tk));
+    else if (*(tk) == ':') isColon(input, tk);
+    else if (*(tk) == '\'') isString(input, tk);
+    else if (*(tk) == '#') isComment(input, tk);
+    else if (isalpha(*(tk))) isID(input, tk);
+    else out << makeOutput(*(tk), "UNDEFINED", line);
+}
+
+bool FSMBox::isSymbol(char input)
+{
+    for (int i = 0; i < 7; ++i) {
+        if (input == symbols[i]) return true;
+    }
+    return false;
+}
+
+void FSMBox::doSymbol(char input)
+{
+    if (input == ',') out << makeOutput(input, "COMMA", line);
+    else if (input == '.') out << makeOutput(input, "PERIOD", line);
+    else if (input == '?') out << makeOutput(input, "Q_MARK", line);
+    else if (input == '(') out << makeOutput(input, "LEFT_PAREN", line);
+    else if (input == ')') out << makeOutput(input, "RIGHT_PAREN", line);
+    else if (input == '*') out << makeOutput(input, "MULTIPLY", line);
+    else if (input == '+') out << makeOutput(input, "ADD", line);
 }
 
 void FSMBox::isColon(string input, string::iterator &tk)
@@ -72,46 +90,79 @@ void FSMBox::isString(string input, string::iterator &tk)
 
 void FSMBox::isComment(string input, string::iterator &tk)
 {
+    ++tk; // increment away from starting char
+    if (*(tk) == '|') multiComment(input, tk); // multiline comment
+    else lineComment(input, tk); // single line comment
+}
+
+void FSMBox::lineComment(string input, string::iterator &tk)
+{
     string st = "#"; // initialize comment string
     int l = line; // remember initial line number
-    ++tk; // increment away from starting char
-    if (*(tk) == '|') { // multiline comment
-        st.push_back(*(tk)); // place it in string
-        ++tk;
-        for (; tk != input.end(); ++tk) { // iterate until end token is found
-            if (*(tk) == '\n') line++; // if newline found, increment line
-            st.push_back(*(tk));
-            if (*(tk) == '|' && *(tk+1) == '#') { // if char is pipe and next char is hash
-                st.push_back('#'); // place hash in string
-                ++tk; // increment away from hash
-                break;
-            }
+    for (;tk != input.end(); ++tk) { // iterate until newline
+        if (*(tk) == '\n') { // if char is newline
+            line++; // increment counter
+            break;
         }
-        if (tk == input.end()) { // if EOF found before end of comment
-            out << makeOutput(st, "UNDEFINED", l); // format as undef
-            --tk; // decrement so that for loop places pointer on EOF and not after
-        }
-        else out << makeOutput(st, "COMMENT", l); // format as comment
+        st.push_back(*(tk)); // else put char in comment string
     }
-    else { // single line comment
-        for (;tk != input.end(); ++tk) { // iterate until newline
-            if (*(tk) == '\n') { // if char is newline
-                line++; // increment counter
-                break;
-            }
-            st.push_back(*(tk)); // else put char in comment string
+    out << makeOutput(st, "COMMENT", l); // format as comment
+}
+
+void FSMBox::multiComment(string input, string::iterator &tk)
+{
+    string st = "#"; // initialize comment string
+    int l = line; // remember initial line number
+    st.push_back(*(tk)); // place it in string
+    ++tk;
+    for (; tk != input.end(); ++tk) { // iterate until end token is found
+        if (*(tk) == '\n') line++; // if newline found, increment line
+        st.push_back(*(tk));
+        if (*(tk) == '|' && *(tk+1) == '#') { // if char is pipe and next char is hash
+            st.push_back('#'); // place hash in string
+            ++tk; // increment away from hash
+            break;
         }
-        out << makeOutput(st, "COMMENT", l); // format as comment
     }
+    if (tk == input.end()) { // if EOF found before end of comment
+        out << makeOutput(st, "UNDEFINED", l); // format as undef
+        --tk; // decrement so that for loop places pointer on EOF and not after
+    }
+    else out << makeOutput(st, "COMMENT", l); // format as comment
 }
 
 void FSMBox::isID(string input, string::iterator &tk)
 {
+    // string st;
+    // st.push_back(*(tk));
+    // ++tk;
+    bool undef = false; // tracks if token is undefined
+    int l = line; // remember initial line
+    // for (; tk != input.end(); ++tk) {
+    //     if (isalpha(*(tk)) || isdigit(*(tk))) st.push_back(*(tk));
+    //     else if (isspace(*(tk)) && *(tk) != '\n') break; // break on space
+    //     else if (*(tk) == '\n') { // break on newline and increment line counter
+    //         line++;
+    //         break;
+    //     }
+    //     else { --tk; break;} // illegal character, decrement counter to allow global for loop to work
+    // }
+    string st = makeID(input, tk);
+    if (undef == true) out << makeOutput(st, "UNDEFINED", line); // format as undef
+    else {
+        if (st == "Schemes") out << makeOutput(st, "SCHEMES", l);
+        else if (st == "Facts") out << makeOutput(st, "FACTS", l);
+        else if (st == "Rules") out << makeOutput(st, "RULES", l);
+        else if (st == "Queries") out << makeOutput(st, "QUERIES", l);
+        else out << makeOutput(st, "ID", l);
+    }
+}
+
+string FSMBox::makeID(string input, string::iterator &tk)
+{
     string st;
     st.push_back(*(tk));
     ++tk;
-    bool undef = false; // tracks if token is undefined
-    int l = line; // remember initial line
     for (; tk != input.end(); ++tk) {
         if (isalpha(*(tk)) || isdigit(*(tk))) st.push_back(*(tk));
         else if (isspace(*(tk)) && *(tk) != '\n') break; // break on space
@@ -121,14 +172,7 @@ void FSMBox::isID(string input, string::iterator &tk)
         }
         else { --tk; break;} // illegal character, decrement counter to allow global for loop to work
     }
-    if (undef == true) out << makeOutput(st, "UNDEFINED", line); // format as undef
-    else {
-        if (st == "Schemes") out << makeOutput(st, "SCHEMES", l);
-        else if (st == "Facts") out << makeOutput(st, "FACTS", l);
-        else if (st == "Rules") out << makeOutput(st, "RULES", l);
-        else if (st == "Queries") out << makeOutput(st, "QUERIES", l);
-        else out << makeOutput(st, "ID", l);
-    }
+    return st;
 }
 
 string FSMBox::makeOutput(string out, string token, int line) // format token output string

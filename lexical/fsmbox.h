@@ -19,6 +19,7 @@ class FSMBox
         int num = 0; // Number of tokens
         ostringstream out; // output stringstream
         int line = 1; // initialize line counter
+        char symbols[7] = {',', '.', '?', '(', ')', '*', '+'};
 
         FSMBox();
         ~FSMBox();
@@ -31,6 +32,30 @@ class FSMBox
          *
          */
         string tokens(string input);
+
+        /*
+         * doLoop
+         *
+         * Loop through everything else
+         *
+         */
+        void doLoop(string input, string::iterator &tk);
+
+        /*
+         * isSymbol
+         *
+         * Checks to see if char is a defined symbol token
+         *
+         */
+        bool isSymbol(char input);
+
+        /*
+         * doSymbol
+         *
+         * If it is, handle it.
+         *
+         */
+        void doSymbol(char input);
 
         /*
          * isColon
@@ -57,12 +82,36 @@ class FSMBox
         void isComment(string input, string::iterator &tk);
 
         /*
+         * lineComment
+         *
+         * Format single line comment
+         *
+         */
+        void lineComment(string input, string::iterator &tk);
+
+        /*
+         * multiComment
+         *
+         * Format multiline comment
+         *
+         */
+        void multiComment(string input, string::iterator &tk);
+
+        /*
          * isID
          *
          * Find and format ID token
          *
          */
         void isID(string input, string::iterator &tk);
+
+        /*
+         * makeID
+         *
+         * Find and return ID token
+         *
+         */
+        string makeID(string input, string::iterator &tk);
 
         /*
          * makeOutput
