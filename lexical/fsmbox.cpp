@@ -31,7 +31,7 @@ string FSMBox::tokens(string input)
         }
         else if ((*tk) == '\'') {
             string st = "'";
-            for (tk != input.end(); ++tk;) {
+            for (;tk != input.end(); ++tk) {
                 st.push_back((*tk));
                 if ((*tk) == '\n') line++;
                 if ((*tk) == '\'') break;
@@ -46,7 +46,7 @@ string FSMBox::tokens(string input)
             int l = line;
             if ((*tk+1) == '|') {
                 st.push_back('|');
-                for (tk != input.end(); ++tk;) {
+                for (;tk != input.end(); ++tk) {
                     st.push_back((*tk));
                     if ((*tk) == '\n') line++;
                     if ((*tk) == '|' && (*tk+1) == '#') {
@@ -60,7 +60,7 @@ string FSMBox::tokens(string input)
                 else out << makeOutput(st, "COMMENT", l) << endl;
             }
             else {
-                for (tk != input.end(); ++tk;) {
+                for (;tk != input.end(); ++tk) {
                     st.push_back((*tk));
                     if ((*tk) == '\n') {
                         line++;
@@ -74,7 +74,7 @@ string FSMBox::tokens(string input)
             string st;
             st.push_back((*tk));
             bool undef = false;
-            for ((*tk) != '\n'; ++tk;) {
+            for (;(*tk) != '\n'; ++tk) {
                 if (isalpha((*tk)) || isdigit((*tk))) st.push_back((*tk));
                 if (st == "Schemes") {
                     out << makeOutput(st, "SCHEMES", line) << endl;
@@ -108,7 +108,7 @@ string FSMBox::tokens(string input)
         else {
             string st;
             st.push_back((*tk));
-            for ((*tk) != '\n'; ++tk;) {
+            for (;(*tk) != '\n'; ++tk) {
                 if (isspace((*tk))) break;
                 st.push_back((*tk));
             }
