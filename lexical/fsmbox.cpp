@@ -109,6 +109,18 @@ string FSMBox::tokens(string input)
                 else out << makeOutput(st, "ID", l);
             }
         }
+        else if (isdigit(*(tk))) { // capture whole digit as undef rather than individual digits
+            string st;
+            st.push_back(*(tk));
+            ++tk;
+            int l = line;
+            for (; tk != input.end(); ++tk) {
+                if (isspace(*(tk)) && *(tk) != '\n') break;
+                if (*(tk) == '\n') { line++; break; }
+                st.push_back(*(tk));
+            }
+            out << makeOutput(st, "UNDEFINED", l);
+        }
         else {
             out << makeOutput(*(tk), "UNDEFINED", line);
         }
