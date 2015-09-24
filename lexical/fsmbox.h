@@ -39,10 +39,10 @@ class FSMBox
          * Attempts to find and return as many tokens from the given string
          * as it can.
          *
-         * Inputs: input string to find tokens from, current line number
+         * Inputs: input string to find tokens from
          *
          */
-        stringstream tokens(string input, int line);
+        stringstream tokens(string input);
 
         /*
          * makeOutput

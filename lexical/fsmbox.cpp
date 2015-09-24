@@ -6,7 +6,7 @@ FSMBox::FSMBox(){}
 
 FSMBox::~FSMBox(){}
 
-stringstream FSMBox::tokens(stringstream input, int line)
+stringstream FSMBox::tokens(stringstream input)
 {
     stringstream out;
     int line = 1;

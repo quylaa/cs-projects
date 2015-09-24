@@ -20,7 +20,7 @@ string tokenize(stringstream lines)
 {
     FSMBox fsm;
     // for (size_t i = 0; i < lines.size(); i++) {
-    stringstream tokenstring = fsm.tokens(lines.at(i), 2);
+    stringstream tokenstring = fsm.tokens(lines);
     // }
     return tokenstring.str();
 }
