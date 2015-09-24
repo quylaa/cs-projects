@@ -10,9 +10,11 @@ string FSMBox::tokens(string input)
 {
     ostringstream out;
     string::iterator tk;
-    int line = 1;
+    int line = 1; // initialize line counter
     for (tk = input.begin(); tk != input.end(); ++tk) {
-        if (*(tk) == '\n') line++;
+        // cout << *(tk);
+        if (*(tk) == '\n') { line++; continue; }// increment line counter when newline is found
+        // else if (*(tk) == '\000') break;
         else if (*(tk) == ',') out << makeOutput(*(tk), "COMMA", line);
         else if (*(tk) == '.') out << makeOutput(*(tk), "PERIOD", line);
         else if (*(tk) == '?') out << makeOutput(*(tk), "Q_MARK", line);
@@ -20,83 +22,95 @@ string FSMBox::tokens(string input)
         else if (*(tk) == ')') out << makeOutput(*(tk), "RIGHT_PAREN", line);
         else if (*(tk) == '*') out << makeOutput(*(tk), "MULTIPLY", line);
         else if (*(tk) == '+') out << makeOutput(*(tk), "ADD", line);
-        else if (isspace(*(tk)) && *(tk) != '\n') continue;
+        else if (isspace(*(tk))/* && *(tk) != '\n'*/) continue;
         else if (*(tk) == ':') {
-            string co;
-            co.push_back(*(tk));
-            if (*(tk+1) == '-') {
-                co.push_back(*(tk+1));
-                out << makeOutput(co, "COLON_DASH", line);
-                tk++;
+            string co; // create string to hold colon
+            co.push_back(*(tk)); // append colon to string
+            if (*(tk+1) == '-') { // if next char is dash
+                co.push_back(*(tk+1)); // append dash to string
+                out << makeOutput(co, "COLON_DASH", line); // format colon_dash
+                tk++; // increment pointer away from dash
             }
-            else out << makeOutput(co, "COLON", line);
+            else out << makeOutput(co, "COLON", line); // otherwise format colon
         }
         else if (*(tk) == '\'') {
-            string st = "'";
-            ++tk;
+            string st = "'"; // initialize string string (lol)
+            ++tk; // increment pointer away from first quotation mark
+            int l = line; // remember starting line number
+            // if (*(tk) == '\'') {
+            //     st.push_back(*(tk));
+            //     ++tk;
+            // }
             for (; tk != input.end(); ++tk) {
-                if (*(tk) == '\n') {
-                    line++;
-                    continue;
+                st.push_back(*(tk)); // add next char to string
+                if (*(tk) == '\n') line++; // if newline, increment counter
+                else if (*(tk) == '\'') { // if quotation mark found
+                    if (*(tk+1) == '\'') { // and next char is quotation mark
+                        st.push_back('\''); // add next quotation mark to string
+                        ++tk; // and increment away from it
+                    }
+                    else break; // otherwise it's the end of the string
                 }
-                st.push_back(*(tk));
-                if (*(tk) == '\'') break;
+                // else if ((tk-1) == input.end()) break;
             }
-            if (tk == input.end()) {
-                out << makeOutput(st, "UNDEFINED", line);
+            if (tk == input.end()) { // if EOF was found before end of string
+                out << makeOutput(st, "UNDEFINED", l); // format as undef
+                --tk; // decrement so that for loop places pointer on EOF and not after
             }
-            else out << makeOutput(st, "STRING", line);
+            else out << makeOutput(st, "STRING", l); // format as string
         }
         else if (*(tk) == '#') {
-            string st = "#";
-            int l = line;
-            ++tk;
-            if (*(tk) == '|') {
-                st.push_back(*(tk));
-                for (; tk != input.end(); ++tk) {
-                    if (*(tk) == '\n') line++;
+            string st = "#"; // initialize comment string
+            int l = line; // remember initial line number
+            ++tk; // increment away from starting char
+            if (*(tk) == '|') { // multiline comment
+                st.push_back(*(tk)); // place it in string
+                for (; tk != input.end(); ++tk) { // iterate until end token is found
+                    if (*(tk) == '\n') line++; // if newline found, increment line
                     st.push_back(*(tk));
-                    if (*(tk) == '|' && *(tk+1) == '#') {
-                        st.push_back('#');
+                    if (*(tk) == '|' && *(tk+1) == '#') { // if char is pipe and next char is hash
+                        st.push_back('#'); // place hash in string
+                        ++tk; // increment away from hash
                         break;
                     }
                 }
-                if (tk == input.end()) {
-                    out << makeOutput(st, "UNDEFINED", l);
+                if (tk == input.end()) { // if EOF found before end of comment
+                    out << makeOutput(st, "UNDEFINED", l); // format as undef
+                    --tk; // decrement so that for loop places pointer on EOF and not after
                 }
-                else out << makeOutput(st, "COMMENT", l);
+                else out << makeOutput(st, "COMMENT", l); // format as comment
             }
-            else {
-                for (;tk != input.end(); ++tk) {
-                    if (*(tk) == '\n') {
-                        line++;
+            else { // single line comment
+                for (;tk != input.end(); ++tk) { // iterate until newline
+                    if (*(tk) == '\n') { // if char is newline
+                        line++; // increment counter
                         break;
                     }
-                    st.push_back(*(tk));
+                    st.push_back(*(tk)); // else put char in comment string
                 }
-                out << makeOutput(st, "COMMENT", l);
+                out << makeOutput(st, "COMMENT", l); // format as comment
             }
         }
-        else if (isalpha(*(tk))) {
+        else if (isalpha(*(tk))) { // ID token
             string st;
             st.push_back(*(tk));
             ++tk;
-            bool undef = false;
-            int l = line;
+            bool undef = false; // tracks if token is undefined
+            int l = line; // remember initial line
             for (; tk != input.end(); ++tk) {
                 if (isalpha(*(tk)) || isdigit(*(tk))) st.push_back(*(tk));
-                else if (isspace(*(tk)) && *(tk) != '\n') break;
-                else if (*(tk) == '\n') {
+                else if (isspace(*(tk)) && *(tk) != '\n') break; // break on space
+                else if (*(tk) == '\n') { // break on newline and increment line counter
                     line++;
                     break;
                 }
-                else { --tk; break;}
+                else { --tk; break;} // illegal character, decrement counter to allow global for loop to work
                 //else {
                 //    st.push_back(*(tk));
                 //    undef = true;
                 //}
             }
-            if (undef == true) out << makeOutput(st, "UNDEFINED", line);
+            if (undef == true) out << makeOutput(st, "UNDEFINED", line); // format as undef
             else {
                 if (st == "Schemes") out << makeOutput(st, "SCHEMES", l);
                 else if (st == "Facts") out << makeOutput(st, "FACTS", l);
@@ -105,23 +119,23 @@ string FSMBox::tokens(string input)
                 else out << makeOutput(st, "ID", l);
             }
         }
-        else {
-            string st;
-            st.push_back(*(tk));
-            ++tk;
-            for (;*(tk) != '\n'; ++tk) {
-                if (isspace(*(tk))) break;
-                st.push_back(*(tk));
-            }
-            out << makeOutput(st, "UNDEFINED", line);
+        else { // any other token
+            // string st;
+            // st.push_back(*(tk));
+            // ++tk;
+            // for (;*(tk) != '\n'; ++tk) {
+            //     if (isspace(*(tk))) break;
+            //     st.push_back(*(tk));
+            // }
+            out << makeOutput(*(tk), "UNDEFINED", line);
         }
     }
-    if (tk == input.end()) out << makeOutput("", "EOF", line-1);
-    out << "Total Tokens = " << num << endl;
+    if (tk == input.end()) out << makeOutput("", "EOF", line); // format EOF
+    out << "Total Tokens = " << num << endl; // num is initialized in header, tracks number of tokens
     return out.str();
 }
 
-string FSMBox::makeOutput(string out, string token, int line)
+string FSMBox::makeOutput(string out, string token, int line) // format token output string
 {
     stringstream o;
     o << "(" << token << ",\"" << out << "\"," << line << ")" << endl;
@@ -129,7 +143,7 @@ string FSMBox::makeOutput(string out, string token, int line)
     return o.str();
 }
 
-string FSMBox::makeOutput(char out, string token, int line)
+string FSMBox::makeOutput(char out, string token, int line) //overload function to allow char input
 {
     stringstream o;
     o << "(" << token << ",\"" << out << "\"," << line << ")" << endl;
