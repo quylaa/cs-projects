@@ -9,8 +9,9 @@ FSMBox::~FSMBox(){}
 string FSMBox::tokens(string input)
 {
     ostringstream out;
+    string::iterator tk;
     int line = 1;
-    for (string::iterator tk = input.begin(); tk != input.end(); ++tk) {
+    for (tk = input.begin(); tk != input.end(); ++tk) {
         if ((*tk) == '\n') line++;
         else if ((*tk) == ',') out << makeOutput((*tk), "COMMA", line);
         else if ((*tk) == '.') out << makeOutput((*tk), "PERIOD", line);
