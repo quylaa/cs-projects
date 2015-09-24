@@ -12,9 +12,7 @@ string FSMBox::tokens(string input)
     string::iterator tk;
     int line = 1;
     for (tk = input.begin(); tk != input.end(); ++tk) {
-        if (*(tk) == '\n') {
-            line++;
-        }
+        if (*(tk) == '\n') line++;
         else if (*(tk) == ',') out << makeOutput(*(tk), "COMMA", line);
         else if (*(tk) == '.') out << makeOutput(*(tk), "PERIOD", line);
         else if (*(tk) == '?') out << makeOutput(*(tk), "Q_MARK", line);
@@ -22,7 +20,7 @@ string FSMBox::tokens(string input)
         else if (*(tk) == ')') out << makeOutput(*(tk), "RIGHT_PAREN", line);
         else if (*(tk) == '*') out << makeOutput(*(tk), "MULTIPLY", line);
         else if (*(tk) == '+') out << makeOutput(*(tk), "ADD", line);
-        else if (isspace(*(tk))) continue;
+        else if (isspace(*(tk)) && *(tk) != '\n') continue;
         else if (*(tk) == ':') {
             string co;
             co.push_back(*(tk));
@@ -56,18 +54,15 @@ string FSMBox::tokens(string input)
             if (*(tk) == '|') {
                 st.push_back(*(tk));
                 for (; tk != input.end(); ++tk) {
-                    if (*(tk) == '\n') {
-                        line++;
-                        continue;
-                    }
+                    if (*(tk) == '\n') line++;
                     st.push_back(*(tk));
-                    if (*(tk) == '|' && (*tk+1) == '#') {
+                    if (*(tk) == '|' && *(tk+1) == '#') {
                         st.push_back('#');
                         break;
                     }
                 }
                 if (tk == input.end()) {
-                    out << makeOutput(st, "UNDEFINED", line);
+                    out << makeOutput(st, "UNDEFINED", l);
                 }
                 else out << makeOutput(st, "COMMENT", l);
             }
@@ -87,6 +82,7 @@ string FSMBox::tokens(string input)
             st.push_back(*(tk));
             ++tk;
             bool undef = false;
+            int l = line;
             for (; tk != input.end(); ++tk) {
                 if (isalpha(*(tk)) || isdigit(*(tk))) st.push_back(*(tk));
                 else if (isspace(*(tk)) && *(tk) != '\n') break;
@@ -94,18 +90,19 @@ string FSMBox::tokens(string input)
                     line++;
                     break;
                 }
-                else {
-                    st.push_back(*(tk));
-                    undef = true;
-                }
+                else { --tk; break;}
+                //else {
+                //    st.push_back(*(tk));
+                //    undef = true;
+                //}
             }
             if (undef == true) out << makeOutput(st, "UNDEFINED", line);
             else {
-                if (st == "Schemes") out << makeOutput(st, "SCHEMES", line);
-                else if (st == "Facts") out << makeOutput(st, "FACTS", line);
-                else if (st == "Rules") out << makeOutput(st, "RULES", line);
-                else if (st == "Queries") out << makeOutput(st, "QUERIES", line);
-                else out << makeOutput(st, "ID", line);
+                if (st == "Schemes") out << makeOutput(st, "SCHEMES", l);
+                else if (st == "Facts") out << makeOutput(st, "FACTS", l);
+                else if (st == "Rules") out << makeOutput(st, "RULES", l);
+                else if (st == "Queries") out << makeOutput(st, "QUERIES", l);
+                else out << makeOutput(st, "ID", l);
             }
         }
         else {
@@ -119,7 +116,7 @@ string FSMBox::tokens(string input)
             out << makeOutput(st, "UNDEFINED", line);
         }
     }
-    if (tk == input.end()) out << makeOutput("", "EOF", line);
+    if (tk == input.end()) out << makeOutput("", "EOF", line-1);
     out << "Total Tokens = " << num << endl;
     return out.str();
 }
