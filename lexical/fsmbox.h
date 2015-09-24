@@ -42,7 +42,7 @@ class FSMBox
          * Inputs: input string to find tokens from
          *
          */
-        stringstream tokens(string input);
+        string tokens(string input);
 
         /*
          * makeOutput

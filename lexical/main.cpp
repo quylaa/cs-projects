@@ -4,7 +4,7 @@
 #include <iostream>
 #include "fsmbox.h"
 
-stringstream getInput(string fileName)
+string getInput(string fileName)
 {
     stringstream iput;
     ifstream file(fileName);
@@ -13,23 +13,25 @@ stringstream getInput(string fileName)
             iput << line << endl;
         }
     }
-    return iput;
+    return iput.str();
 }
 
-string tokenize(stringstream lines)
+string tokenize(string lines)
 {
     FSMBox fsm;
     // for (size_t i = 0; i < lines.size(); i++) {
-    stringstream tokenstring = fsm.tokens(lines);
+    //istringstream lns;
+    //lns << lines;
+    string tokenstring = fsm.tokens(lines);
     // }
-    return tokenstring.str();
+    return tokenstring;
 }
 
 int main()
 {
     cin >> string fileName;
-    stringstream lines = getInput(fileName);
-    if (lines.rdbuf()->in_avail() == 0) return -1;
+    string lines = getInput(fileName);
+    if (lines.empty()) return -1;
     else cout << tokenize(lines) << endl;
     return 0;
 }

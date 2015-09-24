@@ -6,9 +6,9 @@ FSMBox::FSMBox(){}
 
 FSMBox::~FSMBox(){}
 
-stringstream FSMBox::tokens(stringstream input)
+string FSMBox::tokens(string input)
 {
-    stringstream out;
+    ostringstream out;
     int line = 1;
     for (stringstream::iterator tk = input.begin(); tk != input.end(); ++tk) {
         if ((*tk) == ',') out << makeOutput((*tk), "COMMA", line);
