@@ -25,8 +25,8 @@ string FSMBox::tokens(string input)
             string co;
             co.push_back((*tk));
             ++tk;
-            if ((*tk+1) == '-') {
-                co.push_back(*tk+1);
+            if ((*tk) == '-') {
+                co.push_back(*tk);
                 out << makeOutput(co, "COLON_DASH", line);
             }
             else out << makeOutput(co, "COLON", line);
@@ -65,21 +65,23 @@ string FSMBox::tokens(string input)
             }
             else {
                 for (;tk != input.end(); ++tk) {
-                    st.push_back((*tk));
                     if ((*tk) == '\n') {
                         line++;
                         break;
                     }
+                    st.push_back((*tk));
                 }
                 out << makeOutput(st, "COMMENT", l);
             }
         }
         else if (isalpha((*tk))) {
+            cout << (*tk);
             string st;
             st.push_back((*tk));
             ++tk;
             bool undef = false;
             for (;(*tk) != '\n'; ++tk) {
+                cout << (*tk);
                 if (isalpha((*tk)) || isdigit((*tk))) st.push_back((*tk));
                 else if (st == "Schemes") {
                     out << makeOutput(st, "SCHEMES", line);
@@ -98,6 +100,10 @@ string FSMBox::tokens(string input)
                     break;
                 }
                 else if (isspace((*tk))) break;
+                else if ((*tk) == '\n') {
+                    line++;
+                    break;
+                }
                 else {
                     st.push_back((*tk));
                     undef = true;
