@@ -75,15 +75,26 @@ string FSMBox::tokens(string input)
             }
         }
         else if (isalpha((*tk))) {
-            cout << (*tk);
             string st;
             st.push_back((*tk));
             ++tk;
             bool undef = false;
             for (;(*tk) != '\n'; ++tk) {
-                cout << (*tk);
+                cout << st;
                 if (isalpha((*tk)) || isdigit((*tk))) st.push_back((*tk));
-                else if (st == "Schemes") {
+                else if (isspace((*tk))) break;
+                else if ((*tk) == '\n') {
+                    line++;
+                    break;
+                }
+                else {
+                    st.push_back((*tk));
+                    undef = true;
+                }
+            }
+            if (undef == true) out << makeOutput(st, "UNDEFINED", line);
+            else {
+                if (st == "Schemes") {
                     out << makeOutput(st, "SCHEMES", line);
                     break;
                 }
@@ -99,20 +110,7 @@ string FSMBox::tokens(string input)
                     out << makeOutput(st, "QUERIES", line);
                     break;
                 }
-                else if (isspace((*tk))) break;
-                else if ((*tk) == '\n') {
-                    line++;
-                    break;
-                }
-                else {
-                    st.push_back((*tk));
-                    undef = true;
-                }
-            }
-            if (undef == true) out << makeOutput(st, "UNDEFINED", line);
-            else {
-                if (st != "Schemes" && st != "Facts" && st != "Rules" && st != "Queries")
-                    out << makeOutput(st, "ID", line);
+                else out << makeOutput(st, "ID", line);
             }
         }
         else {
