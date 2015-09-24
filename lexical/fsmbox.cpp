@@ -89,7 +89,7 @@ string FSMBox::tokens(string input)
             bool undef = false;
             for (; tk != input.end(); ++tk) {
                 if (isalpha(*(tk)) || isdigit(*(tk))) st.push_back(*(tk));
-                else if (isspace(*(tk))) break;
+                else if (isspace(*(tk)) && *(tk) != '\n') break;
                 else if (*(tk) == '\n') {
                     line++;
                     break;
@@ -119,7 +119,7 @@ string FSMBox::tokens(string input)
             out << makeOutput(st, "UNDEFINED", line);
         }
     }
-    if (tk == input.end()) out << makeOutput("", "EOF", line+1);
+    if (tk == input.end()) out << makeOutput("", "EOF", line);
     out << "Total Tokens = " << num << endl;
     return out.str();
 }
