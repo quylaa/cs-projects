@@ -12,7 +12,9 @@ string FSMBox::tokens(string input)
     string::iterator tk;
     int line = 1;
     for (tk = input.begin(); tk != input.end(); ++tk) {
-        if ((*tk) == '\n') line++;
+        if ((*tk) == '\n') {
+            line++;
+        }
         else if ((*tk) == ',') out << makeOutput((*tk), "COMMA", line);
         else if ((*tk) == '.') out << makeOutput((*tk), "PERIOD", line);
         else if ((*tk) == '?') out << makeOutput((*tk), "Q_MARK", line);
@@ -27,7 +29,7 @@ string FSMBox::tokens(string input)
             if ((*tk+1) == '-') {
                 co.push_back(*tk+1);
                 out << makeOutput(co, "COLON_DASH", line);
-                tk++;
+                // tk++;
             }
             else out << makeOutput(co, "COLON", line);
         }
@@ -109,6 +111,7 @@ string FSMBox::tokens(string input)
         else {
             string st;
             st.push_back((*tk));
+            ++tk;
             for (;(*tk) != '\n'; ++tk) {
                 if (isspace((*tk))) break;
                 st.push_back((*tk));
