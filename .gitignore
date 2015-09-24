@@ -3,3 +3,5 @@
 *.txt
 *.pdf
 *.DS_Store
+.gcc-flags.json
+*.gch
