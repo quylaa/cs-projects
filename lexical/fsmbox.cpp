@@ -24,9 +24,8 @@ string FSMBox::tokens(string input)
         else if ((*tk) == ':') {
             string co;
             co.push_back((*tk));
-            ++tk;
-            if ((*tk) == '-') {
-                co.push_back(*tk);
+            if ((*tk+1) == '-') {
+                co.push_back(*tk+1);
                 out << makeOutput(co, "COLON_DASH", line);
             }
             else out << makeOutput(co, "COLON", line);
@@ -116,7 +115,7 @@ string FSMBox::tokens(string input)
             out << makeOutput(st, "UNDEFINED", line);
         }
     }
-    if ((*tk) == input.end()) out << makeOutput("", "EOF", line+1);
+    if (tk == input.end()) out << makeOutput("", "EOF", line+1);
     out << "Total Tokens = " << num << endl;
     return out.str();
 }
