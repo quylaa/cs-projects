@@ -27,6 +27,7 @@ string FSMBox::tokens(string input)
             if ((*tk+1) == '-') {
                 co.push_back(*tk+1);
                 out << makeOutput(co, "COLON_DASH", line);
+                tk++;
             }
             else out << makeOutput(co, "COLON", line);
         }

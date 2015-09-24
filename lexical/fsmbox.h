@@ -3,23 +3,8 @@
 #ifndef FSMBOX_H_
 #define FSMBOX_H_
 
-// #define COMMA ","
-// #define PERIOD "."
-// #define Q_MARK "?"
-// #define LEFT_PAREN "("
-// #define RIGHT_PAREN ")"
-// #define COLON ":"
-// #define COLON_DASH ":-"
-// #define MULTIPLY "*"
-// #define ADD "+"
-// #define SCHEMES "Schemes"
-// #define FACTS "Facts"
-// #define RULES "Rules"
-// #define QUERIES "Queries"
-
 #include <fstream>
 #include <sstream>
-// #include <algorithm>
 #include <string>
 #include <iterator>
 #include <cctype>
