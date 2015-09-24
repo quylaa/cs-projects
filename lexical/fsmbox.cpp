@@ -23,6 +23,7 @@ string FSMBox::tokens(string input)
         else if ((*tk) == ':') {
             string co;
             co.push_back((*tk));
+            ++tk;
             if ((*tk+1) == '-') {
                 co.push_back(*tk+1);
                 out << makeOutput(co, "COLON_DASH", line) << endl;
@@ -31,6 +32,7 @@ string FSMBox::tokens(string input)
         }
         else if ((*tk) == '\'') {
             string st = "'";
+            ++tk;
             for (;tk != input.end(); ++tk) {
                 st.push_back((*tk));
                 if ((*tk) == '\n') line++;
@@ -44,6 +46,7 @@ string FSMBox::tokens(string input)
         else if ((*tk) == '#') {
             string st = "#";
             int l = line;
+            ++tk;
             if ((*tk+1) == '|') {
                 st.push_back('|');
                 for (;tk != input.end(); ++tk) {
@@ -73,10 +76,11 @@ string FSMBox::tokens(string input)
         else if (isalpha((*tk))) {
             string st;
             st.push_back((*tk));
+            ++tk;
             bool undef = false;
             for (;(*tk) != '\n'; ++tk) {
                 if (isalpha((*tk)) || isdigit((*tk))) st.push_back((*tk));
-                if (st == "Schemes") {
+                else if (st == "Schemes") {
                     out << makeOutput(st, "SCHEMES", line) << endl;
                     break;
                 }
