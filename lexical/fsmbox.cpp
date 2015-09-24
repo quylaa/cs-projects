@@ -11,6 +11,7 @@ string FSMBox::tokens(string input)
     ostringstream out;
     int line = 1;
     for (string::iterator tk = input.begin(); tk != input.end(); ++tk) {
+        cout << line;
         if ((*tk) == ',') out << makeOutput((*tk), "COMMA", line);
         else if ((*tk) == '.') out << makeOutput((*tk), "PERIOD", line);
         else if ((*tk) == '?') out << makeOutput((*tk), "Q_MARK", line);
@@ -108,7 +109,10 @@ string FSMBox::tokens(string input)
                     out << makeOutput(st, "ID", line);
             }
         }
-        else if ((*tk) == '\n') line++;
+        else if ((*tk) == '\n') {
+            cout << "NEWLINE";
+            ++line;
+        }
         else {
             string st;
             st.push_back((*tk));
