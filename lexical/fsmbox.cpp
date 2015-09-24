@@ -19,7 +19,6 @@ string FSMBox::tokens(string input)
         else if ((*tk) == ')') out << makeOutput((*tk), "RIGHT_PAREN", line);
         else if ((*tk) == '*') out << makeOutput((*tk), "MULTIPLY", line);
         else if ((*tk) == '+') out << makeOutput((*tk), "ADD", line);
-        // else if ((*tk) == ' ') out << makeOutput((*tk), "WHITESPACE", line);
         else if (isspace((*tk))) continue;
         else if ((*tk) == ':') {
             string co;
@@ -34,9 +33,12 @@ string FSMBox::tokens(string input)
         else if ((*tk) == '\'') {
             string st = "'";
             ++tk;
-            for (;tk != input.end(); ++tk) {
+            for (; tk != input.end(); ++tk) {
+                if ((*tk) == '\n') {
+                    line++;
+                    continue;
+                }
                 st.push_back((*tk));
-                if ((*tk) == '\n') line++;
                 if ((*tk) == '\'') break;
             }
             if (tk == input.end()) {
@@ -48,11 +50,14 @@ string FSMBox::tokens(string input)
             string st = "#";
             int l = line;
             ++tk;
-            if ((*tk+1) == '|') {
-                st.push_back('|');
-                for (;tk != input.end(); ++tk) {
+            if ((*tk) == '|') {
+                st.push_back((*tk));
+                for (; tk != input.end(); ++tk) {
+                    if ((*tk) == '\n') {
+                        line++;
+                        continue;
+                    }
                     st.push_back((*tk));
-                    if ((*tk) == '\n') line++;
                     if ((*tk) == '|' && (*tk+1) == '#') {
                         st.push_back('#');
                         break;
@@ -80,7 +85,6 @@ string FSMBox::tokens(string input)
             ++tk;
             bool undef = false;
             for (; tk != input.end(); ++tk) {
-                cout << st;
                 if (isalpha((*tk)) || isdigit((*tk))) st.push_back((*tk));
                 else if (isspace((*tk))) break;
                 else if ((*tk) == '\n') {
@@ -94,22 +98,10 @@ string FSMBox::tokens(string input)
             }
             if (undef == true) out << makeOutput(st, "UNDEFINED", line);
             else {
-                if (st == "Schemes") {
-                    out << makeOutput(st, "SCHEMES", line);
-                    // break;
-                }
-                else if (st == "Facts") {
-                    out << makeOutput(st, "FACTS", line);
-                    // break;
-                }
-                else if (st == "Rules") {
-                    out << makeOutput(st, "RULES", line);
-                    // break;
-                }
-                else if (st == "Queries") {
-                    out << makeOutput(st, "QUERIES", line);
-                    // break;
-                }
+                if (st == "Schemes") out << makeOutput(st, "SCHEMES", line);
+                else if (st == "Facts") out << makeOutput(st, "FACTS", line);
+                else if (st == "Rules") out << makeOutput(st, "RULES", line);
+                else if (st == "Queries") out << makeOutput(st, "QUERIES", line);
                 else out << makeOutput(st, "ID", line);
             }
         }
@@ -123,6 +115,8 @@ string FSMBox::tokens(string input)
             out << makeOutput(st, "UNDEFINED", line);
         }
     }
+    if ((*tk) == input.end()) out << makeOutput("", "EOF", line+1);
+    out << "Total Tokens = " << num << endl;
     return out.str();
 }
 
@@ -130,6 +124,7 @@ string FSMBox::makeOutput(string out, string token, int line)
 {
     stringstream o;
     o << "(" << token << ",\"" << out << "\"," << line << ")" << endl;
+    num++;
     return o.str();
 }
 
@@ -137,5 +132,6 @@ string FSMBox::makeOutput(char out, string token, int line)
 {
     stringstream o;
     o << "(" << token << ",\"" << out << "\"," << line << ")" << endl;
+    num++;
     return o.str();
 }

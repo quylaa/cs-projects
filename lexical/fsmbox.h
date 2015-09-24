@@ -31,6 +31,8 @@ class FSMBox
 {
     public:
 
+        int num = 0; // Number of tokens
+
         FSMBox();
         ~FSMBox();
 
