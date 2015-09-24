@@ -79,7 +79,7 @@ string FSMBox::tokens(string input)
             st.push_back((*tk));
             ++tk;
             bool undef = false;
-            for (;(*tk) != '\n'; ++tk) {
+            for (; tk != input.end(); ++tk) {
                 cout << st;
                 if (isalpha((*tk)) || isdigit((*tk))) st.push_back((*tk));
                 else if (isspace((*tk))) break;
