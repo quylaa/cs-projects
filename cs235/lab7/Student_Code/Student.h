@@ -5,6 +5,9 @@
 
 #include "StudentInterface.h"
 #include <sstream>
+#include <vector>
+#include <iostream>
+#include <iomanip>
 
 class Student : public StudentInterface
 {
@@ -18,7 +21,11 @@ class Student : public StudentInterface
 		// studen phone number
 		string phone;
 		// current GPA
-		string GPA;
+		double GPA;
+		// vector of classes
+		vector<double> classes;
+
+		void recalc();
 		
 	public:
 		Student(unsigned long long int IDin, string nameIn, string addressIn, string phoneIn);
@@ -60,13 +67,13 @@ class Student : public StudentInterface
 		string toString();
 };
 
-struct Compare
-{
-	bool operator()(Student* student1, Student* student2)
-	{
-		return student1->getName() < student2->getName();
-	}
-};
+// struct Compare
+// {
+// 	bool operator()(Student* student1, Student* student2)
+// 	{
+// 		return student1->getName() < student2->getName();
+// 	}
+// };
 
 
 #endif
