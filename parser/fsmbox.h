@@ -15,8 +15,8 @@ using namespace std;
 
 class FSMBox
 {
-    private:
-
+    //private:
+    public:
         struct Token
         {
             string content;
@@ -24,9 +24,9 @@ class FSMBox
             int line;
 
             Token(string c, string t, int l) : content(c), type(t), line(l) {};
-        }
+        };
 
-    public:
+    //public:
 
         int num = 0; // Number of tokens
         // ostringstream out; // output stringstream

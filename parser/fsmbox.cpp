@@ -6,7 +6,7 @@ FSMBox::FSMBox(){}
 
 FSMBox::~FSMBox(){}
 
-vetor<Token> FSMBox::tokens(stack<char> input)
+vector<FSMBox::Token> FSMBox::tokens(stack<char> input)
 {
     char t;
     do {
@@ -16,9 +16,9 @@ vetor<Token> FSMBox::tokens(stack<char> input)
         else if (isspace(t)) continue;
         else doLoop(input, t);
     } while (!input.empty());
-    if (t == '\000') out.push_back("", "EOF", line);
-    out << "Total Tokens = " << num << endl; // num is initialized in header, tracks number of tokens
-    return out.str();
+    if (t == '\000') out.push_back(makeOutput("", "EOF", line));
+    //out << "Total Tokens = " << num << endl; // num is initialized in header, tracks number of tokens
+    return out;
 }
 
 void FSMBox::doLoop(stack<char> &input, char &t)
@@ -28,7 +28,7 @@ void FSMBox::doLoop(stack<char> &input, char &t)
     else if (t == '\'') isString(input, t);
     else if (t == '#') isComment(input, t);
     else if (isalpha(t)) isID(input, t);
-    else out.push_back(t, "UNDEFINED", line);
+    else out.push_back(makeOutput(t, "UNDEFINED", line));
 }
 
 bool FSMBox::isSymbol(char input)
@@ -41,13 +41,13 @@ bool FSMBox::isSymbol(char input)
 
 void FSMBox::doSymbol(char input)
 {
-    if (input == ',') out.push_back(input, "COMMA", line);
-    else if (input == '.') out.push_back(input, "PERIOD", line);
-    else if (input == '?') out.push_back(input, "Q_MARK", line);
-    else if (input == '(') out.push_back(input, "LEFT_PAREN", line);
-    else if (input == ')') out.push_back(input, "RIGHT_PAREN", line);
-    else if (input == '*') out.push_back(input, "MULTIPLY", line);
-    else if (input == '+') out.push_back(input, "ADD", line);
+    if (input == ',') out.push_back(makeOutput(input, "COMMA", line));
+    else if (input == '.') out.push_back(makeOutput(input, "PERIOD", line));
+    else if (input == '?') out.push_back(makeOutput(input, "Q_MARK", line));
+    else if (input == '(') out.push_back(makeOutput(input, "LEFT_PAREN", line));
+    else if (input == ')') out.push_back(makeOutput(input, "RIGHT_PAREN", line));
+    else if (input == '*') out.push_back(makeOutput(input, "MULTIPLY", line));
+    else if (input == '+') out.push_back(makeOutput(input, "ADD", line));
 }
 
 void FSMBox::isColon(stack<char> &input, char &t)
@@ -56,11 +56,11 @@ void FSMBox::isColon(stack<char> &input, char &t)
     co.push_back(t); // append colon to string
     if (input.top() == '-') { // if next char is dash
         co.push_back(input.top()); // append dash to string
-        out.push_back(co, "COLON_DASH", line); // format colon_dash
+        out.push_back(makeOutput(co, "COLON_DASH", line)); // format colon_dash
         // tk++; // increment pointer away from dash
         t = topnpop(input);
     }
-    else out.push_back(co, "COLON", line); // otherwise format colon
+    else out.push_back(makeOutput(co, "COLON", line)); // otherwise format colon
 }
 
 void FSMBox::isString(stack<char> &input, char &t)
@@ -86,9 +86,9 @@ void FSMBox::isString(stack<char> &input, char &t)
         }
     }
     if (undef == true) {
-        out.push_back(st, "UNDEFINED", l);
+        out.push_back(makeOutput(st, "UNDEFINED", l));
     }
-    else out.push_back(st, "STRING", l); // format as string
+    else out.push_back(makeOutput(st, "STRING", l)); // format as string
 }
 
 void FSMBox::isComment(stack<char> &input, char &t)
@@ -138,13 +138,13 @@ void FSMBox::isID(stack<char> &input, char &t)
     bool undef = false; // tracks if token is undefined
     int l = line; // remember initial line
     string st = makeID(input, t);
-    if (undef == true) out.push_back(st, "UNDEFINED", line); // format as undef
+    if (undef == true) out.push_back(makeOutput(st, "UNDEFINED", line)); // format as undef
     else {
-        if (st == "Schemes") out.push_back(st, "SCHEMES", l);
-        else if (st == "Facts") out.push_back(st, "FACTS", l);
-        else if (st == "Rules") out.push_back(st, "RULES", l);
-        else if (st == "Queries") out.push_back(st, "QUERIES", l);
-        else out.push_back(st, "ID", l);
+        if (st == "Schemes") out.push_back(makeOutput(st, "SCHEMES", l));
+        else if (st == "Facts") out.push_back(makeOutput(st, "FACTS", l));
+        else if (st == "Rules") out.push_back(makeOutput(st, "RULES", l));
+        else if (st == "Queries") out.push_back(makeOutput(st, "QUERIES", l));
+        else out.push_back(makeOutput(st, "ID", l));
     }
 }
 
