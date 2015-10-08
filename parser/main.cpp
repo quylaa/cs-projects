@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include "fsmbox.h"
+#include "datalogProgram.h"
 
 using namespace std;
 
@@ -33,14 +34,20 @@ stack<char> flip(stack<char> iput)
     return lines;
 }
 
-vector<FSMBox::Token> tokenize(stack<char> lines)
+vector<Token> tokenize(stack<char> lines)
 {
     FSMBox fsm;
-    vector<FSMBox::Token> tokenlist = fsm.tokens(lines);
+    vector<Token> tokenlist = fsm.tokens(lines);
     return tokenlist;
 }
 
-string toString(FSMBox::Token t)
+string datalog(vector<Token> tokens)
+{
+    datalogProgram dlp;
+    return dlp.parse(tokens);
+}
+
+string toString(Token t)
 {
     string s;
     s.append("(\"");
@@ -56,9 +63,10 @@ string toString(FSMBox::Token t)
 int main(int argc, char* argv[])
 {
     stack<char> lines = flip(getInput(argv[1]));
-    vector<FSMBox::Token> tokens = tokenize(lines);
-    for (size_t l = 0; l < tokens.size(); ++l) {
-        cout << toString(tokens.at(l)) << endl;
-    }
+    // vector<Token> tokens = tokenize(lines);
+    cout << datalog(tokenize(lines));
+    // for (size_t t = 0; t < tokens.size(); ++t) {
+    //     cout << toString(tokens.at(t)) << endl;
+    // }
     return 0;
 }

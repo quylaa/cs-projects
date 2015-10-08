@@ -4,33 +4,23 @@
 #define FSMBOX_H_
 
 #include <stack>
-// #include <sstream>
+#include <sstream>
 #include <string>
-// #include <iterator>
+#include <vector>
 #include <cctype>
 #include <iostream>
-#include <vector>
+#include "token.h"
 
 using namespace std;
 
 class FSMBox
 {
-    //private:
     public:
-        struct Token
-        {
-            string content;
-            string type;
-            int line;
-
-            Token(string c, string t, int l) : content(c), type(t), line(l) {};
-        };
-
-    //public:
 
         int num = 0; // Number of tokens
         // ostringstream out; // output stringstream
         vector<Token> out;
+        // stack<Token> out;
         int line = 1; // initialize line counter
         char symbols[7] = {',', '.', '?', '(', ')', '*', '+'};
 

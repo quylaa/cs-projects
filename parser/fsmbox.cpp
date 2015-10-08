@@ -6,7 +6,7 @@ FSMBox::FSMBox(){}
 
 FSMBox::~FSMBox(){}
 
-vector<FSMBox::Token> FSMBox::tokens(stack<char> input)
+vector<Token> FSMBox::tokens(stack<char> input)
 {
     char t;
     do {
@@ -162,7 +162,7 @@ string FSMBox::makeID(stack<char> &input, char &t)
     return st;
 }
 
-FSMBox::Token FSMBox::makeOutput(string out, string token, int line) // format token output string
+Token FSMBox::makeOutput(string out, string token, int line) // format token output string
 {
     Token o(out, token, line);
     // o << "(" << token << ",\"" << out << "\"," << line << ")" << endl;
@@ -170,7 +170,7 @@ FSMBox::Token FSMBox::makeOutput(string out, string token, int line) // format t
     return o;
 }
 
-FSMBox::Token FSMBox::makeOutput(char out, string token, int line) //overload function to allow char input
+Token FSMBox::makeOutput(char out, string token, int line) //overload function to allow char input
 {
     string s(1, out);
     Token o(s, token, line);
