@@ -28,7 +28,7 @@ string datalogProgram::parse(vector<Token> tokens)
     } catch (Token t) {
         ostringstream o;
         o << "Failure!\n";
-        o << "  (" << t.type << ",\"" << t.content << "\"," << t.line << ")";
+        o << "  (" << t.type << ",\"" << t.content << "\"," << t.line << ")" << endl;
         return o.str();
     }
     return toString();
@@ -36,7 +36,6 @@ string datalogProgram::parse(vector<Token> tokens)
 
 void datalogProgram::scheme()
 {
-    // cout << "DOING SCHEME" << endl;
     match("ID");
     Predicate p;
     p.id = vt.at(index-1).content;
@@ -67,7 +66,6 @@ void datalogProgram::idList(vector<Param> &parms)
 
 void datalogProgram::fact()
 {
-    // cout << "DOING FACT" << endl;
     match("ID");
     Predicate p;
     p.id = vt.at(index-1).content;
@@ -89,7 +87,6 @@ void datalogProgram::factList()
 
 void datalogProgram::rule()
 {
-    cout << "DOING RULE" << endl;
     Rule r;
     r.head = headPredicate();
     match("COLON_DASH");
@@ -121,16 +118,13 @@ Predicate datalogProgram::headPredicate()
 
 Predicate datalogProgram::predicate()
 {
-    cout << "MATCHING ID" << endl;
     match("ID");
     Predicate p;
     p.id = vt.at(index-1).content;
-    cout << "MATCHING LEFT PAREN" << endl;
     match("LEFT_PAREN");
     vector<Param> parms;
     parms.push_back(parameter());
     parameterList(parms);
-    cout << "MATCHING RIGHT PAREN" << endl;
     match("RIGHT_PAREN");
     p.params = parms;
     return p;
@@ -149,13 +143,13 @@ Param datalogProgram::parameter()
 {
     if (vt.at(index).type == "STRING") {
         cout << "FOUND STRING" << endl;
-        return Param(vt.at(index).content, false, true);
         index++;
+        return Param(vt.at(index-1).content, false, true);
     }
     else if (vt.at(index).type == "ID") {
         cout << "FOUND ID" << endl;
-        return Param(vt.at(index).content, true, false);
         index++;
+        return Param(vt.at(index-1).content, true, false);
     }
     else return expression();
 }
@@ -174,22 +168,29 @@ Param datalogProgram::expression()
     cout << "FOUND EXP" << endl;
     match("LEFT_PAREN");
     string expr;
+    expr.append("(");
     expr.append(parameter().value);
     expr.append(op());
     expr.append(parameter().value);
+    expr.append(")");
     match("RIGHT_PAREN");
     return Param(expr, false, false);
 }
 
 string datalogProgram::op()
 {
-    if (vt.at(index).type == "ADD") return "+";
-    else /*if (vt.at(index).type == "MULTIPLY")*/ return "*";
+    if (vt.at(index).type == "ADD") {
+        index++;
+        return "+";
+    }
+    else {
+        index++;
+        return "*";
+    }
 }
 
 void datalogProgram::query()
 {
-    // cout << "DOING QUERY" << endl;
     Predicate p = predicate();
     match("Q_MARK");
     queries.push_back(p);
@@ -282,7 +283,7 @@ string datalogProgram::domainToString(vector<string> dv)
     ostringstream out;
     out << "Domain(" << dv.size() << "):" << endl;
     for (size_t i = 0; i < dv.size(); ++i) {
-        out << "  \'" << dv.at(i) << "\'" << endl;
+        out << "  " << dv.at(i) << endl;
     }
     return out.str();
 }
