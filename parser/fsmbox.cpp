@@ -100,7 +100,7 @@ void FSMBox::isComment(stack<char> &input, char &t)
 void FSMBox::lineComment(stack<char> &input, char &t)
 {
     string st = "#"; // initialize comment string
-    int l = line; // remember initial line number
+    // int l = line; // remember initial line number
     while (!input.empty()) {
         t = topnpop(input);
         if (t == '\n') { line++; break; }
@@ -112,7 +112,7 @@ void FSMBox::lineComment(stack<char> &input, char &t)
 void FSMBox::multiComment(stack<char> &input, char &t)
 {
     string st = "#"; // initialize comment string
-    int l = line; // remember initial line number
+    // int l = line; // remember initial line number
     bool undef = false;
     t = topnpop(input);
     st.push_back(t); // place it in string
@@ -162,7 +162,7 @@ string FSMBox::makeID(stack<char> &input, char &t)
     return st;
 }
 
-Token FSMBox::makeOutput(string out, string token, int line) // format token output string
+FSMBox::Token FSMBox::makeOutput(string out, string token, int line) // format token output string
 {
     Token o(out, token, line);
     // o << "(" << token << ",\"" << out << "\"," << line << ")" << endl;
@@ -170,7 +170,7 @@ Token FSMBox::makeOutput(string out, string token, int line) // format token out
     return o;
 }
 
-Token FSMBox::makeOutput(char out, string token, int line) //overload function to allow char input
+FSMBox::Token FSMBox::makeOutput(char out, string token, int line) //overload function to allow char input
 {
     string s(1, out);
     Token o(s, token, line);

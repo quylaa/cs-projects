@@ -33,30 +33,30 @@ stack<char> flip(stack<char> iput)
     return lines;
 }
 
-vector<Token> tokenize(stack<char> lines)
+vector<FSMBox::Token> tokenize(stack<char> lines)
 {
     FSMBox fsm;
-    string tokenstring = fsm.tokens(lines);
-    return tokenstring;
+    vector<FSMBox::Token> tokenlist = fsm.tokens(lines);
+    return tokenlist;
 }
 
-string toString(Token t)
+string toString(FSMBox::Token t)
 {
     string s;
-    s.push_back("(");
-    s.push_back(t.content);
-    s.push_back(",");
-    s.push_back(t.type);
-    s.push_back(",");
-    s.push_back(t.line);
-    s.push_back(")");
+    s.append("(\"");
+    s.append(t.content);
+    s.append("\",");
+    s.append(t.type);
+    s.push_back(',');
+    s.append(to_string(t.line));
+    s.push_back(')');
     return s;
 }
 
 int main(int argc, char* argv[])
 {
     stack<char> lines = flip(getInput(argv[1]));
-    vector<Token> tokens = tokenize(lines);
+    vector<FSMBox::Token> tokens = tokenize(lines);
     for (size_t l = 0; l < tokens.size(); ++l) {
         cout << toString(tokens.at(l)) << endl;
     }
