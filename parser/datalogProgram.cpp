@@ -142,12 +142,10 @@ void datalogProgram::predicateList(vector<Predicate> &rules)
 Param datalogProgram::parameter()
 {
     if (vt.at(index).type == "STRING") {
-        cout << "FOUND STRING" << endl;
         index++;
         return Param(vt.at(index-1).content, false, true);
     }
     else if (vt.at(index).type == "ID") {
-        cout << "FOUND ID" << endl;
         index++;
         return Param(vt.at(index-1).content, true, false);
     }
@@ -165,7 +163,6 @@ void datalogProgram::parameterList(vector<Param> &parms)
 
 Param datalogProgram::expression()
 {
-    cout << "FOUND EXP" << endl;
     match("LEFT_PAREN");
     string expr;
     expr.append("(");
