@@ -1,22 +1,36 @@
 // Written by Aleks Christensen
 
-// #include <vector>
 #include <iostream>
 #include "fsmbox.h"
 
-string getInput(string fileName)
+stack<char> getInput(string fileName)
 {
-    stringstream iput;
+    stack<char> iput;
     ifstream file(fileName);
     if (file) {
-        for (string line; getline(file, line);) {
-            iput << line << endl;
+        char t;
+        while (!file.eof()) {
+            file.get(t);
+            iput.push(t);
         }
     }
-    return iput.str();
+    iput.pop();
+    iput.push('\000');
+    file.close();
+    return iput;
 }
 
-string tokenize(string lines)
+stack<char> flip(stack<char> iput)
+{
+    stack<char> lines;
+    while (!iput.empty()) {
+        lines.push(iput.top());
+        iput.pop();
+    }
+    return lines;
+}
+
+string tokenize(stack<char> lines)
 {
     FSMBox fsm;
     string tokenstring = fsm.tokens(lines);
@@ -25,7 +39,7 @@ string tokenize(string lines)
 
 int main(int argc, char* argv[])
 {
-    string lines = getInput(argv[1]);
+    stack<char> lines = flip(getInput(argv[1]));
     cout << tokenize(lines);
     return 0;
 }

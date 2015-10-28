@@ -3,6 +3,7 @@
 #ifndef FSMBOX_H_
 #define FSMBOX_H_
 
+#include <stack>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -31,7 +32,7 @@ class FSMBox
          * as it can.
          *
          */
-        string tokens(string input);
+        string tokens(stack<char> input);
 
         /*
          * doLoop
@@ -39,7 +40,7 @@ class FSMBox
          * Loop through everything else
          *
          */
-        void doLoop(string input, string::iterator &tk);
+        void doLoop(stack<char> &input, char &t);
 
         /*
          * isSymbol
@@ -63,7 +64,7 @@ class FSMBox
          * Figure if token is colon or colon_dash
          *
          */
-        void isColon(string input, string::iterator &tk);
+        void isColon(stack<char> &input, char &t);
 
         /*
          * isString
@@ -71,7 +72,7 @@ class FSMBox
          * Find and format string token
          *
          */
-        void isString(string input, string::iterator &tk);
+        void isString(stack<char> &input, char &t);
 
         /*
          * isComment
@@ -79,7 +80,7 @@ class FSMBox
          * Find and format comment
          *
          */
-        void isComment(string input, string::iterator &tk);
+        void isComment(stack<char> &input, char &t);
 
         /*
          * lineComment
@@ -87,7 +88,7 @@ class FSMBox
          * Format single line comment
          *
          */
-        void lineComment(string input, string::iterator &tk);
+        void lineComment(stack<char> &input, char &t);
 
         /*
          * multiComment
@@ -95,7 +96,7 @@ class FSMBox
          * Format multiline comment
          *
          */
-        void multiComment(string input, string::iterator &tk);
+        void multiComment(stack<char> &input, char &t);
 
         /*
          * isID
@@ -103,7 +104,7 @@ class FSMBox
          * Find and format ID token
          *
          */
-        void isID(string input, string::iterator &tk);
+        void isID(stack<char> &input, char &t);
 
         /*
          * makeID
@@ -111,7 +112,7 @@ class FSMBox
          * Find and return ID token
          *
          */
-        string makeID(string input, string::iterator &tk);
+        string makeID(stack<char> &input, char &t);
 
         /*
          * makeOutput
@@ -125,6 +126,8 @@ class FSMBox
         string makeOutput(string out, string token, int line);
 
         string makeOutput(char out, string token, int line);
+
+        char topnpop(stack<char> &input);
 };
 
 #endif
