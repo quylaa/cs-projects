@@ -5,7 +5,7 @@
 #include <sstream>
 #include "fsmbox.h"
 #include "datalogProgram.h"
-#include "relation.h"
+#include "database.h"
 
 stack<char> getInput(string fileName)
 {
@@ -53,7 +53,7 @@ vector< vector<Predicate> > datalog(vector<Token> tokens)
 //     return db.make(datas);
 // }
 
-string makedata(vector< vector<Predicate> > datas)
+void makedata(vector< vector<Predicate> > datas, Database &db)
 {
     vector<Predicate> schemes = datas.at(0);
     vector<Predicate> facts = datas.at(1);
@@ -66,7 +66,7 @@ string makedata(vector< vector<Predicate> > datas)
         vector<Param> parms = st->params;
         vector<string> schema;
         for (size_t i = 0; i < parms.size(); ++i) {
-            /*if (parms.at(i).isString == true)*/ schema.push_back(parms.at(i).toString());
+            schema.push_back(parms.at(i).toString());
         }
         relations.push_back(Relation(name, schema));
     }
@@ -83,11 +83,12 @@ string makedata(vector< vector<Predicate> > datas)
             }
         }
     }
-    ostringstream out;
+    // ostringstream out;
     for (vector<Relation>::iterator rt = relations.begin(); rt != relations.end(); ++rt) {
-        out << rt->print();
+        // out << rt->print();
+        db.addRelation((*rt));
     }
-    return out.str();
+    // return out.str();
 }
 
 string toString(Token t)
@@ -107,7 +108,9 @@ int main(int argc, char* argv[])
 {
     stack<char> lines = flip(getInput(argv[1]));
     vector< vector<Predicate> > datas = datalog(tokenize(lines));
-    cout << makedata(datas) << endl;
+    Database db;
+    makedata(datas, db);
+    cout << db.getRelation("SK").print() << endl;
     // cout << database(datas) << endl;
     return 0;
 }
