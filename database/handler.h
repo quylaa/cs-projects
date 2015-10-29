@@ -27,6 +27,7 @@ public:
         for (vector<Relation>::iterator rt = relations.begin(); rt != relations.end(); ++rt) {
             db.addRelation((*rt));
         }
+        doQueries(queries, db);
 
         return db;
     };
@@ -60,7 +61,56 @@ public:
         }
     };
 
+    Database doQueries(vector<Predicate> qs, Database &db)
+    {
+        Database results;
+        vector< pair<string, vector< pair<string, string> > > > queries = getQueries(qs);
+        for (vector< pair<string, vector< pair<string, string> > > >::iterator vpt = queries.begin();
+                vpt != queries.end(); ++vpt)
+            {
+                results.addRelation(doQuery((*vpt), db));
+            }
+        return results;
+    };
 
+    vector< pair<string, vector< pair<string, string> > > > getQueries(vector<Predicate> queries)
+    {
+        vector< pair<string, vector< pair<string, string> > > > quers;
+        for (vector<Predicate>::iterator qt = queries.begin(); qt != queries.end(); ++qt) {
+            string id = qt->id;
+            vector<Param> prams = qt->params;
+            vector< pair<string, string> > parms;
+            for (size_t k = 0; k < prams.size(); ++k) {
+                if(prams.at(k).isID) {
+                    parms.push_back(pair<string, string>(prams.at(k).value, "ID"));
+                } else if (prams.at(k).isString) {
+                    parms.push_back(pair<string, string>(prams.at(k).value, "STR"));
+                } else {
+                    parms.push_back(pair<string, string>(prams.at(k).value, "EXP"));
+                }
+            }
+            quers.push_back(pair< string, vector< pair<string, string> > >(id, parms));
+        }
+        return quers;
+    };
+
+    Relation doQuery(pair<string, vector< pair<string, string> > > queries, Database &db)
+    {
+        string id = queries.first;
+        vector< pair<string, string> > params = queries.second;
+
+        Relation r = db.getRelation(id);
+        if (r.getName() == "NULL") return r;
+
+        for (vector< pair<string, string> >::iterator pt = params.begin(); pt != params.end(); ++pt) {
+            string v = pt->first;
+            string t = pt->second;
+
+            // if (t == "ID") r.valSelect()
+        }
+
+        return r;
+    };
 };
 
 #endif

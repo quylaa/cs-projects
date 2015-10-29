@@ -3,6 +3,7 @@
 #ifndef RELATION_H_
 #define RELATION_H_
 
+#include <utility>
 #include <string>
 #include <vector>
 #include <set>
@@ -23,7 +24,7 @@ class Relation
 
         void addTuple(vector<string> more);
 
-        set< vector<string> > Select(vector<string> items);
+        set< vector<string> > Select(vector< pair<string, string> > items);
 
         // set< vector<string> > Project(vector<string> items);
         //

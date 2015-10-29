@@ -17,9 +17,20 @@ class Database
         Database() {};
         ~Database() {};
 
-        Relation getRelation(string name);
+        Relation getRelation(string name)
+        {
+            if (allRelations.find(name) != allRelations.end()) return allRelations.at(name);
+            else {
+                Relation none("NULL", vector<string>());
+                return none;
+            }
+        };
 
-        void addRelation(Relation rel);
+        void addRelation(Relation rel)
+        {
+            string name = rel.getName();
+            allRelations.insert(pair<string, Relation>(name, rel));
+        };
 
         Relation doQuery();
 };

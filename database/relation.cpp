@@ -8,9 +8,18 @@ void Relation::addTuple(vector<string> more)
     datas.insert(more);
 }
 
-set< vector<string> > Relation::Select(vector<string> items)
+set< vector<string> > Relation::Select(vector< pair<string, string> > items)
 {
     set< vector<string> > results;
+    for (vector< pair<string, string> >::iterator it = items.begin(); it != items.end(); ++it) {
+        string col = it->first;
+        string val = it->second;
+        int which = 0;
+        for (size_t s = 0; s < schema.size(); ++s) { if (schema.at(s) == col) which = s; }
+        for (set< vector<string> >::iterator rt = datas.begin(); rt != datas.end(); ++rt) {
+            if (rt->at(which) == val) results.insert((*rt));
+        }
+    }
     return results;
 }
 
