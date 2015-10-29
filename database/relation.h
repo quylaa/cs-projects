@@ -23,8 +23,8 @@ class Relation
 
         void addTuple(vector<string> more);
 
-        // set< vector<string> > Select(vector<string> items);
-        //
+        set< vector<string> > Select(vector<string> items);
+
         // set< vector<string> > Project(vector<string> items);
         //
         // set< vector<string> > Rename(vector<string> from, vector<string> to);

@@ -8,11 +8,12 @@ void Relation::addTuple(vector<string> more)
     datas.insert(more);
 }
 
-// set< vector<string> > Relation::Select(vector<string> items)
-// {
-//     return new set< vector<string> >;
-// }
-//
+set< vector<string> > Relation::Select(vector<string> items)
+{
+    set< vector<string> > results;
+    
+}
+
 // set< vector<string> > Relation::Project(vector<string> items)
 // {
 //     return new set< vector<string> >;

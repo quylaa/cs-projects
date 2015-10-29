@@ -83,6 +83,10 @@ void makedata(vector< vector<Predicate> > datas, Database &db)
             }
         }
     }
+
+    for (vector<Predicate>::iterator qt = queries.begin(); qt != queries.end(); ++qt) {
+
+    }
     // ostringstream out;
     for (vector<Relation>::iterator rt = relations.begin(); rt != relations.end(); ++rt) {
         // out << rt->print();
