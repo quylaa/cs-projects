@@ -11,22 +11,34 @@ void Relation::addTuple(vector<string> more)
 set< vector<string> > Relation::Select(vector< pair<string, string> > items)
 {
     set< vector<string> > results;
-    for (vector< pair<string, string> >::iterator it = items.begin(); it != items.end(); ++it) {
-        string col = it->first;
-        string val = it->second;
-        int which = 0;
-        for (size_t s = 0; s < schema.size(); ++s) { if (schema.at(s) == col) which = s; }
-        for (set< vector<string> >::iterator rt = datas.begin(); rt != datas.end(); ++rt) {
-            if (rt->at(which) == val) results.insert((*rt));
+    vector<string> params;
+    for (size_t it = 0; it < items.size(); ++it) {
+        params.push_back(items.at(it).first);
+        // string type = items.at(it).second;
+        // int which = 0;
+        // for (size_t s = 0; s < schema.size(); ++s) { if (schema.at(s) == col) which = s; }
+    }
+    bool matches = true;
+    for (set< vector<string> >::iterator rt = datas.begin(); rt != datas.end(); ++rt) {
+        matches = true;
+        for (size_t i = 0; i < params.size(); ++i) {
+            if(params.at(i) != "STR") continue;
+            if (rt->at(i) != params.at(i)) matches = false;
         }
+        if (matches == true/*rt->at(i) == val*/) results.insert((*rt));
     }
     return results;
 }
 
-// set< vector<string> > Relation::Project(vector<string> items)
-// {
-//     return new set< vector<string> >;
-// }
+set< vector<string> > Relation::Project(vector< pair<string, string> > items)
+{
+    set< vector<string> > results;
+    for (size_t it = 0; it < items.size(); ++it) {
+        string val = items
+    }
+
+    return results;
+}
 //
 // set< vector<string> > Relation::Rename(vector<string> from, vector<string> to)
 // {
@@ -56,4 +68,9 @@ string Relation::print()
 string Relation::getName()
 {
     return name;
+}
+
+vector<string> Relation::getSchema()
+{
+    return schema;
 }
