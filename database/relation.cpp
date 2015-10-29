@@ -11,7 +11,7 @@ void Relation::addTuple(vector<string> more)
 set< vector<string> > Relation::Select(vector<string> items)
 {
     set< vector<string> > results;
-    
+    return results;
 }
 
 // set< vector<string> > Relation::Project(vector<string> items)

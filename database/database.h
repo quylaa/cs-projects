@@ -20,6 +20,8 @@ class Database
         Relation getRelation(string name);
 
         void addRelation(Relation rel);
+
+        Relation doQuery();
 };
 
 #endif
