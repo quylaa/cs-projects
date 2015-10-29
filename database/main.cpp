@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <utility>
 #include "fsmbox.h"
 #include "datalogProgram.h"
 #include "database.h"
@@ -83,10 +84,23 @@ void makedata(vector< vector<Predicate> > datas, Database &db)
             }
         }
     }
-
+    vector< pair<string, vector< pair<string, string> > > > quers;
     for (vector<Predicate>::iterator qt = queries.begin(); qt != queries.end(); ++qt) {
-
+        string id = qt->id;
+        vector<Param> prams = qt->params;
+        vector< pair<string, string> > parms;
+        for (size_t k = 0; k < prams.size(); ++k) {
+            if(prams.at(k).isID) {
+                parms.push_back(pair<string, string>(prams.at(k).value, "ID"));
+            } else if (prams.at(k).isString) {
+                parms.push_back(pair<string, string>(prams.at(k).value, "STR"));
+            } else {
+                parms.push_back(pair<string, string>(prams.at(k).value, "EXP"));
+            }
+        }
+        quers.push_back(pair< string, vector< pair<string, string> > >(id, parms));
     }
+    
     // ostringstream out;
     for (vector<Relation>::iterator rt = relations.begin(); rt != relations.end(); ++rt) {
         // out << rt->print();
