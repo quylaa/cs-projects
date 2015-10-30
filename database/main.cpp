@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
     Handler h;
     Database db = h.makeData(datas);
     // vector<Relation> results = h.doQueries()
-    cout << db.getRelation("SK").print() << endl;
+    cout << db.print() << endl;
     // cout << database(datas) << endl;
     return 0;
 }

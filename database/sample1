@@ -8,7 +8,7 @@ Facts:
 Rules:
   DoNothing(Z) :- Stuff(Z).
 Queries:
-  SK(A,'c')?
+#  SK(A,'c')?
   SK('b','c')?
-  SK(X,X)?
-  SK(A,B)?
+#  SK(X,X)?
+#  SK(A,B)?

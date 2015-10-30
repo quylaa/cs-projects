@@ -4,6 +4,7 @@
 #define DATABASE_H_
 
 #include <string>
+#include <sstream>
 #include <vector>
 #include <map>
 #include "relation.h"
@@ -32,7 +33,14 @@ class Database
             allRelations.insert(pair<string, Relation>(name, rel));
         };
 
-        Relation doQuery();
+        string print()
+        {
+            ostringstream out;
+            for (map<string, Relation>::iterator mt = allRelations.begin(); mt != allRelations.end(); ++mt) {
+                out << mt->first << "\n======\n" << mt->second.print();
+            }
+            return out.str();
+        }
 };
 
 #endif

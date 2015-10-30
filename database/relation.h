@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <map>
 
 using namespace std;
 
@@ -27,7 +28,7 @@ class Relation
 
         set< vector<string> > Select(vector< pair<string, string> > items);
 
-        set< vector<string> > Project(vector< pair<string, string> > items);
+        map<string, vector<string> > Project(vector< pair<string, string> > items);
 
         // set< vector<string> > Rename(vector<string> from, vector<string> to);
 
