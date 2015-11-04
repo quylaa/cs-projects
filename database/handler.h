@@ -29,6 +29,7 @@ public:
         }
         Database qdb = doQueries(queries, db);
 
+        string r = "";
         return qdb;
     };
 
@@ -65,6 +66,7 @@ public:
     {
         Database results;
         vector< pair<string, vector< pair<string, string> > > > queries = getQueries(qs);
+        vector<string> querystrings = getStrings(qs);
         for (vector< pair<string, vector< pair<string, string> > > >::iterator vpt = queries.begin();
                 vpt != queries.end(); ++vpt)
             {
@@ -73,13 +75,24 @@ public:
         return results;
     };
 
+    vector<string> getStrings(vector<Predicate> qs)
+    {
+        vector<string> res;
+        for (vector<Predicate>::iterator qt = qs.begin(); qt != qs.end(); ++qt) {
+            res.push_back(qt->toString());
+        }
+        return res;
+    }
+
     vector< pair<string, vector< pair<string, string> > > > getQueries(vector<Predicate> queries)
     {
+        ostringstream res;
         vector< pair<string, vector< pair<string, string> > > > quers;
         for (vector<Predicate>::iterator qt = queries.begin(); qt != queries.end(); ++qt) {
             string id = qt->id;
             vector<Param> prams = qt->params;
             vector< pair<string, string> > parms;
+            res << qt->toString() << endl;
             for (size_t k = 0; k < prams.size(); ++k) {
                 if(prams.at(k).isID) {
                     parms.push_back(pair<string, string>(prams.at(k).value, "ID"));
@@ -97,8 +110,10 @@ public:
         return quers;
     };
 
-    Relation doQuery(pair<string, vector< pair<string, string> > > queries, Database db)
+    string doQuery(pair<string, vector< pair<string, string> > > queries, Database db)
     {
+        ostringstream res;
+        res <<
         string id = queries.first;
         vector< pair<string, string> > params = queries.second;
 
