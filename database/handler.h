@@ -13,7 +13,7 @@ public:
     Handler() {};
     ~Handler() {};
 
-    string makeData(vector< vector<Predicate> > datas)
+    void makeData(vector< vector<Predicate> > datas)
     {
         Database db;
         vector<Predicate> schemes = datas.at(0);
@@ -27,10 +27,11 @@ public:
         for (vector<Relation>::iterator rt = relations.begin(); rt != relations.end(); ++rt) {
             db.addRelation((*rt));
         }
-        string qdb = doQueries(queries, db);
+        cout << db.print();
+        doQueries(queries, db);
+        cout << db.print();
 
-        string r = "";
-        return qdb;
+        // return qdb;
     };
 
     void getSchemes(vector<Predicate> schemes, vector<Relation> &relations)
@@ -62,38 +63,25 @@ public:
         }
     };
 
-    string doQueries(vector<Predicate> qs, Database db)
+    void doQueries(vector<Predicate> qs, Database db)
     {
         //Database results;
-        ostringstream res;
+        // ostringstream res;
         vector< pair<string, vector< pair<string, string> > > > queries = getQueries(qs);
-<<<<<<< HEAD
 //        for (vector< pair<string, vector< pair<string, string> > > >::iterator vpt = queries.begin();
 //                vpt != queries.end(); ++vpt)
-          for (size_t o = 0; o < queries.size(); ++o)
-=======
-        vector<string> querystrings = getStrings(qs);
-        for (vector< pair<string, vector< pair<string, string> > > >::iterator vpt = queries.begin();
-                vpt != queries.end(); ++vpt)
->>>>>>> cf15e1d7a181641ba8928b34275539e5f7ab4997
-            {
-                res << qs.at(o).toString();
-                //results.addRelation(doQuery((*vpt), db));
-                Relation t = doQuery(queries.at(o), db);
-                if (t.getData().empty()) res << " No\n";
-                else res << " Yes" << t.print();
+        for (size_t o = 0; o < queries.size(); ++o) {
+            // cout << db.print();
+            cout << qs.at(o).toString() << "?";
+            //results.addRelation(doQuery((*vpt), db));
+            Relation t = doQuery(queries.at(o), db);
+            if (t.getData().empty()) cout << " No\n";
+            else {
+                cout << " Yes" << t.print();
             }
-        return res.str();
-    };
-
-    vector<string> getStrings(vector<Predicate> qs)
-    {
-        vector<string> res;
-        for (vector<Predicate>::iterator qt = qs.begin(); qt != qs.end(); ++qt) {
-            res.push_back(qt->toString());
         }
-        return res;
-    }
+        // return res.str();
+    };
 
     vector< pair<string, vector< pair<string, string> > > > getQueries(vector<Predicate> queries)
     {
@@ -121,10 +109,8 @@ public:
         return quers;
     };
 
-    string doQuery(pair<string, vector< pair<string, string> > > queries, Database db)
+    Relation doQuery(pair<string, vector< pair<string, string> > > queries, Database db)
     {
-        ostringstream res;
-        res <<
         string id = queries.first;
         vector< pair<string, string> > params = queries.second;
 
@@ -145,8 +131,28 @@ public:
             set< vector<string> > dat;
             for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
                 schema.push_back(vt->first);
-                dat.insert(vt->second);
+                vector<string> temp;
+                for (size_t in = 0; in < vt->second.size(); ++in) {
+                    temp.push_back(vt->second.at(in));
+                }
+                dat.insert(temp);
+                // dat.insert(vt->second);
             }
+            // for (size_t i = 0; i < schema.size(); ++i) {
+            //     vector<string> temp;
+            //     for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
+            //         temp.push_back(vt->second.at(i));
+            //     }
+            //     dat.insert(temp);
+            // }
+            // for (set< vector<string> >::iterator st = dat.begin(); st != dat.end(); ++st) {
+            //     st->clear();
+            //     for (size_t i = 0; i < schema.size(); ++i) {
+            //         for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
+            //             st->push_back(vt->second.at(i));
+            //         }
+            //     }
+            // }
             Relation temp(id, schema, dat);
             return temp;
         }
