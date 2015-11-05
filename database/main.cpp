@@ -59,9 +59,9 @@ int main(int argc, char* argv[])
     stack<char> lines = flip(getInput(argv[1]));
     vector< vector<Predicate> > datas = datalog(tokenize(lines));
     Handler h;
-    Database db = h.makeData(datas);
+    string db = h.makeData(datas);
     // vector<Relation> results = h.doQueries()
-    cout << db.print() << endl;
+    cout << db << endl;
     // cout << database(datas) << endl;
     return 0;
 }

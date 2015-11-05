@@ -13,7 +13,7 @@ public:
     Handler() {};
     ~Handler() {};
 
-    Database makeData(vector< vector<Predicate> > datas)
+    string makeData(vector< vector<Predicate> > datas)
     {
         Database db;
         vector<Predicate> schemes = datas.at(0);
@@ -27,7 +27,7 @@ public:
         for (vector<Relation>::iterator rt = relations.begin(); rt != relations.end(); ++rt) {
             db.addRelation((*rt));
         }
-        Database qdb = doQueries(queries, db);
+        string qdb = doQueries(queries, db);
 
         return qdb;
     };
@@ -61,16 +61,22 @@ public:
         }
     };
 
-    Database doQueries(vector<Predicate> qs, Database db)
+    string doQueries(vector<Predicate> qs, Database db)
     {
-        Database results;
+        //Database results;
+        ostringstream res;
         vector< pair<string, vector< pair<string, string> > > > queries = getQueries(qs);
-        for (vector< pair<string, vector< pair<string, string> > > >::iterator vpt = queries.begin();
-                vpt != queries.end(); ++vpt)
+//        for (vector< pair<string, vector< pair<string, string> > > >::iterator vpt = queries.begin();
+//                vpt != queries.end(); ++vpt)
+          for (size_t o = 0; o < queries.size(); ++o)
             {
-                results.addRelation(doQuery((*vpt), db));
+                res << qs.at(o).toString();
+                //results.addRelation(doQuery((*vpt), db));
+                Relation t = doQuery(queries.at(o), db);
+                if (t.getData().empty()) res << " No\n";
+                else res << " Yes" << t.print();
             }
-        return results;
+        return res.str();
     };
 
     vector< pair<string, vector< pair<string, string> > > > getQueries(vector<Predicate> queries)

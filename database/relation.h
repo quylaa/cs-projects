@@ -36,6 +36,8 @@ class Relation
 
         string getName();
 
+        set< vector<string> > getData();
+
         vector<string> getSchema();
 };
 

@@ -71,20 +71,25 @@ string Relation::print()
 {
     ostringstream out;
     // out << "**" << name << "**" << endl;
-    for (vector<string>::iterator vt = schema.begin(); vt != schema.end(); ++vt) {
-        out << " " << (*vt) << "  ";
-    }
-    out << "\n-------\n";
-
+    //for (vector<string>::iterator vt = schema.begin(); vt != schema.end(); ++vt) {
+        //out << " " << (*vt) << "  ";
+    //}
+    //out << "\n-------\n";
+    int k = 0;
+    int t = 0;
     for (set< vector<string> >::iterator st = datas.begin(); st != datas.end(); ++st) {
+        if (k != 0) k++;
         for (size_t s = 0; s < st->size(); ++s) {
-            out << st->at(s);
-            if (s != (st->size()-1)) out << " ";
+            t++;
+            out << schema.at(k) << "=" << st->at(s) << endl;
+            //if (s != (st->size()-1)) out << " ";
         }
-        out << endl;
+        //out << endl;
     }
     out << endl;
-    return out.str();
+    ostringstream o;
+    o << "(" << t << ")\n" << out.str();
+    return o.str();
 }
 
 string Relation::getName()
@@ -95,4 +100,9 @@ string Relation::getName()
 vector<string> Relation::getSchema()
 {
     return schema;
+}
+
+set <vector<string> > Relation::getData()
+{
+    return datas;
 }
