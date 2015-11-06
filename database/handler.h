@@ -29,7 +29,7 @@ public:
         }
         cout << db.print();
         doQueries(queries, db);
-        cout << db.print();
+        // cout << db.print();
 
         // return qdb;
     };
@@ -95,13 +95,13 @@ public:
             for (size_t k = 0; k < prams.size(); ++k) {
                 if(prams.at(k).isID) {
                     parms.push_back(pair<string, string>(prams.at(k).value, "ID"));
-                    cout << "GOT ID\n";
+                    // cout << "GOT ID\n";
                 } else if (prams.at(k).isString) {
                     parms.push_back(pair<string, string>(prams.at(k).value, "STR"));
-                    cout << "GOT STR\n";
+                    // cout << "GOT STR\n";
                 } else {
                     parms.push_back(pair<string, string>(prams.at(k).value, "EXP"));
-                    cout << "GOT EXP\n";
+                    // cout << "GOT EXP\n";
                 }
             }
             quers.push_back(pair< string, vector< pair<string, string> > >(id, parms));
@@ -129,29 +129,42 @@ public:
             map<string, vector<string> > proj = temp.Project(params);
             vector<string> schema;
             set< vector<string> > dat;
+            int l;
             for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
                 schema.push_back(vt->first);
-                if (vt == proj.begin()) {
-                    for (size_t k = 0; k < vt->second.size(); ++k) {
-                        vector<string> t;
-                        t.push_back(vt->second.at(k));
-                        dat.insert(t);
-                    }
-                } else {
-                  for (set< vector<string> >::iterator st = dat.begin(); st != dat.end(); ++st) {
-                    for (size_t k = 0; k < vt->second.size(); ++k) {
-                      st->push_back(vt->second.at(k));
-                    }
-                  }
-                }
-                // dat.insert(vt->second);
+                l = vt->second.size();
             }
+                //
+                // if (vt == proj.begin()) {
+                //     for (size_t k = 0; k < vt->second.size(); ++k) {
+                //         vector<string> t;
+                //         t.push_back(vt->second.at(k));
+                //         dat.insert(t);
+                //     }
+                // } else {
+                //   for (set< vector<string> >::iterator st = dat.begin(); st != dat.end(); ++st) {
+                //     for (size_t k = 0; k < vt->second.size(); ++k) {
+                //       st->push_back(vt->second.at(k));
+                //     }
+                //   }
+                // }
+                // dat.insert(vt->second);
             // for (size_t i = 0; i < schema.size(); ++i) {
-            //     vector<string> t;
-            //     for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
-            //         t.push_back(vt->second.at(i));
-            //     }
-            //     dat.insert(t);
+                for (int m = 0; m < l; ++m) {
+                    vector<string> newt;
+                    for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
+                            newt.push_back(vt->second.at(m));
+                    }
+                    dat.insert(newt);
+                }
+                // for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
+                //     vector<string> t;
+                //     for (size_t k = 0; k < vt->second.size(); ++k) {
+                //         t.push_back(vt->second.at(k));
+                //         dat.insert(t);
+                //     }
+                //     t.push_back(vt->second.at(i));
+                // }
             // }
             // for (set< vector<string> >::iterator st = dat.begin(); st != dat.end(); ++st) {
             //     st->clear();
