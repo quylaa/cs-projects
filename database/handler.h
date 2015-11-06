@@ -131,19 +131,27 @@ public:
             set< vector<string> > dat;
             for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
                 schema.push_back(vt->first);
-                vector<string> temp;
-                for (size_t in = 0; in < vt->second.size(); ++in) {
-                    temp.push_back(vt->second.at(in));
+                if (vt == proj.begin()) {
+                    for (size_t k = 0; k < vt->second.size(); ++k) {
+                        vector<string> t;
+                        t.push_back(vt->second.at(k));
+                        dat.insert(t);
+                    }
+                } else {
+                  for (set< vector<string> >::iterator st = dat.begin(); st != dat.end(); ++st) {
+                    for (size_t k = 0; k < vt->second.size(); ++k) {
+                      st->push_back(vt->second.at(k));
+                    }
+                  }
                 }
-                dat.insert(temp);
                 // dat.insert(vt->second);
             }
             // for (size_t i = 0; i < schema.size(); ++i) {
-            //     vector<string> temp;
+            //     vector<string> t;
             //     for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
-            //         temp.push_back(vt->second.at(i));
+            //         t.push_back(vt->second.at(i));
             //     }
-            //     dat.insert(temp);
+            //     dat.insert(t);
             // }
             // for (set< vector<string> >::iterator st = dat.begin(); st != dat.end(); ++st) {
             //     st->clear();
