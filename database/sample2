@@ -1,14 +1,15 @@
 Schemes:
-  SK(A,B,C)
+	ab(A,B)
 Facts:
-  SK('a','c','d').
-  SK('b','c','d').
-  SK('b','b','c').
-  SK('b','c','d').
+	ab('joe','bob').
+	ab('jim','bob').
+	ab('joe','jim').
+	ab('bob','bob').
 Rules:
-  DoNothing(Z) :- Stuff(Z).
+
 Queries:
-  SK(A,'c',C)?
-  SK('b','c','d')?
-#  SK(X,X)?
-#  SK(A,B)?
+	ab('joe','jim')?
+	ab( who, 'bob')?
+	ab('joe', anyone)?
+	ab(X,X)?
+	ab(X,Y)?

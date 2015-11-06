@@ -27,11 +27,7 @@ public:
         for (vector<Relation>::iterator rt = relations.begin(); rt != relations.end(); ++rt) {
             db.addRelation((*rt));
         }
-        cout << db.print();
         doQueries(queries, db);
-        // cout << db.print();
-
-        // return qdb;
     };
 
     void getSchemes(vector<Predicate> schemes, vector<Relation> &relations)
@@ -65,22 +61,19 @@ public:
 
     void doQueries(vector<Predicate> qs, Database db)
     {
-        //Database results;
-        // ostringstream res;
         vector< pair<string, vector< pair<string, string> > > > queries = getQueries(qs);
-//        for (vector< pair<string, vector< pair<string, string> > > >::iterator vpt = queries.begin();
-//                vpt != queries.end(); ++vpt)
         for (size_t o = 0; o < queries.size(); ++o) {
-            // cout << db.print();
             cout << qs.at(o).toString() << "?";
-            //results.addRelation(doQuery((*vpt), db));
             Relation t = doQuery(queries.at(o), db);
             if (t.getData().empty()) cout << " No\n";
+            else if (t.getData().size() == 1) {
+                if (!t.hasDone().at(2)) cout << " Yes(1)\n";
+                else cout << " Yes" << t.print();
+            }
             else {
                 cout << " Yes" << t.print();
             }
         }
-        // return res.str();
     };
 
     vector< pair<string, vector< pair<string, string> > > > getQueries(vector<Predicate> queries)
@@ -95,13 +88,10 @@ public:
             for (size_t k = 0; k < prams.size(); ++k) {
                 if(prams.at(k).isID) {
                     parms.push_back(pair<string, string>(prams.at(k).value, "ID"));
-                    // cout << "GOT ID\n";
                 } else if (prams.at(k).isString) {
                     parms.push_back(pair<string, string>(prams.at(k).value, "STR"));
-                    // cout << "GOT STR\n";
                 } else {
                     parms.push_back(pair<string, string>(prams.at(k).value, "EXP"));
-                    // cout << "GOT EXP\n";
                 }
             }
             quers.push_back(pair< string, vector< pair<string, string> > >(id, parms));
@@ -109,86 +99,57 @@ public:
         return quers;
     };
 
-    Relation doQuery(pair<string, vector< pair<string, string> > > queries, Database db)
+    Relation doQuery(pair<string, vector< pair<string, string> > > query, Database db)
     {
-        string id = queries.first;
-        vector< pair<string, string> > params = queries.second;
+        string id = query.first;
+        vector< pair<string, string> > params = query.second;
 
         Relation r = db.getRelation(id);
         if (r.getName() == "NULL") return r;
 
         set< vector<string> > datas = r.Select(params);
-        Relation temp(id, r.getSchema(), datas);
+        Relation temp(id, r.getSchema(), datas, r.hasDone());
         vector< pair<int, bool> > areIds;
-        for (size_t r = 0; r < queries.second.size(); ++r) {
-            if (queries.second.at(r).second == "ID") {
+        for (size_t r = 0; r < query.second.size(); ++r) {
+            if (query.second.at(r).second == "ID") {
                 areIds.push_back(pair<int, bool>(r, true));
             }
         }
         if (!areIds.empty()) {
-            map<string, vector<string> > proj = temp.Project(params);
-            vector<string> schema;
-            set< vector<string> > dat;
-            int l;
-            for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
-                schema.push_back(vt->first);
-                l = vt->second.size();
-            }
-                //
-                // if (vt == proj.begin()) {
-                //     for (size_t k = 0; k < vt->second.size(); ++k) {
-                //         vector<string> t;
-                //         t.push_back(vt->second.at(k));
-                //         dat.insert(t);
-                //     }
-                // } else {
-                //   for (set< vector<string> >::iterator st = dat.begin(); st != dat.end(); ++st) {
-                //     for (size_t k = 0; k < vt->second.size(); ++k) {
-                //       st->push_back(vt->second.at(k));
-                //     }
-                //   }
-                // }
-                // dat.insert(vt->second);
-            // for (size_t i = 0; i < schema.size(); ++i) {
-                for (int m = 0; m < l; ++m) {
-                    vector<string> newt;
-                    for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
-                            newt.push_back(vt->second.at(m));
-                    }
-                    dat.insert(newt);
-                }
-                // for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
-                //     vector<string> t;
-                //     for (size_t k = 0; k < vt->second.size(); ++k) {
-                //         t.push_back(vt->second.at(k));
-                //         dat.insert(t);
-                //     }
-                //     t.push_back(vt->second.at(i));
-                // }
-            // }
-            // for (set< vector<string> >::iterator st = dat.begin(); st != dat.end(); ++st) {
-            //     st->clear();
-            //     for (size_t i = 0; i < schema.size(); ++i) {
-            //         for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
-            //             st->push_back(vt->second.at(i));
-            //         }
-            //     }
-            // }
-            Relation temp(id, schema, dat);
-            return temp;
+            return queryPR(id, areIds, temp, params);
         }
-        // map<string, vector<string> > res = temp.Project(params);
-
-        // for (vector< pair<string, string> >::iterator pt = params.begin(); pt != params.end(); ++pt) {
-        //     string v = pt->first;
-        //     string t = pt->second;
-        //
-        //     vector<string> parms;
-        //
-        //     if (t == "ID")
-        // }
 
         return temp;
+    };
+
+    Relation queryPR(string id, vector< pair<int, bool> > areIds, Relation temp, vector< pair<string, string> > params)
+    {
+        map<string, vector<string> > proj = temp.Project(params);
+        vector<string> schema;
+        set< vector<string> > dat;
+        int l;
+        for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
+            schema.push_back(vt->first);
+            l = vt->second.size();
+        }
+        for (int m = 0; m < l; ++m) {
+            vector<string> newt;
+            for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
+                    newt.push_back(vt->second.at(m));
+            }
+            dat.insert(newt);
+        }
+        Relation newr(id, schema, dat, temp.hasDone());
+        if (areIds.size() == 1) {
+            newr.Rename(schema.at(0), params.at(areIds.at(0).first).first);
+        } else {
+            for (vector< pair<int, bool> >::iterator pt = areIds.begin(); pt != areIds.end(); ++pt) {
+                if (pt->second == true) {
+                    newr.Rename(schema.at(pt->first), params.at(pt->first).first);
+                }
+            }
+        }
+        return newr;
     };
 };
 

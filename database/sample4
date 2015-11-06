@@ -1,4 +1,4 @@
-Schemes: 
+Schemes:
 	people(person1,person2)
 	employer(boss,employee)
 Facts:
@@ -15,8 +15,8 @@ Queries:
 	people('joe','jim')?
 	people( who, 'bob')?
 	people('joe', anyone)?
-#	people(X,X)?
-#	people(X,Y)?
-#	employer('ralph', X)?
+	people(X,X)?
+	people(X,Y)?
+	employer('ralph', X)?
 	employer('bob','bob')?
-#	employer(X,Y)?
+	employer(X,Y)?

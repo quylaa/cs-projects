@@ -10,5 +10,5 @@ Rules:
 Queries:
   SK(A,'c')?
   SK('b','c')?
-#  SK(X,X)?
+  SK(X,X)?
   SK(A,B)?

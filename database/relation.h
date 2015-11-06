@@ -18,10 +18,16 @@ class Relation
         vector<string> schema;
         set< vector<string> > datas;
 
+        bool hasSelected = false;
+        bool hasProjected = false;
+        bool hasRenamed = false;
+
     public:
 
         Relation(string n, vector<string> s) : name(n), schema(s) {};
         Relation(string n, vector<string> s, set< vector<string> > d) : name(n), schema(s), datas(d) {};
+        Relation(string n, vector<string> s, set< vector<string> > d, vector<bool> hd)
+            : name(n), schema(s), datas(d), hasSelected(hd[0]), hasProjected(hd[1]), hasRenamed(hd[2]) {};
         ~Relation() {};
 
         void addTuple(vector<string> more);
@@ -30,7 +36,9 @@ class Relation
 
         map<string, vector<string> > Project(vector< pair<string, string> > items);
 
-        // set< vector<string> > Rename(vector<string> from, vector<string> to);
+        void Rename(string from, string to);
+
+        string makeString();
 
         string print();
 
@@ -39,6 +47,8 @@ class Relation
         set< vector<string> > getData();
 
         vector<string> getSchema();
+
+        vector<bool> hasDone();
 };
 
 #endif

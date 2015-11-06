@@ -11,15 +11,12 @@ void Relation::addTuple(vector<string> more)
 
 set< vector<string> > Relation::Select(vector< pair<string, string> > items)
 {
-    // cout << "DOING SELECT" << endl;
+    hasSelected = true;
     set< vector<string> > results;
     vector<string> params;
     for (size_t it = 0; it < items.size(); ++it) {
         items.at(it).second == "STR" ? params.push_back(items.at(it).first)
             : params.push_back("WRONG");
-        // string type = items.at(it).second;
-        // int which = 0;
-        // for (size_t s = 0; s < schema.size(); ++s) { if (schema.at(s) == col) which = s; }
     }
     bool matches = true;
     for (set< vector<string> >::iterator rt = datas.begin(); rt != datas.end(); ++rt) {
@@ -27,28 +24,20 @@ set< vector<string> > Relation::Select(vector< pair<string, string> > items)
         for (size_t i = 0; i < params.size(); ++i) {
             if (params.at(i) == "WRONG") continue;
             if (rt->at(i) != params.at(i)) matches = false;
-            // cout << rt->at(i) << " ";
         }
-        // cout << endl;
         if (matches == true/*rt->at(i) == val*/) results.insert((*rt));
-        // for (size_t j = 0; j < (*rt).size(); ++j) {
-             // cout << (*rt).at(j) << " ";
-        // }
     }
-    // cout << endl;
     return results;
 }
 
 map<string, vector<string> > Relation::Project(vector< pair<string, string> > items)
 {
-    // cout << "DOING PROJECT\n";
+    hasProjected = true;
     map<string, vector<string> > results;
-
     for (set< vector<string> >::iterator rt = datas.begin(); rt != datas.end(); ++rt) {
         for (size_t it = 0; it < items.size(); ++it) {
             if (items.at(it).second != "ID") continue;
             string val = rt->at(it);
-            // cout << schema.at(it) << " -> " << val << " ";
             try {
                 results.at(schema.at(it)).push_back(val);
             } catch (const out_of_range& oor) {
@@ -57,33 +46,70 @@ map<string, vector<string> > Relation::Project(vector< pair<string, string> > it
             }
         }
     }
-    // cout << endl;
     return results;
 }
-//
-// set< vector<string> > Relation::Rename(vector<string> from, vector<string> to)
-// {
-//     return new set< vector<string> >;
-// }
+
+void Relation::Rename(string from, string to)
+{
+    hasRenamed = true;
+    for (size_t i = 0; i < schema.size(); ++i) {
+        if (schema.at(i) == from) {
+            schema.at(i) = to;
+            for (size_t j = 0; j < i; ++j) {
+                if (schema.at(j) == schema.at(i)) {
+                    set< vector<string> > newDatas;
+                    for (set< vector<string> >::iterator st = datas.begin(); st != datas.end(); ++st) {
+                        if (st->at(i) == st->at(j)) newDatas.insert((*st));
+                    }
+                    datas = newDatas;
+                }
+            }
+        }
+    }
+}
+
+string Relation::makeString()
+{
+    ostringstream out;
+    for (set< vector<string> >::iterator st = datas.begin(); st != datas.end(); ++st) {
+        out << "  ";
+        vector<string> dn;
+        for (size_t s = 0; s < st->size(); ++s) {
+            bool fnd = false;
+            for (size_t i = 0; i < dn.size(); ++i) {
+                if (dn.at(i) == schema.at(s)) fnd = true;
+            }
+            if (fnd) continue;
+            out << schema.at(s) << "=" << st->at(s);
+            // if (s != (st->size()-1))
+            dn.push_back(schema.at(s));
+        }
+        out << endl;
+    }
+    return out.str();
+}
 
 string Relation::print()
 {
     ostringstream out;
-    // out << "**" << name << "**" << endl;
-    //for (vector<string>::iterator vt = schema.begin(); vt != schema.end(); ++vt) {
-        //out << " " << (*vt) << "  ";
-    //}
-    //out << "\n-------\n";
-    for (set< vector<string> >::iterator st = datas.begin(); st != datas.end(); ++st) {
-        // if (k != 0) k++;
-        for (size_t s = 0; s < st->size(); ++s) {
-            // t++;
-            out << schema.at(s) << "=" << st->at(s);
-            if (s != (st->size()-1)) out << ", ";
+    bool dupe = false;
+    for (size_t i = 0; i < schema.size(); ++i) {
+        if (i == 0) continue;
+        if (schema.at(i) == schema.at(i-1)) {
+            dupe = true;
         }
-        out << endl;
     }
-    out << endl;
+    if (dupe) out << makeString();
+    else {
+        for (set< vector<string> >::iterator st = datas.begin(); st != datas.end(); ++st) {
+            out << "  ";
+            for (size_t s = 0; s < st->size(); ++s) {
+                out << schema.at(s) << "=" << st->at(s);
+                if (s != (st->size()-1)) out << ", ";
+            }
+            out << endl;
+        }
+    }
     ostringstream o;
     o << "(" << datas.size() << ")\n" << out.str();
     return o.str();
@@ -102,4 +128,13 @@ vector<string> Relation::getSchema()
 set <vector<string> > Relation::getData()
 {
     return datas;
+}
+
+vector<bool> Relation::hasDone()
+{
+    vector<bool> done;
+    done.push_back(hasSelected);
+    done.push_back(hasProjected);
+    done.push_back(hasRenamed);
+    return done;
 }
