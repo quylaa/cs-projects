@@ -65,14 +65,14 @@ public:
         for (size_t o = 0; o < queries.size(); ++o) {
             cout << qs.at(o).toString() << "?";
             Relation t = doQuery(queries.at(o), db);
-            if (t.getData().empty()) cout << " No\n";
-            else if (t.getData().size() == 1) {
-                if (!t.hasDone().at(2)) cout << " Yes(1)\n";
-                else cout << " Yes" << t.print();
-            }
-            else {
-                cout << " Yes" << t.print();
-            }
+            // if (t.getData().empty()) cout << " No\n";
+            // else if (t.getData().size() == 1) {
+            //     // if (!t.hasDone().at(2)) cout << " Yes(1)\n";
+            //     /*else*/ cout << " Yes" << t.print();
+            // }
+            // else {
+            //     cout << " Yes" << t.print();
+            // }
         }
     };
 
@@ -107,49 +107,60 @@ public:
         Relation r = db.getRelation(id);
         if (r.getName() == "NULL") return r;
 
-        set< vector<string> > datas = r.Select(params);
-        Relation temp(id, r.getSchema(), datas, r.hasDone());
-        vector< pair<int, bool> > areIds;
+        Relation temp = r.Select(params);
+        // Relation temp(id, r.getSchema(), datas, r.hasDone());
+        vector<string> ids;
         for (size_t r = 0; r < query.second.size(); ++r) {
             if (query.second.at(r).second == "ID") {
-                areIds.push_back(pair<int, bool>(r, true));
+                ids.push_back(query.second.at(r).first);
             }
         }
-        if (!areIds.empty()) {
-            return queryPR(id, areIds, temp, params);
+        if (!ids.empty()) {
+            Relation result = temp.Project(params);
+            result.Rename(ids);
+            cout << " Yes(" << result.getData().size() << ")\n";
+            cout << result.print();
+            return result;
         }
-
+        if (temp.getData().size() == 0) {
+            cout << " No\n";
+        } else if (temp.getData().size() == 1) {
+            cout << " Yes(1)\n";
+        } else {
+            cout << " Yes(" << temp.getData().size() << ")\n";
+            cout << temp.print();
+        }
         return temp;
     };
 
-    Relation queryPR(string id, vector< pair<int, bool> > areIds, Relation temp, vector< pair<string, string> > params)
+    Relation queryPR(vector< pair<int, string> > ids, Relation temp, vector< pair<string, string> > params)
     {
-        map<string, vector<string> > proj = temp.Project(params);
-        vector<string> schema;
-        set< vector<string> > dat;
-        int l;
-        for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
-            schema.push_back(vt->first);
-            l = vt->second.size();
-        }
-        cout << l << endl;
-        for (int m = 0; m < l; ++m) {
-            vector<string> newt;
-            for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
-                    newt.push_back(vt->second.at(m));
-            }
-            dat.insert(newt);
-        }
-        Relation newr(id, schema, dat, temp.hasDone());
-        if (areIds.size() == 1) {
-            newr.Rename(schema.at(0), params.at(areIds.at(0).first).first);
-        } else {
-            for (vector< pair<int, bool> >::iterator pt = areIds.begin(); pt != areIds.end(); ++pt) {
-                if (pt->second == true) {
-                    newr.Rename(schema.at(pt->first), params.at(pt->first).first);
-                }
-            }
-        }
+        // map<string, vector<string> > proj = temp.Project(params);
+        // vector<string> schema;
+        // set< vector<string> > dat;
+        // int l;
+        // for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
+        //     schema.push_back(vt->first);
+        //     l = vt->second.size();
+        // }
+        // cout << l << endl;
+        // for (int m = 0; m < l; ++m) {
+        //     vector<string> newt;
+        //     for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
+        //             newt.push_back(vt->second.at(m));
+        //     }
+        //     dat.insert(newt);
+        // }
+        Relation newr = temp.Project(params);
+        // if (areIds.size() == 1) {
+        //     newr.Rename(schema.at(0), params.at(areIds.at(0).first).first);
+        // } else {
+        //     for (vector< pair<int, bool> >::iterator pt = areIds.begin(); pt != areIds.end(); ++pt) {
+        //         if (pt->second == true) {
+        //             newr.Rename(schema.at(pt->first), params.at(pt->first).first);
+        //         }
+        //     }
+        // }
         return newr;
     };
 };

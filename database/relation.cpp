@@ -9,9 +9,10 @@ void Relation::addTuple(vector<string> more)
     datas.insert(more);
 }
 
-set< vector<string> > Relation::Select(vector< pair<string, string> > items)
+Relation Relation::Select(vector< pair<string, string> > items)
 {
-    hasSelected = true;
+    // cout << "DOING SELECT" << endl;
+    // hasSelected = true;
     set< vector<string> > results;
     vector<string> params;
     for (size_t it = 0; it < items.size(); ++it) {
@@ -24,20 +25,24 @@ set< vector<string> > Relation::Select(vector< pair<string, string> > items)
         for (size_t i = 0; i < params.size(); ++i) {
             if (params.at(i) == "WRONG") continue;
             if (rt->at(i) != params.at(i)) matches = false;
+            // cout << rt->at(i) << " \n";
         }
         if (matches == true/*rt->at(i) == val*/) results.insert((*rt));
     }
-    return results;
+    Relation temp(name, schema, results);
+    return temp;
 }
 
-map<string, vector<string> > Relation::Project(vector< pair<string, string> > items)
+Relation Relation::Project(vector< pair<string, string> > items)
 {
-    hasProjected = true;
+    // cout << "DOING PROJECT" << endl;
+    // hasProjected = true;
     map<string, vector<string> > results;
     for (set< vector<string> >::iterator rt = datas.begin(); rt != datas.end(); ++rt) {
         for (size_t it = 0; it < items.size(); ++it) {
             if (items.at(it).second != "ID") continue;
             string val = rt->at(it);
+            // cout << schema.at(it) << " -> " << val << " \n";
             try {
                 results.at(schema.at(it)).push_back(val);
             } catch (const out_of_range& oor) {
@@ -46,15 +51,40 @@ map<string, vector<string> > Relation::Project(vector< pair<string, string> > it
             }
         }
     }
-    return results;
+
+    vector<string> newSchema;
+    set< vector<string> > dat;
+    int l;
+
+    for (map<string, vector<string> >::iterator vt = results.begin(); vt != results.end(); ++vt) {
+        newSchema.push_back(vt->first);
+        l = vt->second.size();
+    }
+    for (int m = 0; m < l; ++m) {
+        vector<string> newt;
+        for (map<string, vector<string> >::iterator vt = results.begin(); vt != results.end(); ++vt) {
+                newt.push_back(vt->second.at(m));
+        }
+        dat.insert(newt);
+    }
+    Relation temp(name, newSchema, dat);
+    return temp;
 }
 
-void Relation::Rename(string from, string to)
+void Relation::Rename(vector<string> ids)
 {
-    hasRenamed = true;
-    for (size_t i = 0; i < schema.size(); ++i) {
-        if (schema.at(i) == from) {
-            schema.at(i) = to;
+    // cout << "DOING RENAME" << endl;
+    // hasRenamed = true;
+    // if (schema.size() == 1) {
+    //     cout << schema.at(0) << " => " << ids.at(0).second << " \n";
+    //     schema.at(0) = ids.at(0).second;
+    // }
+    // else {
+        for (size_t pt = 0; pt < schema.size(); ++pt) {
+            // cout << schema.at(pt) << " => " << ids.at(pt) << " \n";
+            schema.at(pt) = ids.at(pt);
+        }
+        for (size_t i = 0; i < schema.size(); ++i) {
             for (size_t j = 0; j < i; ++j) {
                 if (schema.at(j) == schema.at(i)) {
                     set< vector<string> > newDatas;
@@ -65,7 +95,7 @@ void Relation::Rename(string from, string to)
                 }
             }
         }
-    }
+    // }
 }
 
 string Relation::makeString()
@@ -110,9 +140,9 @@ string Relation::print()
             out << endl;
         }
     }
-    ostringstream o;
-    o << "(" << datas.size() << ")\n" << out.str();
-    return o.str();
+    // ostringstream o;
+    // o << "(" << datas.size() << ")\n" << out.str();
+    return out.str();
 }
 
 string Relation::getName()
@@ -130,11 +160,11 @@ set <vector<string> > Relation::getData()
     return datas;
 }
 
-vector<bool> Relation::hasDone()
-{
-    vector<bool> done;
-    done.push_back(hasSelected);
-    done.push_back(hasProjected);
-    done.push_back(hasRenamed);
-    return done;
-}
+// vector<bool> Relation::hasDone()
+// {
+//     vector<bool> done;
+//     done.push_back(hasSelected);
+//     done.push_back(hasProjected);
+//     done.push_back(hasRenamed);
+//     return done;
+// }
