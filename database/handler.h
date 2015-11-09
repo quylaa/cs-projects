@@ -132,6 +132,7 @@ public:
             schema.push_back(vt->first);
             l = vt->second.size();
         }
+        cout << l << endl;
         for (int m = 0; m < l; ++m) {
             vector<string> newt;
             for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {

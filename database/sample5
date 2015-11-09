@@ -1,0 +1,16 @@
+Schemes:
+  new(A,B,C,D,E)
+  thing(W,X,Y,Z)
+Facts:
+  new('a','b','c','d','e').
+  new('a','b','b','c','b').
+  new('a','a','c','e','d').
+  thing('w','x','x','w').
+  thing('x','y','z','z').
+  thing('z','y','z','y').
+Rules:
+  new(A,B,C,D,E):- thing(A,B,D,C).
+Queries:
+  new('a','b','c','d','e')?
+  new(A,'b','b',D,E)?
+  new(A,B,B,D,E)?
