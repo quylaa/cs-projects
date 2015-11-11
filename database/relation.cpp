@@ -120,12 +120,17 @@ string Relation::makeString()
             }
             if (fnd) continue;
             out << schema.at(s) << "=" << st->at(s);
-            // if (s != (st->size()-1))
+            if (s != (st->size()-1)) out << ", ";
             dn.push_back(schema.at(s));
         }
         out << endl;
     }
-    return out.str();
+    string o = out.str();
+    if (o.at(o.size()-3) == ',') {
+        o = o.substr(0, o.size()-3);
+        o.push_back('\n');
+    }
+    return o;
 }
 
 string Relation::print()
