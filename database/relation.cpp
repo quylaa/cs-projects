@@ -41,8 +41,8 @@ Relation Relation::Project(vector< pair<string, string> > items)
     vector<string> newSchema;
     vector<int> indexes;
     for (size_t t = 0; t < items.size(); ++t) {
-        if (items.at(it).second == "ID") {
-            indexes.push_back(it);
+        if (items.at(t).second == "ID") {
+            indexes.push_back(t);
             newSchema.push_back(schema.at(t));
         }
     }
