@@ -37,37 +37,46 @@ Relation Relation::Project(vector< pair<string, string> > items)
 {
     // cout << "DOING PROJECT" << endl;
     // hasProjected = true;
-    map<string, vector<string> > results;
-    for (set< vector<string> >::iterator rt = datas.begin(); rt != datas.end(); ++rt) {
-        for (size_t it = 0; it < items.size(); ++it) {
-            if (items.at(it).second != "ID") continue;
-            string val = rt->at(it);
-            // cout << schema.at(it) << " -> " << val << " \n";
-            try {
-                results.at(schema.at(it)).push_back(val);
-            } catch (const out_of_range& oor) {
-                vector<string> temp = {val};
-                results.insert(pair<string, vector<string> >(schema.at(it), temp));
-            }
-        }
-    }
-
+    set< vector<string> > results;
     vector<string> newSchema;
-    set< vector<string> > dat;
-    int l;
-
-    for (map<string, vector<string> >::iterator vt = results.begin(); vt != results.end(); ++vt) {
-        newSchema.push_back(vt->first);
-        l = vt->second.size();
-    }
-    for (int m = 0; m < l; ++m) {
-        vector<string> newt;
-        for (map<string, vector<string> >::iterator vt = results.begin(); vt != results.end(); ++vt) {
-                newt.push_back(vt->second.at(m));
+    vector<int> indexes;
+    for (size_t t = 0; t < items.size(); ++t) {
+        if (items.at(it).second == "ID") {
+            indexes.push_back(it);
+            newSchema.push_back(schema.at(t));
         }
-        dat.insert(newt);
     }
-    Relation temp(name, newSchema, dat);
+    for (set< vector<string> >::iterator rt = datas.begin(); rt != datas.end(); ++rt) {
+        vector<string> newtup;
+        for (size_t it = 0; it < indexes.size(); ++it) {
+            // if (items.at(it).second != "ID") continue;
+            newtup.push_back(rt->at(it));
+            // cout << schema.at(it) << " -> " << val << " \n";
+            // try {
+            //     results.at(schema.at(it)).push_back(val);
+            // } catch (const out_of_range& oor) {
+            //     vector<string> temp = {val};
+            //     results.insert(pair<string, vector<string> >(schema.at(it), temp));
+            // }
+        }
+        results.insert(newtup);
+    }
+
+    // set< vector<string> > dat;
+    // int l;
+
+    // for (map<string, vector<string> >::iterator vt = results.begin(); vt != results.end(); ++vt) {
+    //     newSchema.push_back(vt->first);
+    //     l = vt->second.size();
+    // }
+    // for (int m = 0; m < l; ++m) {
+    //     vector<string> newt;
+    //     for (map<string, vector<string> >::iterator vt = results.begin(); vt != results.end(); ++vt) {
+    //             newt.push_back(vt->second.at(m));
+    //     }
+    //     dat.insert(newt);
+    // }
+    Relation temp(name, newSchema, results);
     return temp;
 }
 
