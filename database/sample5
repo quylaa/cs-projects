@@ -6,9 +6,11 @@ Facts:
   new('a','b','b','c','b').
   new('a','a','c','e','d').
   new('a','b','c','c','e').
+  new('a','a','a','a','e').
   thing('w','x','x','w').
   thing('x','y','z','z').
   thing('z','y','z','y').
+  thing('w','x','x','w').
 Rules:
   new(A,B,C,D,E):- thing(A,B,D,C).
 Queries:
@@ -16,3 +18,6 @@ Queries:
   new(A,'b','b',D,E)?
   new(A,B,B,D,E)?
   new('a','b',C,D,E)?
+  new(A,A,A,A,E)?
+  thing(W,X,Y,Z)?
+  thing(W,X,X,W)?

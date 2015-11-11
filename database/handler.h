@@ -107,7 +107,7 @@ public:
         Relation r = db.getRelation(id);
         if (r.getName() == "NULL") return r;
 
-        Relation temp = r.Select(params);
+        Relation result = r.Select(params);
         // Relation temp(id, r.getSchema(), datas, r.hasDone());
         vector<string> ids;
         for (size_t r = 0; r < query.second.size(); ++r) {
@@ -116,21 +116,26 @@ public:
             }
         }
         if (!ids.empty()) {
-            Relation result = temp.Project(params);
-            result.Rename(ids);
-            cout << " Yes(" << result.getData().size() << ")\n";
-            cout << result.print();
+            Relation temp = result.Project(params);
+            temp.Rename(ids);
+            result = temp;
+            if (result.getData().size() == 0) {
+                cout << " No\n";
+            } else {
+                cout << " Yes(" << result.getData().size() << ")\n";
+                cout << result.print();
+            }
             return result;
         }
-        if (temp.getData().size() == 0) {
+        if (result.getData().size() == 0) {
             cout << " No\n";
-        } else if (temp.getData().size() == 1) {
+        } else if (result.getData().size() == 1) {
             cout << " Yes(1)\n";
         } else {
-            cout << " Yes(" << temp.getData().size() << ")\n";
-            cout << temp.print();
+            cout << " Yes(" << result.getData().size() << ")\n";
+            cout << result.print();
         }
-        return temp;
+        return result;
     };
 
     Relation queryPR(vector< pair<int, string> > ids, Relation temp, vector< pair<string, string> > params)
