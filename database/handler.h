@@ -119,16 +119,31 @@ public:
             Relation temp = result.Project(params);
             temp.Rename(ids);
             //result = temp;
-            if (temp.getData().size() == 0) {
-                cout << " No\n";
-            } else if (!schemaComp(temp, result) || temp.getData().size() > 1) {
-                cout << " Yes(" << temp.getData().size() << ")\n";
-                cout << temp.print();
-            } else {
-                cout << " Yes(1)\n";
-            }
+            // if (temp.getData().size() == 0) {
+            //     cout << " No\n";
+            // } else if (!schemaComp(temp, result) || temp.getData().size() > 1) {
+            //     cout << " Yes(" << temp.getData().size() << ")\n";
+            //     cout << temp.print();
+            // } else {
+            //     cout << " Yes(1)\n";
+            // }
+            printResult(temp, result);
             return temp;
         }
+        // if (result.getData().size() == 0) {
+        //     cout << " No\n";
+        // } else if (result.getData().size() == 1) {
+        //     cout << " Yes(1)\n";
+        // } else {
+        //     cout << " Yes(" << result.getData().size() << ")\n";
+        //     cout << result.print();
+        // }
+        printResult(result);
+        return result;
+    };
+
+    void printResult(Relation result)
+    {
         if (result.getData().size() == 0) {
             cout << " No\n";
         } else if (result.getData().size() == 1) {
@@ -137,7 +152,18 @@ public:
             cout << " Yes(" << result.getData().size() << ")\n";
             cout << result.print();
         }
-        return result;
+    };
+
+    void printResult(Relation result, Relation prev)
+    {
+        if (result.getData().size() == 0) {
+            cout << " No\n";
+        } else if (!schemaComp(result, prev) || result.getData().size() > 1) {
+            cout << " Yes(" << result.getData().size() << ")\n";
+            cout << result.print();
+        } else {
+            cout << " Yes(1)\n";
+        }
     };
 
     bool schemaComp(Relation A, Relation B)

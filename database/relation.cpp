@@ -1,7 +1,5 @@
 // Written by Aleks Christensen
 
-#include <sstream>
-#include <iostream>
 #include "relation.h"
 
 void Relation::addTuple(vector<string> more)
@@ -137,9 +135,11 @@ string Relation::print()
 {
     ostringstream out;
     bool dupe = false;
-    for (size_t i = 0; i < schema.size(); ++i) {
+    vector<string> tschema = schema;
+    sort(tschema.begin(), tschema.end());
+    for (size_t i = 0; i < tschema.size(); ++i) {
         if (i == 0) continue;
-        if (schema.at(i) == schema.at(i-1)) {
+        if (tschema.at(i) == tschema.at(i-1)) {
             dupe = true;
         }
     }
