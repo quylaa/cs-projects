@@ -3,6 +3,7 @@ loves(A,'sue')? Yes(2)
   A='steve'
 loves('dave',B)? Yes(1)
 loves(woman,'john')? Yes(1)
+  woman='mary'
 hates(PERSON,PEOPLE)? Yes(3)
   PERSON='dave', PEOPLE='steve'
   PERSON='mary', PEOPLE='sue'

@@ -121,7 +121,7 @@ public:
             //result = temp;
             if (temp.getData().size() == 0) {
                 cout << " No\n";
-            } else if (temp.hasRenamed() || temp.getData().size() > 1) {
+            } else if (!schemaComp(temp, result) || temp.getData().size() > 1) {
                 cout << " Yes(" << temp.getData().size() << ")\n";
                 cout << temp.print();
             } else {
@@ -140,36 +140,24 @@ public:
         return result;
     };
 
-    Relation queryPR(vector< pair<int, string> > ids, Relation temp, vector< pair<string, string> > params)
+    bool schemaComp(Relation A, Relation B)
     {
-        // map<string, vector<string> > proj = temp.Project(params);
-        // vector<string> schema;
-        // set< vector<string> > dat;
-        // int l;
-        // for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
-        //     schema.push_back(vt->first);
-        //     l = vt->second.size();
+        vector<string> schA = A.getSchema();
+        vector<string> schB = B.getSchema();
+        vector<string> isect(5);
+        vector<string>::iterator it;
+
+        it = set_intersection(schA.begin(), schA.end(), schB.begin(), schB.end(), isect.begin());
+        isect.resize(it-isect.begin());
+        bool emp;
+        isect.empty() ? emp = false : emp = true;
+        return emp;
+        // if (schA.size() != schB.size()) return false;
+        // for (size_t i = 0; i < schA.size(); ++i) {
+        //     if (schA.at(i) != schB.at(i)) return false;
         // }
-        // cout << l << endl;
-        // for (int m = 0; m < l; ++m) {
-        //     vector<string> newt;
-        //     for (map<string, vector<string> >::iterator vt = proj.begin(); vt != proj.end(); ++vt) {
-        //             newt.push_back(vt->second.at(m));
-        //     }
-        //     dat.insert(newt);
-        // }
-        Relation newr = temp.Project(params);
-        // if (areIds.size() == 1) {
-        //     newr.Rename(schema.at(0), params.at(areIds.at(0).first).first);
-        // } else {
-        //     for (vector< pair<int, bool> >::iterator pt = areIds.begin(); pt != areIds.end(); ++pt) {
-        //         if (pt->second == true) {
-        //             newr.Rename(schema.at(pt->first), params.at(pt->first).first);
-        //         }
-        //     }
-        // }
-        return newr;
-    };
+        // return true;
+    }
 };
 
 #endif
