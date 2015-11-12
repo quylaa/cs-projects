@@ -118,14 +118,16 @@ public:
         if (!ids.empty()) {
             Relation temp = result.Project(params);
             temp.Rename(ids);
-            result = temp;
-            if (result.getData().size() == 0) {
+            //result = temp;
+            if (temp.getData().size() == 0) {
                 cout << " No\n";
+            } else if (temp.hasRenamed() || temp.getData().size() > 1) {
+                cout << " Yes(" << temp.getData().size() << ")\n";
+                cout << temp.print();
             } else {
-                cout << " Yes(" << result.getData().size() << ")\n";
-                cout << result.print();
+                cout << " Yes(1)\n";
             }
-            return result;
+            return temp;
         }
         if (result.getData().size() == 0) {
             cout << " No\n";
