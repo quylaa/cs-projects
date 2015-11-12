@@ -156,6 +156,11 @@ string Relation::print()
     }
     // ostringstream o;
     // o << "(" << datas.size() << ")\n" << out.str();
+    string o = out.str();
+    if (o.at(o.size()-3) == ',') {
+        o = o.substr(0, o.size()-3);
+        o.push_back('\n');
+    }
     return out.str();
 }
 
