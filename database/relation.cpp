@@ -117,18 +117,18 @@ string Relation::makeString()
                 if (dn.at(i) == schema.at(s)) fnd = true;
             }
             if (fnd) continue;
+            if (s != 0) out << ", ";
             out << schema.at(s) << "=" << st->at(s);
-            if (s != (st->size()-1)) out << ", ";
             dn.push_back(schema.at(s));
         }
         out << endl;
     }
-    string o = out.str();
-    if (o.at(o.size()-3) == ',') {
-        o = o.substr(0, o.size()-3);
-        o.push_back('\n');
-    }
-    return o;
+    // string o = out.str();
+    // if (o.at(o.size()-3) == ',') {
+    //     o = o.substr(0, o.size()-3);
+    //     o.push_back('\n');
+    // }
+    return out.str();
 }
 
 string Relation::print()
@@ -148,19 +148,19 @@ string Relation::print()
         for (set< vector<string> >::iterator st = datas.begin(); st != datas.end(); ++st) {
             out << "  ";
             for (size_t s = 0; s < st->size(); ++s) {
+                if (s != 0) out << ", ";
                 out << schema.at(s) << "=" << st->at(s);
-                if (s != (st->size()-1)) out << ", ";
             }
             out << endl;
         }
     }
     // ostringstream o;
     // o << "(" << datas.size() << ")\n" << out.str();
-    string o = out.str();
-    if (o.at(o.size()-3) == ',') {
-        o = o.substr(0, o.size()-3);
-        o.push_back('\n');
-    }
+    // string o = out.str();
+    // if (o.at(o.size()-3) == ',') {
+    //     o = o.substr(0, o.size()-3);
+    //     o.push_back('\n');
+    // }
     return out.str();
 }
 
