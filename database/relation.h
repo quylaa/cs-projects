@@ -20,7 +20,7 @@ class Relation
 
         // bool hasSelected = false;
         // bool hasProjected = false;
-        // bool hasRenamed = false;
+        bool Renamed = false;
 
     public:
 
@@ -48,7 +48,7 @@ class Relation
 
         vector<string> getSchema();
 
-        // vector<bool> hasDone();
+        bool hasRenamed();
 };
 
 #endif

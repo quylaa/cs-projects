@@ -1,0 +1,19 @@
+Schemes:
+  loves(A,B)
+  hates(A,B)
+Facts:
+  loves('john','mary').
+  loves('mary','john').
+  loves('steve','sue').
+  loves('sue','dave').
+  loves('dave','sue').
+  hates('steve','dave').
+  hates('mary','sue').
+  hates('dave','steve').
+Rules:
+  hates(A,B):- hates(B,A).
+Queries:
+  loves(A,'sue')?
+  loves('dave',B)?
+  loves(woman,'john')?
+  hates(PERSON,PEOPLE)?

@@ -1,0 +1,9 @@
+loves(A,'sue')? Yes(2)
+  A='dave'
+  A='steve'
+loves('dave',B)? Yes(1)
+loves(woman,'john')? Yes(1)
+hates(PERSON,PEOPLE)? Yes(3)
+  PERSON='dave', PEOPLE='steve'
+  PERSON='mary', PEOPLE='sue'
+  PERSON='steve', PEOPLE='dave'

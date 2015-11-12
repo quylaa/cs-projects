@@ -50,7 +50,7 @@ Relation Relation::Project(vector< pair<string, string> > items)
         vector<string> newtup;
         for (size_t it = 0; it < indexes.size(); ++it) {
             // if (items.at(it).second != "ID") continue;
-            newtup.push_back(rt->at(it));
+            newtup.push_back(rt->at(indexes.at(it)));
             // cout << schema.at(it) << " -> " << val << " \n";
             // try {
             //     results.at(schema.at(it)).push_back(val);
@@ -96,6 +96,7 @@ void Relation::Rename(vector<string> ids)
         for (size_t i = 0; i < schema.size(); ++i) {
             for (size_t j = 0; j < i; ++j) {
                 if (schema.at(j) == schema.at(i)) {
+                    Renamed = true;
                     set< vector<string> > newDatas;
                     for (set< vector<string> >::iterator st = datas.begin(); st != datas.end(); ++st) {
                         if (st->at(i) == st->at(j)) newDatas.insert((*st));
@@ -174,11 +175,11 @@ set <vector<string> > Relation::getData()
     return datas;
 }
 
-// vector<bool> Relation::hasDone()
-// {
+bool Relation::hasRenamed()
+{
 //     vector<bool> done;
 //     done.push_back(hasSelected);
 //     done.push_back(hasProjected);
 //     done.push_back(hasRenamed);
-//     return done;
-// }
+    return Renamed;
+}
