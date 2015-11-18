@@ -1,0 +1,15 @@
+Schemes populated after 2 passes through the Rules.
+g('4',B)? Yes(1)
+  B='5'
+r(E,'3')? Yes(1)
+  E='4'
+f(A,B)? Yes(2)
+  A='1', B='2'
+  A='4', B='3'
+g(A,B)? Yes(2)
+  A='3', B='2'
+  A='4', B='5'
+r(A,B)? Yes(3)
+  A='1', B='2'
+  A='3', B='5'
+  A='4', B='3'
