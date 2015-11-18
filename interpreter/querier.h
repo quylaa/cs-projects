@@ -13,21 +13,25 @@ public:
     Querier() {};
     ~Querier() {};
 
-    void makeData(vector< vector<Predicate> > datas)
+    void makeData(vector<Token> tokens)
     {
-        Database db;
-        vector<Predicate> schemes = datas.at(0);
-        vector<Predicate> facts = datas.at(1);
-        vector<Predicate> queries = datas.at(2);
-        vector<Relation> relations;
+        datalogProgram dlp;
+        if (dlp.parse(tokens)) {
+            Database db;
+            vector<Predicate> schemes = dlp.getSchemes();
+            vector<Predicate> facts = dlp.getFacts();
+            vector<Rule> rules = dlp.getRules();
+            vector<Predicate> queries = dlp.getQueries();
+            vector<Relation> relations;
 
-        getSchemes(schemes, relations);
-        getFacts(facts, relations);
+            getSchemes(schemes, relations);
+            getFacts(facts, relations);
 
-        for (vector<Relation>::iterator rt = relations.begin(); rt != relations.end(); ++rt) {
-            db.addRelation((*rt));
+            for (vector<Relation>::iterator rt = relations.begin(); rt != relations.end(); ++rt) {
+                db.addRelation((*rt));
+            }
+            doQueries(queries, db);
         }
-        doQueries(queries, db);
     };
 
     void getSchemes(vector<Predicate> schemes, vector<Relation> &relations)

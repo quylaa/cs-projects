@@ -37,7 +37,7 @@ class datalogProgram
          * Attempts to parse the given tokens into a recognized language
          *
          */
-        vector< vector<Predicate> > parse(vector<Token> tokens);
+        bool parse(vector<Token> tokens);
 
         void scheme();
 
@@ -98,6 +98,14 @@ class datalogProgram
         string toString();
 
         vector< vector<Predicate> > toDatabase();
+
+        vector<Predicate> getSchemes();
+
+        vector<Predicate> getFacts();
+
+        vector<Rule> getRules();
+
+        vector<Predicate> getQueries();
 };
 
 #endif

@@ -6,7 +6,7 @@ datalogProgram::datalogProgram(){}
 
 datalogProgram::~datalogProgram(){}
 
-vector< vector<Predicate> > datalogProgram::parse(vector<Token> tokens)
+bool datalogProgram::parse(vector<Token> tokens)
 {
     vt = tokens;
     try {
@@ -26,13 +26,15 @@ vector< vector<Predicate> > datalogProgram::parse(vector<Token> tokens)
         queryList();
         match("EOF");
     } catch (Token t) {
-        ostringstream o;
-        o << "Failure!\n";
-        o << "  (" << t.type << ",\"" << t.content << "\"," << t.line << ")" << endl;
-        vector< vector<Predicate> > empt;
-        return empt;
+        // ostringstream o;
+        // o << "Failure!\n";
+        // o << "  (" << t.type << ",\"" << t.content << "\"," << t.line << ")" << endl;
+        // vector< vector<Predicate> > empt;
+        // return empt;
+        return false;
     }
-    return toDatabase();
+    // return toDatabase();
+    return true;
 }
 
 void datalogProgram::scheme()
@@ -309,4 +311,24 @@ vector< vector<Predicate> > datalogProgram::toDatabase()
     datas.push_back(facts);
     datas.push_back(queries);
     return datas;
+}
+
+vector<Predicate> datalogProgram::getSchemes()
+{
+    return schemes;
+}
+
+vector<Predicate> datalogProgram::getFacts()
+{
+    return facts;
+}
+
+vector<Rule> datalogProgram::getRules()
+{
+    return rules;
+}
+
+vector<Predicate> datalogProgram::getQueries()
+{
+    return queries;
 }

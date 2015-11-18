@@ -42,17 +42,17 @@ vector<Token> tokenize(stack<char> lines)
     return tokenlist;
 }
 
-vector< vector<Predicate> > datalog(vector<Token> tokens)
-{
-    datalogProgram dlp;
-    return dlp.parse(tokens);
-}
+// vector< vector<Predicate> > datalog(vector<Token> tokens)
+// {
+//     datalogProgram dlp;
+//     return dlp.parse(tokens);
+// }
 
 int main(int argc, char* argv[])
 {
-    stack<char> lines = flip(getInput(argv[1]));
-    vector< vector<Predicate> > datas = datalog(tokenize(lines));
+    vector<Token> tokens = tokenize(flip(getInput(argv[1])));
+    // vector< vector<Predicate> > datas = datalog(tokenize(lines));
     Querier q;
-    q.makeData(datas);
+    q.makeData(tokens);
     return 0;
 }
