@@ -25,9 +25,10 @@ void Querier::makeData(vector<Token> tokens)
 
 void Querier::getSchemes(vector<Predicate> schemes, vector<Relation> &relations)
 {
-    for (vector<Predicate>::iterator st = schemes.begin(); st != schemes.end(); ++st) {
-        string name = st->id;
-        vector<Param> parms = st->params;
+    // for (vector<Predicate>::iterator st = schemes.begin(); st != schemes.end(); ++st) {
+    for (auto st : schemes) {
+        string name = st.id;
+        vector<Param> parms = st.params;
         vector<string> schema;
         for (size_t i = 0; i < parms.size(); ++i) {
             schema.push_back(parms.at(i).toString());
@@ -38,10 +39,11 @@ void Querier::getSchemes(vector<Predicate> schemes, vector<Relation> &relations)
 
 void Querier::getFacts(vector<Predicate> facts, vector<Relation> &relations)
 {
-    for (vector<Predicate>::iterator pt = facts.begin(); pt != facts.end(); ++pt) {
+    // for (vector<Predicate>::iterator pt = facts.begin(); pt != facts.end(); ++pt) {
+    for (auto pt : facts) {
         for (size_t j = 0; j < relations.size(); ++j) {
-            if (pt->id == relations.at(j).getName()) {
-                vector<Param> parms = pt->params;
+            if (pt.id == relations.at(j).getName()) {
+                vector<Param> parms = pt.params;
                 vector<string> tups;
                 for (size_t t = 0; t < parms.size(); ++t) {
                     if (parms.at(t).isString) tups.push_back(parms.at(t).toString());
@@ -51,6 +53,15 @@ void Querier::getFacts(vector<Predicate> facts, vector<Relation> &relations)
         }
     }
 };
+
+void Querier::getRules(vector<Rule> rules, Database db)
+{
+    for (auto rt : rules) {
+        Predicate head = rt.head;
+        vector<Predicate> right = rt.rules;
+
+    }
+}
 
 void Querier::doQueries(vector<Predicate> qs, Database db)
 {
@@ -65,11 +76,12 @@ vector< pair<string, vector< pair<string, string> > > > Querier::getQueries(vect
 {
     ostringstream res;
     vector< pair<string, vector< pair<string, string> > > > quers;
-    for (vector<Predicate>::iterator qt = queries.begin(); qt != queries.end(); ++qt) {
-        string id = qt->id;
-        vector<Param> prams = qt->params;
+    // for (vector<Predicate>::iterator qt = queries.begin(); qt != queries.end(); ++qt) {
+    for (auto qt : queries) {
+        string id = qt.id;
+        vector<Param> prams = qt.params;
         vector< pair<string, string> > parms;
-        res << qt->toString() << endl;
+        res << qt.toString() << endl;
         for (size_t k = 0; k < prams.size(); ++k) {
             if(prams.at(k).isID) {
                 parms.push_back(pair<string, string>(prams.at(k).value, "ID"));
@@ -85,7 +97,7 @@ vector< pair<string, vector< pair<string, string> > > > Querier::getQueries(vect
 };
 
 Relation Querier::doQuery(pair<string, vector< pair<string, string> > > query, Database db)
-{
+{//why the hell is this not accepting straight predicates?
     string id = query.first;
     vector< pair<string, string> > params = query.second;
 
@@ -102,10 +114,10 @@ Relation Querier::doQuery(pair<string, vector< pair<string, string> > > query, D
     if (!ids.empty()) {
         Relation temp = result.Project(params);
         temp.Rename(ids);
-        printResult(temp, result);
+        // printResult(temp, result);
         return temp;
     }
-    printResult(result);
+    // printResult(result);
     return result;
 };
 

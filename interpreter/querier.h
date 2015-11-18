@@ -19,6 +19,8 @@ public:
 
     void getFacts(vector<Predicate> facts, vector<Relation> &relations);
 
+    void getRules(vector<Rule> rules, Database db);
+
     void doQueries(vector<Predicate> qs, Database db);
 
     vector< pair<string, vector< pair<string, string> > > > getQueries(vector<Predicate> queries);
