@@ -16,13 +16,14 @@ Relation Relation::Select(vector< pair<string, string> > items)
             : params.push_back("WRONG");
     }
     bool matches = true;
-    for (set< vector<string> >::iterator rt = datas.begin(); rt != datas.end(); ++rt) {
+    // for (set< vector<string> >::iterator rt = datas.begin(); rt != datas.end(); ++rt) {
+    for (auto rt : datas) {
         matches = true;
         for (size_t i = 0; i < params.size(); ++i) {
             if (params.at(i) == "WRONG") continue;
-            if (rt->at(i) != params.at(i)) matches = false;
+            if (rt.at(i) != params.at(i)) matches = false;
         }
-        if (matches == true) results.insert((*rt));
+        if (matches == true) results.insert(rt);
     }
     Relation temp(name, schema, results);
     return temp;
@@ -39,10 +40,11 @@ Relation Relation::Project(vector< pair<string, string> > items)
             newSchema.push_back(schema.at(t));
         }
     }
-    for (set< vector<string> >::iterator rt = datas.begin(); rt != datas.end(); ++rt) {
+    // for (set< vector<string> >::iterator rt = datas.begin(); rt != datas.end(); ++rt) {
+    for (auto rt : datas) {
         vector<string> newtup;
         for (size_t it = 0; it < indexes.size(); ++it) {
-            newtup.push_back(rt->at(indexes.at(it)));
+            newtup.push_back(rt.at(indexes.at(it)));
         }
         results.insert(newtup);
     }
@@ -60,8 +62,9 @@ void Relation::Rename(vector<string> ids)
             for (size_t j = 0; j < i; ++j) {
                 if (schema.at(j) == schema.at(i)) {
                     set< vector<string> > newDatas;
-                    for (set< vector<string> >::iterator st = datas.begin(); st != datas.end(); ++st) {
-                        if (st->at(i) == st->at(j)) newDatas.insert((*st));
+                    // for (set< vector<string> >::iterator st = datas.begin(); st != datas.end(); ++st) {
+                    for (auto st : datas) {
+                        if (st.at(i) == st.at(j)) newDatas.insert(st);
                     }
                     datas = newDatas;
                 }
@@ -72,17 +75,18 @@ void Relation::Rename(vector<string> ids)
 string Relation::makeString()
 {
     ostringstream out;
-    for (set< vector<string> >::iterator st = datas.begin(); st != datas.end(); ++st) {
+    // for (set< vector<string> >::iterator st = datas.begin(); st != datas.end(); ++st) {
+    for (auto st : datas) {
         out << "  ";
         vector<string> dn;
-        for (size_t s = 0; s < st->size(); ++s) {
+        for (size_t s = 0; s < st.size(); ++s) {
             bool fnd = false;
             for (size_t i = 0; i < dn.size(); ++i) {
                 if (dn.at(i) == schema.at(s)) fnd = true;
             }
             if (fnd) continue;
             if (s != 0) out << ", ";
-            out << schema.at(s) << "=" << st->at(s);
+            out << schema.at(s) << "=" << st.at(s);
             dn.push_back(schema.at(s));
         }
         out << endl;
@@ -104,11 +108,12 @@ string Relation::print()
     }
     if (dupe) out << makeString();
     else {
-        for (set< vector<string> >::iterator st = datas.begin(); st != datas.end(); ++st) {
+        // for (set< vector<string> >::iterator st = datas.begin(); st != datas.end(); ++st) {
+        for (auto st : datas) {
             out << "  ";
-            for (size_t s = 0; s < st->size(); ++s) {
+            for (size_t s = 0; s < st.size(); ++s) {
                 if (s != 0) out << ", ";
-                out << schema.at(s) << "=" << st->at(s);
+                out << schema.at(s) << "=" << st.at(s);
             }
             out << endl;
         }
