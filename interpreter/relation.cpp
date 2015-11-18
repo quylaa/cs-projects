@@ -126,7 +126,7 @@ vector<string> Relation::getSchema()
     return schema;
 }
 
-set <vector<string> > Relation::getData()
+int Relation::getSize()
 {
-    return datas;
+    return datas.size();
 }

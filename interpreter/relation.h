@@ -41,7 +41,7 @@ class Relation
 
         string getName();
 
-        set< vector<string> > getData();
+        int getSize();
 
         vector<string> getSchema();
 };

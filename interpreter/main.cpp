@@ -6,7 +6,7 @@
 #include "fsmbox.h"
 #include "datalogProgram.h"
 #include "database.h"
-#include "handler.h"
+#include "querier.h"
 
 stack<char> getInput(string fileName)
 {
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 {
     stack<char> lines = flip(getInput(argv[1]));
     vector< vector<Predicate> > datas = datalog(tokenize(lines));
-    Handler h;
-    h.makeData(datas);
+    Querier q;
+    q.makeData(datas);
     return 0;
 }

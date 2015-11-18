@@ -1,17 +1,17 @@
 // Written by Aleks Christensen
 
-#ifndef HANDLER_H_
-#define HANDLER_H_
+#ifndef QUERIER_H_
+#define QUERIER_H_
 
 #include <utility>
 #include "datalogProgram.h"
 #include "database.h"
 
-class Handler
+class Querier
 {
 public:
-    Handler() {};
-    ~Handler() {};
+    Querier() {};
+    ~Querier() {};
 
     void makeData(vector< vector<Predicate> > datas)
     {
@@ -118,22 +118,22 @@ public:
 
     void printResult(Relation result)
     {
-        if (result.getData().size() == 0) {
+        if (result.getSize() == 0) {
             cout << " No\n";
-        } else if (result.getData().size() == 1) {
+        } else if (result.getSize() == 1) {
             cout << " Yes(1)\n";
         } else {
-            cout << " Yes(" << result.getData().size() << ")\n";
+            cout << " Yes(" << result.getSize() << ")\n";
             cout << result.print();
         }
     };
 
     void printResult(Relation result, Relation prev)
     {
-        if (result.getData().size() == 0) {
+        if (result.getSize() == 0) {
             cout << " No\n";
-        } else if (!schemaComp(result, prev) || result.getData().size() > 1) {
-            cout << " Yes(" << result.getData().size() << ")\n";
+        } else if (!schemaComp(result, prev) || result.getSize() > 1) {
+            cout << " Yes(" << result.getSize() << ")\n";
             cout << result.print();
         } else {
             cout << " Yes(1)\n";
