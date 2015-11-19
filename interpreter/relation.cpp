@@ -7,12 +7,12 @@ void Relation::addTuple(vector<string> more)
     datas.insert(more);
 }
 
-Relation Relation::Select(vector< pair<string, string> > items)
+Relation Relation::Select(vector<Param> items)
 {
     set< vector<string> > results;
     vector<string> params;
     for (size_t it = 0; it < items.size(); ++it) {
-        items.at(it).second == "STR" ? params.push_back(items.at(it).first)
+        items.at(it).isString ? params.push_back(items.at(it).value)
             : params.push_back("WRONG");
     }
     bool matches = true;
@@ -29,13 +29,13 @@ Relation Relation::Select(vector< pair<string, string> > items)
     return temp;
 }
 
-Relation Relation::Project(vector< pair<string, string> > items)
+Relation Relation::Project(vector<Param> items)
 {
     set< vector<string> > results;
     vector<string> newSchema;
     vector<int> indexes;
     for (size_t t = 0; t < items.size(); ++t) {
-        if (items.at(t).second == "ID") {
+        if (items.at(t).isID) {
             indexes.push_back(t);
             newSchema.push_back(schema.at(t));
         }

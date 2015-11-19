@@ -63,15 +63,6 @@ void Querier::getRules(vector<Rule> rules, Database db)
     }
 }
 
-void Querier::doQueries(vector<Predicate> qs, Database db)
-{
-    vector< pair<string, vector< pair<string, string> > > > queries = getQueries(qs);
-    for (size_t o = 0; o < queries.size(); ++o) {
-        cout << qs.at(o).toString() << "?";
-        Relation t = doQuery(queries.at(o), db);
-    }
-};
-
 vector< pair<string, vector< pair<string, string> > > > Querier::getQueries(vector<Predicate> queries)
 {
     ostringstream res;
@@ -96,19 +87,28 @@ vector< pair<string, vector< pair<string, string> > > > Querier::getQueries(vect
     return quers;
 };
 
-Relation Querier::doQuery(pair<string, vector< pair<string, string> > > query, Database db)
-{//why the hell is this not accepting straight predicates?
-    string id = query.first;
-    vector< pair<string, string> > params = query.second;
+void Querier::doQueries(vector<Predicate> queries, Database db)
+{
+    // vector< pair<string, vector< pair<string, string> > > > queries = getQueries(qs);
+    for (size_t o = 0; o < queries.size(); ++o) {
+        cout << queries.at(o).toString() << "?";
+        Relation t = doQuery(queries.at(o), db);
+    }
+};
+
+Relation Querier::doQuery(Predicate query, Database db)
+{
+    string id = query.id;
+    vector<Param> params = query.params;
 
     Relation r = db.getRelation(id);
     if (r.getName() == "NULL") return r;
 
     Relation result = r.Select(params);
     vector<string> ids;
-    for (size_t r = 0; r < query.second.size(); ++r) {
-        if (query.second.at(r).second == "ID") {
-            ids.push_back(query.second.at(r).first);
+    for (size_t r = 0; r < query.params.size(); ++r) {
+        if (query.params.at(r).isID) {
+            ids.push_back(query.params.at(r).value);
         }
     }
     if (!ids.empty()) {

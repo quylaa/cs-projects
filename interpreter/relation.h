@@ -11,6 +11,7 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include "predicate.h"
 
 using namespace std;
 
@@ -29,9 +30,9 @@ class Relation
 
         void addTuple(vector<string> more);
 
-        Relation Select(vector< pair<string, string> > items);
+        Relation Select(vector<Param> items);
 
-        Relation Project(vector< pair<string, string> > items);
+        Relation Project(vector<Param> items);
 
         void Rename(vector<string> ids);
 

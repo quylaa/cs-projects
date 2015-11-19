@@ -25,7 +25,7 @@ public:
 
     vector< pair<string, vector< pair<string, string> > > > getQueries(vector<Predicate> queries);
 
-    Relation doQuery(pair<string, vector< pair<string, string> > > query, Database db);
+    Relation doQuery(Predicate query, Database db);
 
     void printResult(Relation result);
 
