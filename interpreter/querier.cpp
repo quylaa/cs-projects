@@ -19,13 +19,13 @@ void Querier::makeData(vector<Token> tokens)
         for (auto rt : relations) {
             db.addRelation(rt);
         }
+        doRules(rules, db);
         doQueries(queries, db);
     }
 };
 
 void Querier::getSchemes(vector<Predicate> schemes, vector<Relation> &relations)
 {
-    // for (vector<Predicate>::iterator st = schemes.begin(); st != schemes.end(); ++st) {
     for (auto st : schemes) {
         string name = st.id;
         vector<Param> parms = st.params;
@@ -39,7 +39,6 @@ void Querier::getSchemes(vector<Predicate> schemes, vector<Relation> &relations)
 
 void Querier::getFacts(vector<Predicate> facts, vector<Relation> &relations)
 {
-    // for (vector<Predicate>::iterator pt = facts.begin(); pt != facts.end(); ++pt) {
     for (auto pt : facts) {
         for (size_t j = 0; j < relations.size(); ++j) {
             if (pt.id == relations.at(j).getName()) {
@@ -54,42 +53,49 @@ void Querier::getFacts(vector<Predicate> facts, vector<Relation> &relations)
     }
 };
 
-void Querier::getRules(vector<Rule> rules, Database db)
+void Querier::doRules(vector<Rule> rules, Database db)
 {
     for (auto rt : rules) {
         Predicate head = rt.head;
         vector<Predicate> right = rt.rules;
+        vector<Relation> rels;
+
+        for (auto pred : right) rels.push_back(doQuery(pred, db));
+        for (auto r : rels) cout << r.getName() << " " << r.print() << endl;
+        // rels.size() > 1 ? Relation result = join(rels) : Relation result = rels.at(0);
 
     }
 }
 
-vector< pair<string, vector< pair<string, string> > > > Querier::getQueries(vector<Predicate> queries)
+Relation Querier::join(vector<Relation> rels)
 {
-    ostringstream res;
-    vector< pair<string, vector< pair<string, string> > > > quers;
-    // for (vector<Predicate>::iterator qt = queries.begin(); qt != queries.end(); ++qt) {
-    for (auto qt : queries) {
-        string id = qt.id;
-        vector<Param> prams = qt.params;
-        vector< pair<string, string> > parms;
-        res << qt.toString() << endl;
-        for (size_t k = 0; k < prams.size(); ++k) {
-            if(prams.at(k).isID) {
-                parms.push_back(pair<string, string>(prams.at(k).value, "ID"));
-            } else if (prams.at(k).isString) {
-                parms.push_back(pair<string, string>(prams.at(k).value, "STR"));
-            } else {
-                parms.push_back(pair<string, string>(prams.at(k).value, "EXP"));
+    map<string, bool> done;
+    bool need = false;
+    for (auto r : rels) {
+        for (auto s : r.getSchema()) {
+            if (done.find(s) != done.end()) {
+                need = true;
+                done.at(s) = true;
+            }
+            else done.insert(pair<string, bool>(s,false));
+        }
+    }
+    if (need) {
+        vector<Relation> toJoin;
+        vector<string> indexes;
+        for (auto id : done) {
+            if (id.second) indexes.push_back(id.first);
+        }
+        for (auto rel : rels) {
+            for (auto idx : indexes) {
+                // toJoin.push_back()
             }
         }
-        quers.push_back(pair< string, vector< pair<string, string> > >(id, parms));
     }
-    return quers;
-};
+}
 
 void Querier::doQueries(vector<Predicate> queries, Database db)
 {
-    // vector< pair<string, vector< pair<string, string> > > > queries = getQueries(qs);
     for (size_t o = 0; o < queries.size(); ++o) {
         cout << queries.at(o).toString() << "?";
         Relation t = doQuery(queries.at(o), db);
