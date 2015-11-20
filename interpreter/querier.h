@@ -19,15 +19,17 @@ public:
 
     void getFacts(vector<Predicate> facts, vector<Relation> &relations);
 
-    void doRules(vector<Rule> rules, Database db);
+    void doRules(vector<Rule> rules, Database &db);
 
     Relation join(vector<Relation> rels);
 
+    Relation natJoin(Relation rel);
+
     Relation cProduct(vector<Relation> rels);
 
-    void doQueries(vector<Predicate> qs, Database db);
+    void doQueries(vector<Predicate> qs, Database &db);
 
-    Relation doQuery(Predicate query, Database db);
+    Relation doQuery(Predicate query, Database &db);
 
     void printResult(Relation result);
 

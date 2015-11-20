@@ -53,7 +53,7 @@ void Querier::getFacts(vector<Predicate> facts, vector<Relation> &relations)
     }
 };
 
-void Querier::doRules(vector<Rule> rules, Database db)
+void Querier::doRules(vector<Rule> rules, Database &db)
 {
     for (auto rt : rules) {
         Predicate head = rt.head;
@@ -61,40 +61,102 @@ void Querier::doRules(vector<Rule> rules, Database db)
         vector<Relation> rels;
 
         for (auto pred : right) rels.push_back(doQuery(pred, db));
-        for (auto r : rels) cout << r.getName() << " " << r.print() << endl;
+        // for (auto r : rels) cout << r.getName() << " " << r.print() << endl;
         // rels.size() > 1 ? Relation result = join(rels) : Relation result = rels.at(0);
-
+        join(rels);
     }
 }
 
 Relation Querier::join(vector<Relation> rels)
 {
-    map<string, bool> done;
-    bool need = false;
-    for (auto r : rels) {
-        for (auto s : r.getSchema()) {
-            if (done.find(s) != done.end()) {
-                need = true;
-                done.at(s) = true;
-            }
-            else done.insert(pair<string, bool>(s,false));
-        }
-    }
-    if (need) {
-        vector<Relation> toJoin;
-        vector<string> indexes;
-        for (auto id : done) {
-            if (id.second) indexes.push_back(id.first);
-        }
-        for (auto rel : rels) {
-            for (auto idx : indexes) {
-                // toJoin.push_back()
-            }
-        }
-    }
+    Relation crossed = cProduct(rels);
+    return natJoin(crossed);
+    // map<string, bool> done;
+    // bool need = false;
+    // for (auto s : crossed.getSchema()) {
+    //     if (done.find(s) != done.end()) {
+    //         need = true;
+    //         done.at(s) = true;
+    //     }
+    //     else done.insert(pair<string, bool>(s,false));
+    // }
+    // for (auto r : rels) {
+    //     for (auto s : r.getSchema()) {
+    //         if (done.find(s) != done.end()) {
+    //             need = true;
+    //             done.at(s) = true;
+    //         }
+    //     }
+    // }
+    // if (need) {
+    //     vector<Relation> toJoin;
+    //     vector<string> indexes;
+    //     vector<Param> parms;
+    //     for (auto id : done) {
+    //         if (id.second) indexes.push_back(id.first);
+    //     }
+    //     for (auto rel : rels) {
+    //         for (auto idx : indexes) {
+    //             // toJoin.push_back()
+    //         }
+    //     }
+    // }
 }
 
-void Querier::doQueries(vector<Predicate> queries, Database db)
+Relation Querier::natJoin(Relation rel)
+{
+    map<string, vector<int> > indexes;
+    vector<string> sch = rel.getSchema();
+    for (vector<string>::iterator idx = sch.begin(); idx != sch.end(); ++idx) {
+        if (indexes.find((*idx)) != indexes.end()) continue;
+        vector<int> locs;
+        auto f = idx;
+        locs.push_back(f-sch.begin());
+        do {
+            f = find(f+1, sch.end(), (*idx));
+            if (f != sch.end()) locs.push_back(f-sch.begin());
+            else break;
+        } while (true);
+        indexes.insert(pair<string, vector<int> >((*idx), locs));
+    }
+    for (auto i : indexes) {
+        cout << i.first << " :: ";
+        for (auto j : i.second) {
+            cout << j << " ";
+        }
+        cout << endl;
+    }
+    return rel;
+}
+
+Relation Querier::cProduct(vector<Relation> rels)
+{
+    vector<string> newSchema;
+    set< vector<string> > newDatas;
+    string newName;
+    int tupleCnt = 1; // tracks final # tuples by multiplying each relation size together
+    for (auto rel : rels) {
+        for (auto s : rel.getSchema()) {
+            newSchema.push_back(s); // create giant, messy schema
+        }
+        tupleCnt = tupleCnt * rel.getSize(); // multiply existing count by size
+        newName.append(rel.getName());
+    }
+    for (int i = 0; i < tupleCnt; ++i) {
+        vector<string> newTup;
+        for (auto rel : rels) { // iterate over each relation
+            for (auto tup : rel.getDatas()) { // iterate over tuples in relation
+                for (auto d : tup) { // iterate over data value in tuple
+                    newTup.push_back(d);
+                }
+            }
+        }
+        newDatas.insert(newTup); // add messy tuple to new set
+    }
+    return Relation(newName, newSchema, newDatas); // return cross product
+}
+
+void Querier::doQueries(vector<Predicate> queries, Database &db)
 {
     for (size_t o = 0; o < queries.size(); ++o) {
         cout << queries.at(o).toString() << "?";
@@ -102,7 +164,7 @@ void Querier::doQueries(vector<Predicate> queries, Database db)
     }
 };
 
-Relation Querier::doQuery(Predicate query, Database db)
+Relation Querier::doQuery(Predicate query, Database &db)
 {
     string id = query.id;
     vector<Param> params = query.params;

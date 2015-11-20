@@ -130,3 +130,8 @@ int Relation::getSize()
 {
     return datas.size();
 }
+
+set< vector<string> > Relation::getDatas()
+{
+    return datas;
+}

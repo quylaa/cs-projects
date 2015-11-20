@@ -44,6 +44,8 @@ class Relation
 
         int getSize();
 
+        set< vector<string> > getDatas();
+
         vector<string> getSchema();
 };
 
