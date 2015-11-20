@@ -67,10 +67,52 @@ void Querier::doRules(vector<Rule> rules, Database &db)
     }
 }
 
-Relation Querier::join(vector<Relation> rels)
+Relation Querier::join(vector<Relation> &rels)
 {
-    Relation crossed = cProduct(rels);
-    return natJoin(crossed);
+    while (rels.size() > 1)
+    {
+        vector< pair<int,int> > dupes;
+        set< vector<string> > datA = rels.at(0).getDatas();
+        set< vector<string> > datB = rels.at(1).getDatas();
+        // for (size_t i = 0; i < rels.size(); ++i) {
+            // if (i+1 != rels.size()) {
+                vector<string> schA = rels.at(0).getSchema();
+                vector<string> schB = rels.at(1).getSchema();
+                for (size_t j = 0; j < schA.size(); ++j) {
+                    auto f = find(schB.begin(), schB.end(), schA.at(j));
+                    if (f != schB.end()) dupes.push_back(pair<int,int>(j,f-schB.begin()));
+                }
+            // }
+        // }
+        if (!dupes.empty()) {
+            set< vector<string> > newDatas;
+            vector<string> newSchema = schA;
+            for (auto p : dupes) {
+                schB.erase(schB.begin() + p.second);
+                for (auto tupA : datA) {
+                    for (auto tupB : datB) {
+                        if (tupA.at(p.first) == tupB.at(p.second)) {
+                            tupB.erase(tupB.begin() + p.second);
+                            vector<string> newTup = tupA;
+                            newTup.insert(newTup.end(), tupB.begin(), tupB.end());
+                            newDatas.insert(newTup);
+                        }
+                    }
+                }
+            }
+            string newName = rels.at(0).getName() + rels.at(1).getName();
+            newSchema.insert(newSchema.end(), schB.begin(), schB.end());
+            rels.at(0) = Relation(newName, newSchema, newDatas);
+            rels.erase(rels.begin()+1);
+        } else {
+            rels.at(0) = cProduct(rels);
+            rels.erase(rels.begin()+1);
+        }
+        cout << rels.at(0).print() << endl;
+    }
+    return rels.at(0);
+    // Relation crossed = cProduct(rels);
+    // return natJoin(crossed);
     // map<string, bool> done;
     // bool need = false;
     // for (auto s : crossed.getSchema()) {
@@ -105,26 +147,31 @@ Relation Querier::join(vector<Relation> rels)
 
 Relation Querier::natJoin(Relation rel)
 {
-    map<string, vector<int> > indexes;
+    map<string, vector<int> > indexes; // map of all duplicate schema value locations
     vector<string> sch = rel.getSchema();
     for (vector<string>::iterator idx = sch.begin(); idx != sch.end(); ++idx) {
-        if (indexes.find((*idx)) != indexes.end()) continue;
-        vector<int> locs;
-        auto f = idx;
-        locs.push_back(f-sch.begin());
+        if (indexes.find((*idx)) != indexes.end()) continue; // if already searched for, skip
+        vector<int> locs; // else initialize temp vector
+        locs.push_back(idx-sch.begin()); // add current location
         do {
-            f = find(f+1, sch.end(), (*idx));
-            if (f != sch.end()) locs.push_back(f-sch.begin());
-            else break;
-        } while (true);
-        indexes.insert(pair<string, vector<int> >((*idx), locs));
+            vector<string>::iterator f = find(f+1, sch.end(), (*idx)); // find next dupe
+            if (f != sch.end()) locs.push_back(f-sch.begin()); // if exists, add
+            else break; // else break
+        } while (true); // continue while there might still be duplicates
+        indexes.insert(pair<string, vector<int> >((*idx), locs)); // save to map
     }
-    for (auto i : indexes) {
+    for (auto i : indexes) { // debugging output
         cout << i.first << " :: ";
         for (auto j : i.second) {
             cout << j << " ";
         }
         cout << endl;
+    }
+
+    for (auto tup : rel.getDatas()) {
+        for (auto col : indexes) {
+
+        }
     }
     return rel;
 }

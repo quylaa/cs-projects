@@ -21,7 +21,7 @@ public:
 
     void doRules(vector<Rule> rules, Database &db);
 
-    Relation join(vector<Relation> rels);
+    Relation join(vector<Relation> &rels);
 
     Relation natJoin(Relation rel);
 

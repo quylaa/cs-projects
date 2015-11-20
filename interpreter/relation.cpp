@@ -53,20 +53,20 @@ Relation Relation::Project(vector<Param> items)
 
 void Relation::Rename(vector<string> ids)
 {
-        for (size_t pt = 0; pt < schema.size(); ++pt) {
-            schema.at(pt) = ids.at(pt);
-        }
-        for (size_t i = 0; i < schema.size(); ++i) {
-            for (size_t j = 0; j < i; ++j) {
-                if (schema.at(j) == schema.at(i)) {
-                    set< vector<string> > newDatas;
-                    for (auto st : datas) {
-                        if (st.at(i) == st.at(j)) newDatas.insert(st);
-                    }
-                    datas = newDatas;
+    for (size_t pt = 0; pt < schema.size(); ++pt) {
+        schema.at(pt) = ids.at(pt);
+    }
+    for (size_t i = 0; i < schema.size(); ++i) {
+        for (size_t j = 0; j < i; ++j) {
+            if (schema.at(j) == schema.at(i)) {
+                set< vector<string> > newDatas;
+                for (auto st : datas) {
+                    if (st.at(i) == st.at(j)) newDatas.insert(st);
                 }
+                datas = newDatas;
             }
         }
+    }
 }
 
 string Relation::makeString()
