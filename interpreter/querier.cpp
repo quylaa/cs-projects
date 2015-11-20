@@ -67,85 +67,52 @@ void Querier::doRules(vector<Rule> rules, Database &db)
     }
 }
 
-Relation Querier::join(vector<Relation> &rels)
+Relation Querier::join(vector<Relation> &rels) // correct version of join
 {
-    while (rels.size() > 1)
+    while (rels.size() > 1) // while there's 2 or more to join
     {
-        vector< pair<int,int> > dupes;
+        vector< pair<int,int> > dupes; // pair<index1, index2>
         set< vector<string> > datA = rels.at(0).getDatas();
         set< vector<string> > datB = rels.at(1).getDatas();
-        // for (size_t i = 0; i < rels.size(); ++i) {
-            // if (i+1 != rels.size()) {
-                vector<string> schA = rels.at(0).getSchema();
-                vector<string> schB = rels.at(1).getSchema();
-                for (size_t j = 0; j < schA.size(); ++j) {
-                    auto f = find(schB.begin(), schB.end(), schA.at(j));
-                    if (f != schB.end()) dupes.push_back(pair<int,int>(j,f-schB.begin()));
-                }
-            // }
-        // }
-        if (!dupes.empty()) {
-            set< vector<string> > newDatas;
-            vector<string> newSchema = schA;
-            for (auto p : dupes) {
-                schB.erase(schB.begin() + p.second);
-                for (auto tupA : datA) {
+        vector<string> schA = rels.at(0).getSchema();
+        vector<string> schB = rels.at(1).getSchema();
+        for (size_t j = 0; j < schA.size(); ++j) {
+            auto f = find(schB.begin(), schB.end(), schA.at(j)); // find duplicate
+            if (f != schB.end()) dupes.push_back(pair<int,int>(j,f-schB.begin())); // save pair of indexes
+        }
+        if (!dupes.empty()) { // if there are duplicates
+            set< vector<string> > newDatas; // init new datas
+            vector<string> newSchema = schA; // init new schema w/schema of A
+            for (auto p : dupes) { // iterate over duplicates found
+                schB.erase(schB.begin() + p.second); // erase duplicate in schema B
+                for (auto tupA : datA) { // iterate over tuples
                     for (auto tupB : datB) {
-                        if (tupA.at(p.first) == tupB.at(p.second)) {
-                            tupB.erase(tupB.begin() + p.second);
-                            vector<string> newTup = tupA;
-                            newTup.insert(newTup.end(), tupB.begin(), tupB.end());
-                            newDatas.insert(newTup);
+                        if (tupA.at(p.first) == tupB.at(p.second)) { // if duplicate
+                            tupB.erase(tupB.begin() + p.second); // erase second version
+                            vector<string> newTup = tupA; // init new tuple
+                            newTup.insert(newTup.end(), tupB.begin(), tupB.end()); // store the rest of tuple B
+                            newDatas.insert(newTup); // save tuple
                         }
                     }
                 }
             }
-            string newName = rels.at(0).getName() + rels.at(1).getName();
-            newSchema.insert(newSchema.end(), schB.begin(), schB.end());
-            rels.at(0) = Relation(newName, newSchema, newDatas);
-            rels.erase(rels.begin()+1);
+            string newName = rels.at(0).getName() + rels.at(1).getName(); // make name
+            newSchema.insert(newSchema.end(), schB.begin(), schB.end()); // save rest of schema B
+            rels.at(0) = Relation(newName, newSchema, newDatas); // overwrite first rel with joined rel
+            rels.erase(rels.begin()+1); // erase used relation
         } else {
-            rels.at(0) = cProduct(rels);
-            rels.erase(rels.begin()+1);
+            vector<Relation> toCross;
+            toCross.push_back(rels.at(0));
+            toCross.push_back(rels.at(1));
+            rels.at(0) = cProduct(toCross); // if no duplicates, cross product
+            rels.erase(rels.begin()+1); // erase crossed relation
         }
-        cout << rels.at(0).print() << endl;
+        cout << rels.at(0).print() << endl; // debugging
     }
     return rels.at(0);
-    // Relation crossed = cProduct(rels);
-    // return natJoin(crossed);
-    // map<string, bool> done;
-    // bool need = false;
-    // for (auto s : crossed.getSchema()) {
-    //     if (done.find(s) != done.end()) {
-    //         need = true;
-    //         done.at(s) = true;
-    //     }
-    //     else done.insert(pair<string, bool>(s,false));
-    // }
-    // for (auto r : rels) {
-    //     for (auto s : r.getSchema()) {
-    //         if (done.find(s) != done.end()) {
-    //             need = true;
-    //             done.at(s) = true;
-    //         }
-    //     }
-    // }
-    // if (need) {
-    //     vector<Relation> toJoin;
-    //     vector<string> indexes;
-    //     vector<Param> parms;
-    //     for (auto id : done) {
-    //         if (id.second) indexes.push_back(id.first);
-    //     }
-    //     for (auto rel : rels) {
-    //         for (auto idx : indexes) {
-    //             // toJoin.push_back()
-    //         }
-    //     }
-    // }
 }
 
-Relation Querier::natJoin(Relation rel)
+Relation Querier::natJoin(Relation rel) // ignore this, apparently it makes the code take too long
 {
     map<string, vector<int> > indexes; // map of all duplicate schema value locations
     vector<string> sch = rel.getSchema();
