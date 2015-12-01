@@ -39,6 +39,15 @@ class Database
             allRelations.at(name) = newRel;
         };
 
+        int size()
+        {
+            int cnt = 0;
+            for (auto rel : allRelations) {
+                cnt += rel.second.getSize();
+            }
+            return cnt;
+        };
+
         string print()
         {
             ostringstream out;

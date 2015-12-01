@@ -55,30 +55,40 @@ void Querier::getFacts(vector<Predicate> facts, vector<Relation> &relations)
 
 void Querier::doRules(vector<Rule> rules, Database &db)
 {
-    for (auto rt : rules) {
-        Predicate head = rt.head;
-        vector<Predicate> right = rt.rules;
-        vector<Relation> rels;
-        vector<string> headVals;
+    int relcnt;
+    int newcnt;
+    int passes = 0;
+    do {
+        relcnt  = db.size();
+        for (auto rt : rules) {
+            Predicate head = rt.head;
+            vector<Predicate> right = rt.rules;
+            vector<Relation> rels;
+            vector<string> headVals;
 
-        for (auto hp : head.params) headVals.push_back(hp.value);
+            for (auto hp : head.params) headVals.push_back(hp.value);
 
-        for (auto pred : right) rels.push_back(doQuery(pred, db, false));
-        // for (auto r : rels) cout << r.getName() << " " << r.print() << endl;
-        // rels.size() > 1 ? Relation result = join(rels) : Relation result = rels.at(0);
-        Relation result = join(rels).Project(headVals);
-        Relation orig = db.getRelation(head.id);
-        vector<string> rSchema = result.getSchema();
-        for (size_t ridx = 0; ridx < head.params.size(); ++ridx) {
-            for (size_t sidx = 0; sidx < rSchema.size(); ++sidx) {
-                if (head.params.at(ridx).value == rSchema.at(sidx)) {
-                    rSchema.at(sidx) = orig.getSchema().at(ridx);
+            for (auto pred : right) rels.push_back(doQuery(pred, db, false));
+            // for (auto r : rels) cout << r.getName() << " " << r.print() << endl;
+            // rels.size() > 1 ? Relation result = join(rels) : Relation result = rels.at(0);
+            Relation result = join(rels).Project(headVals);
+            Relation orig = db.getRelation(head.id);
+            vector<string> rSchema = result.getSchema();
+            for (size_t ridx = 0; ridx < head.params.size(); ++ridx) {
+                for (size_t sidx = 0; sidx < rSchema.size(); ++sidx) {
+                    if (head.params.at(ridx).value == rSchema.at(sidx)) {
+                        rSchema.at(sidx) = orig.getSchema().at(ridx);
+                    }
                 }
             }
+            Relation final = Relation(result.getName(), rSchema, result.getDatas());
+            Union(final, orig, db);
+            // cout << relcnt << " // " << db.size() << endl;
         }
-        Relation final = Relation(result.getName(), rSchema, result.getDatas());
-        Union(final, orig, db);
-    }
+        newcnt = db.size();
+        passes++;
+    } while (newcnt > relcnt);
+    cout << "Schemes populated after " << passes << " passes through the Rules." << endl;
     // cout << db.print() << endl;
 }
 
