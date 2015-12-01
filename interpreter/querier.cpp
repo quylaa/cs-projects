@@ -63,8 +63,16 @@ void Querier::doRules(vector<Rule> rules, Database &db)
         for (auto pred : right) rels.push_back(doQuery(pred, db));
         // for (auto r : rels) cout << r.getName() << " " << r.print() << endl;
         // rels.size() > 1 ? Relation result = join(rels) : Relation result = rels.at(0);
-        join(rels);
+        Relation result = join(rels);
+        result.Project(head.params);
+        Relation orig = db.getRelation(head.id);
+        
     }
+}
+
+void Querier::unionPrep(vector<Relation> &rels, Database &db)
+{
+
 }
 
 Relation Querier::join(vector<Relation> &rels) // correct version of join
@@ -112,36 +120,36 @@ Relation Querier::join(vector<Relation> &rels) // correct version of join
     return rels.at(0);
 }
 
-Relation Querier::natJoin(Relation rel) // ignore this, apparently it makes the code take too long
-{
-    map<string, vector<int> > indexes; // map of all duplicate schema value locations
-    vector<string> sch = rel.getSchema();
-    for (vector<string>::iterator idx = sch.begin(); idx != sch.end(); ++idx) {
-        if (indexes.find((*idx)) != indexes.end()) continue; // if already searched for, skip
-        vector<int> locs; // else initialize temp vector
-        locs.push_back(idx-sch.begin()); // add current location
-        do {
-            vector<string>::iterator f = find(f+1, sch.end(), (*idx)); // find next dupe
-            if (f != sch.end()) locs.push_back(f-sch.begin()); // if exists, add
-            else break; // else break
-        } while (true); // continue while there might still be duplicates
-        indexes.insert(pair<string, vector<int> >((*idx), locs)); // save to map
-    }
-    for (auto i : indexes) { // debugging output
-        cout << i.first << " :: ";
-        for (auto j : i.second) {
-            cout << j << " ";
-        }
-        cout << endl;
-    }
-
-    for (auto tup : rel.getDatas()) {
-        for (auto col : indexes) {
-
-        }
-    }
-    return rel;
-}
+// Relation Querier::natJoin(Relation rel) // ignore this, apparently it makes the code take too long
+// {
+//     map<string, vector<int> > indexes; // map of all duplicate schema value locations
+//     vector<string> sch = rel.getSchema();
+//     for (vector<string>::iterator idx = sch.begin(); idx != sch.end(); ++idx) {
+//         if (indexes.find((*idx)) != indexes.end()) continue; // if already searched for, skip
+//         vector<int> locs; // else initialize temp vector
+//         locs.push_back(idx-sch.begin()); // add current location
+//         do {
+//             vector<string>::iterator f = find(f+1, sch.end(), (*idx)); // find next dupe
+//             if (f != sch.end()) locs.push_back(f-sch.begin()); // if exists, add
+//             else break; // else break
+//         } while (true); // continue while there might still be duplicates
+//         indexes.insert(pair<string, vector<int> >((*idx), locs)); // save to map
+//     }
+//     for (auto i : indexes) { // debugging output
+//         cout << i.first << " :: ";
+//         for (auto j : i.second) {
+//             cout << j << " ";
+//         }
+//         cout << endl;
+//     }
+//
+//     for (auto tup : rel.getDatas()) {
+//         for (auto col : indexes) {
+//
+//         }
+//     }
+//     return rel;
+// }
 
 Relation Querier::cProduct(vector<Relation> rels)
 {

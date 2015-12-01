@@ -4,6 +4,17 @@
 #define TOKEN_H_
 
 #include <string>
+#include <sstream>
+
+namespace patch
+{
+    template < typename T > std::string to_string( const T& n )
+    {
+        std::ostringstream stm ;
+        stm << n ;
+        return stm.str() ;
+    }
+}
 
 class Token
 {
@@ -22,7 +33,7 @@ public:
         o.append(",");
         o.append(type);
         o.append(",");
-        o.append(std::to_string(line));
+        o.append(patch::to_string(line));
         o.append(")");
         return o;
     }

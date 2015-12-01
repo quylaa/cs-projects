@@ -23,7 +23,9 @@ public:
 
     Relation join(vector<Relation> &rels);
 
-    Relation natJoin(Relation rel);
+    // Relation natJoin(Relation rel);
+
+    void unionPrep(vector<Relation> &rels, Database &db);
 
     Relation cProduct(vector<Relation> rels);
 
