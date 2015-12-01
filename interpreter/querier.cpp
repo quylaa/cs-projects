@@ -55,11 +55,11 @@ void Querier::getFacts(vector<Predicate> facts, vector<Relation> &relations)
 
 void Querier::doRules(vector<Rule> rules, Database &db)
 {
-    int relcnt;
-    int newcnt;
+    int relcnt; // old tuple count
+    int newcnt; // new tuple count
     int passes = 0;
     do {
-        relcnt  = db.size();
+        relcnt  = db.size(); // save initial database size
         for (auto rt : rules) {
             Predicate head = rt.head;
             vector<Predicate> right = rt.rules;
@@ -85,9 +85,9 @@ void Querier::doRules(vector<Rule> rules, Database &db)
             Union(final, orig, db);
             // cout << relcnt << " // " << db.size() << endl;
         }
-        newcnt = db.size();
+        newcnt = db.size(); // get new database size
         passes++;
-    } while (newcnt > relcnt);
+    } while (newcnt > relcnt); // continue until db doesnt change
     cout << "Schemes populated after " << passes << " passes through the Rules." << endl;
     // cout << db.print() << endl;
 }
