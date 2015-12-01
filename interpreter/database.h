@@ -33,6 +33,12 @@ class Database
             allRelations.insert(pair<string, Relation>(name, rel));
         };
 
+        void modRelation(Relation newRel)
+        {
+            string name = newRel.getName();
+            allRelations.at(name) = newRel;
+        };
+
         string print()
         {
             ostringstream out;

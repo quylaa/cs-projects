@@ -25,13 +25,13 @@ public:
 
     // Relation natJoin(Relation rel);
 
-    void unionPrep(vector<Relation> &rels, Database &db);
+    void Union(Relation result, Relation orig, Database &db);
 
     Relation cProduct(vector<Relation> rels);
 
     void doQueries(vector<Predicate> qs, Database &db);
 
-    Relation doQuery(Predicate query, Database &db);
+    Relation doQuery(Predicate query, Database &db, bool print);
 
     void printResult(Relation result);
 

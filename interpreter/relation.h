@@ -34,6 +34,8 @@ class Relation
 
         Relation Project(vector<Param> items);
 
+        Relation Project(vector<string> items);
+
         void Rename(vector<string> ids);
 
         string makeString();

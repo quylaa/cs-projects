@@ -51,6 +51,32 @@ Relation Relation::Project(vector<Param> items)
     return temp;
 }
 
+Relation Relation::Project(vector<string> items)
+{
+    set< vector<string> > results;
+    vector<string> newSchema;
+    vector<int> indexes;
+
+    for (size_t t = 0; t < items.size(); ++t) {
+        for (size_t s = 0; s < schema.size(); ++s) {
+            if (items.at(t) == schema.at(s)) {
+                newSchema.push_back(items.at(t));
+                indexes.push_back(s);
+            }
+        }
+    }
+    for (auto rt : datas) {
+        vector<string> newtup;
+        for (size_t it = 0; it < indexes.size(); ++it) {
+            newtup.push_back(rt.at(indexes.at(it)));
+        }
+        results.insert(newtup);
+    }
+
+    Relation temp(name, newSchema, results);
+    return temp;
+}
+
 void Relation::Rename(vector<string> ids)
 {
     for (size_t pt = 0; pt < schema.size(); ++pt) {

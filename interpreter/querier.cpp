@@ -59,20 +59,35 @@ void Querier::doRules(vector<Rule> rules, Database &db)
         Predicate head = rt.head;
         vector<Predicate> right = rt.rules;
         vector<Relation> rels;
+        vector<string> headVals;
 
-        for (auto pred : right) rels.push_back(doQuery(pred, db));
+        for (auto hp : head.params) headVals.push_back(hp.value);
+
+        for (auto pred : right) rels.push_back(doQuery(pred, db, false));
         // for (auto r : rels) cout << r.getName() << " " << r.print() << endl;
         // rels.size() > 1 ? Relation result = join(rels) : Relation result = rels.at(0);
-        Relation result = join(rels);
-        result.Project(head.params);
+        Relation result = join(rels).Project(headVals);
         Relation orig = db.getRelation(head.id);
-        
+        vector<string> rSchema = result.getSchema();
+        for (size_t ridx = 0; ridx < head.params.size(); ++ridx) {
+            for (size_t sidx = 0; sidx < rSchema.size(); ++sidx) {
+                if (head.params.at(ridx).value == rSchema.at(sidx)) {
+                    rSchema.at(sidx) = orig.getSchema().at(ridx);
+                }
+            }
+        }
+        Relation final = Relation(result.getName(), rSchema, result.getDatas());
+        Union(final, orig, db);
     }
+    // cout << db.print() << endl;
 }
 
-void Querier::unionPrep(vector<Relation> &rels, Database &db)
+void Querier::Union(Relation result, Relation orig, Database &db)
 {
-
+    set< vector<string> > bothDatas = orig.getDatas();
+    for (auto rTup : result.getDatas()) bothDatas.insert(rTup);
+    Relation both = Relation(orig.getName(), orig.getSchema(), bothDatas);
+    db.modRelation(both);
 }
 
 Relation Querier::join(vector<Relation> &rels) // correct version of join
@@ -115,41 +130,10 @@ Relation Querier::join(vector<Relation> &rels) // correct version of join
             rels.at(0) = cProduct(toCross); // if no duplicates, cross product
             rels.erase(rels.begin()+1); // erase crossed relation
         }
-        cout << rels.at(0).print() << endl; // debugging
+        // cout << rels.at(0).print() << endl; // debugging
     }
     return rels.at(0);
 }
-
-// Relation Querier::natJoin(Relation rel) // ignore this, apparently it makes the code take too long
-// {
-//     map<string, vector<int> > indexes; // map of all duplicate schema value locations
-//     vector<string> sch = rel.getSchema();
-//     for (vector<string>::iterator idx = sch.begin(); idx != sch.end(); ++idx) {
-//         if (indexes.find((*idx)) != indexes.end()) continue; // if already searched for, skip
-//         vector<int> locs; // else initialize temp vector
-//         locs.push_back(idx-sch.begin()); // add current location
-//         do {
-//             vector<string>::iterator f = find(f+1, sch.end(), (*idx)); // find next dupe
-//             if (f != sch.end()) locs.push_back(f-sch.begin()); // if exists, add
-//             else break; // else break
-//         } while (true); // continue while there might still be duplicates
-//         indexes.insert(pair<string, vector<int> >((*idx), locs)); // save to map
-//     }
-//     for (auto i : indexes) { // debugging output
-//         cout << i.first << " :: ";
-//         for (auto j : i.second) {
-//             cout << j << " ";
-//         }
-//         cout << endl;
-//     }
-//
-//     for (auto tup : rel.getDatas()) {
-//         for (auto col : indexes) {
-//
-//         }
-//     }
-//     return rel;
-// }
 
 Relation Querier::cProduct(vector<Relation> rels)
 {
@@ -182,11 +166,11 @@ void Querier::doQueries(vector<Predicate> queries, Database &db)
 {
     for (size_t o = 0; o < queries.size(); ++o) {
         cout << queries.at(o).toString() << "?";
-        Relation t = doQuery(queries.at(o), db);
+        Relation t = doQuery(queries.at(o), db, true);
     }
 };
 
-Relation Querier::doQuery(Predicate query, Database &db)
+Relation Querier::doQuery(Predicate query, Database &db, bool print)
 {
     string id = query.id;
     vector<Param> params = query.params;
@@ -204,10 +188,10 @@ Relation Querier::doQuery(Predicate query, Database &db)
     if (!ids.empty()) {
         Relation temp = result.Project(params);
         temp.Rename(ids);
-        // printResult(temp, result);
+        if (print) printResult(temp, result);
         return temp;
     }
-    // printResult(result);
+    if (print) printResult(result);
     return result;
 };
 
