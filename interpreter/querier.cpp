@@ -71,7 +71,7 @@ void Querier::doRules(vector<Rule> rules, Database &db)
             for (auto pred : right) rels.push_back(doQuery(pred, db, false));
             // for (auto r : rels) cout << r.getName() << " " << r.print() << endl;
             // rels.size() > 1 ? Relation result = join(rels) : Relation result = rels.at(0);
-            Relation result = join(rels).Project(headVals);
+            Relation result = Join(rels).Project(headVals);
             Relation orig = db.getRelation(head.id);
             vector<string> rSchema = result.getSchema();
             for (size_t ridx = 0; ridx < head.params.size(); ++ridx) {
@@ -100,15 +100,25 @@ void Querier::Union(Relation result, Relation orig, Database &db)
     db.modRelation(both);
 }
 
-Relation Querier::join(vector<Relation> &rels) // correct version of join
+Relation Querier::Join(vector<Relation> &rels)
 {
-    while (rels.size() > 1) // while there's 2 or more to join
+    while (rels.size() > 1)
     {
+        rels.at(0) = join(rels.at(0), rels.at(1));
+        rels.erase(rels.begin()+1); // erase crossed relation
+    }
+    return rels.at(0);
+}
+
+Relation Querier::join(Relation first, Relation second) // correct version of join
+{
+    // while (rels.size() > 1) // while there's 2 or more to join
+    // {
         vector< pair<int,int> > dupes; // pair<index1, index2>
-        set< vector<string> > datA = rels.at(0).getDatas();
-        set< vector<string> > datB = rels.at(1).getDatas();
-        vector<string> schA = rels.at(0).getSchema();
-        vector<string> schB = rels.at(1).getSchema();
+        set< vector<string> > datA = first.getDatas();
+        set< vector<string> > datB = second.getDatas();
+        vector<string> schA = first.getSchema();
+        vector<string> schB = second.getSchema();
         for (size_t j = 0; j < schA.size(); ++j) {
             auto f = find(schB.begin(), schB.end(), schA.at(j)); // find duplicate
             if (f != schB.end()) dupes.push_back(pair<int,int>(j,f-schB.begin())); // save pair of indexes
@@ -129,20 +139,20 @@ Relation Querier::join(vector<Relation> &rels) // correct version of join
                     }
                 }
             }
-            string newName = rels.at(0).getName() + rels.at(1).getName(); // make name
+            string newName = first.getName() + second.getName(); // make name
             newSchema.insert(newSchema.end(), schB.begin(), schB.end()); // save rest of schema B
-            rels.at(0) = Relation(newName, newSchema, newDatas); // overwrite first rel with joined rel
-            rels.erase(rels.begin()+1); // erase used relation
+            first = Relation(newName, newSchema, newDatas); // overwrite first rel with joined rel
+            // rels.erase(rels.begin()+1); // erase used relation
         } else {
             vector<Relation> toCross;
-            toCross.push_back(rels.at(0));
-            toCross.push_back(rels.at(1));
-            rels.at(0) = cProduct(toCross); // if no duplicates, cross product
-            rels.erase(rels.begin()+1); // erase crossed relation
+            toCross.push_back(first);
+            toCross.push_back(second);
+            first = cProduct(toCross); // if no duplicates, cross product
+            // rels.erase(rels.begin()+1); // erase crossed relation
         }
         // cout << rels.at(0).print() << endl; // debugging
-    }
-    return rels.at(0);
+    // }
+    return first;
 }
 
 Relation Querier::cProduct(vector<Relation> rels)
