@@ -125,6 +125,11 @@ Relation Querier::join(Relation first, Relation second) // correct version of jo
             auto f = find(schB.begin(), schB.end(), schA.at(j)); // find duplicate
             if (f != schB.end()) dupes.push_back(pair<int,int>(j,f-schB.begin())); // save pair of indexes
         }
+        // bool nat = true;
+        // for (auto p : dupes) if (p.first != p.second) nat = false;
+        // if (nat) {
+        //     return nJoin(schA, datA, datB, first.getName(), second.getName());
+        // }
         if (!dupes.empty()) { // if there are duplicates
             first = dJoin(dupes, schA, schB, datA, datB, first.getName(), second.getName());
             // set< vector<string> > newDatas; // init new datas
@@ -157,6 +162,19 @@ Relation Querier::join(Relation first, Relation second) // correct version of jo
     // }
     // cout << first.getName() << " " << first.dprint();
     return first;
+}
+
+Relation Querier::nJoin(vector<string> &schA, set< vector<string> > &datA, set< vector<string> > &datB, string nameA, string nameB)
+{
+    vector<string> newSchema = schA;
+    set< vector<string> > newDatas;
+    for (auto tupA : datA) {
+        for (auto tupB : datB) {
+            if (tupA == tupB) newDatas.insert(tupA);
+        }
+    }
+    string newName = nameA + nameB; // make name
+    return Relation(newName, newSchema, newDatas);
 }
 
 Relation Querier::dJoin(vector< pair<int,int> > &dupes, vector<string> &schA, vector<string> &schB,
