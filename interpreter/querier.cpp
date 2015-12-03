@@ -72,7 +72,9 @@ void Querier::doRules(vector<Rule> rules, Database &db)
             // for (auto r : rels) cout << r.getName() << " " << r.print() << endl;
             // rels.size() > 1 ? Relation result = join(rels) : Relation result = rels.at(0);
             Relation result = Join(rels).Project(headVals);
+            // cout << "result: " << result.getName() << " " << result.dprint() << "//";
             Relation orig = db.getRelation(head.id);
+            // cout << "orig: " << orig.getName() << " " << orig.dprint() << "//";
             vector<string> rSchema = result.getSchema();
             for (size_t ridx = 0; ridx < head.params.size(); ++ridx) {
                 for (size_t sidx = 0; sidx < rSchema.size(); ++sidx) {
@@ -124,24 +126,25 @@ Relation Querier::join(Relation first, Relation second) // correct version of jo
             if (f != schB.end()) dupes.push_back(pair<int,int>(j,f-schB.begin())); // save pair of indexes
         }
         if (!dupes.empty()) { // if there are duplicates
-            set< vector<string> > newDatas; // init new datas
-            vector<string> newSchema = schA; // init new schema w/schema of A
-            for (auto p : dupes) { // iterate over duplicates found
-                schB.erase(schB.begin() + p.second); // erase duplicate in schema B
-                for (auto tupA : datA) { // iterate over tuples
-                    for (auto tupB : datB) {
-                        if (tupA.at(p.first) == tupB.at(p.second)) { // if duplicate
-                            tupB.erase(tupB.begin() + p.second); // erase second version
-                            vector<string> newTup = tupA; // init new tuple
-                            newTup.insert(newTup.end(), tupB.begin(), tupB.end()); // store the rest of tuple B
-                            newDatas.insert(newTup); // save tuple
-                        }
-                    }
-                }
-            }
-            string newName = first.getName() + second.getName(); // make name
-            newSchema.insert(newSchema.end(), schB.begin(), schB.end()); // save rest of schema B
-            first = Relation(newName, newSchema, newDatas); // overwrite first rel with joined rel
+            first = dJoin(dupes, schA, schB, datA, datB, first.getName(), second.getName());
+            // set< vector<string> > newDatas; // init new datas
+            // vector<string> newSchema = schA; // init new schema w/schema of A
+            // for (auto p : dupes) { // iterate over duplicates found
+            //     schB.erase(schB.begin() + p.second); // erase duplicate in schema B
+            //     for (auto tupA : datA) { // iterate over tuples
+            //         for (auto tupB : datB) {
+            //             if (tupA.at(p.first) == tupB.at(p.second)) { // if duplicate
+            //                 tupB.erase(tupB.begin() + p.second); // erase second version
+            //                 vector<string> newTup = tupA; // init new tuple
+            //                 newTup.insert(newTup.end(), tupB.begin(), tupB.end()); // store the rest of tuple B
+            //                 newDatas.insert(newTup); // save tuple
+            //             }
+            //         }
+            //     }
+            // }
+            // string newName = first.getName() + second.getName(); // make name
+            // newSchema.insert(newSchema.end(), schB.begin(), schB.end()); // save rest of schema B
+            // first = Relation(newName, newSchema, newDatas); // overwrite first rel with joined rel
             // rels.erase(rels.begin()+1); // erase used relation
         } else {
             vector<Relation> toCross;
@@ -150,9 +153,39 @@ Relation Querier::join(Relation first, Relation second) // correct version of jo
             first = cProduct(toCross); // if no duplicates, cross product
             // rels.erase(rels.begin()+1); // erase crossed relation
         }
-        // cout << rels.at(0).print() << endl; // debugging
+        // cout << first.print() << endl; // debugging
     // }
+    // cout << first.getName() << " " << first.dprint();
     return first;
+}
+
+Relation Querier::dJoin(vector< pair<int,int> > &dupes, vector<string> &schA, vector<string> &schB,
+    set< vector<string> > &datA, set< vector<string> > &datB, string nameA, string nameB)
+{
+    set< vector<string> > newDatas; // init new datas
+    vector<string> newSchema = schA; // init new schema w/schema of A
+    vector<int> dubs;
+    for (auto p : dupes) dubs.push_back(p.second);
+    sort(dubs.begin(), dubs.end());
+    reverse(dubs.begin(), dubs.end());
+    for (size_t b = 0; b < dubs.size(); ++b) schB.erase(schB.begin() + dubs.at(b)); // erase duplicate in schema B
+    newSchema.insert(newSchema.end(), schB.begin(), schB.end()); // save rest of schema B
+
+    for (auto p : dupes) { // iterate over duplicates found
+        for (auto tupA : datA) { // iterate over tuples
+            for (auto tupB : datB) {
+                if (tupA.at(p.first) == tupB.at(p.second)) { // if duplicate
+                    tupB.erase(tupB.begin() + p.second); // erase second version
+                    vector<string> newTup = tupA; // init new tuple
+                    newTup.insert(newTup.end(), tupB.begin(), tupB.end()); // store the rest of tuple B
+                    // for (size_t t = 0; t < tupB.size(); ++t) if (t != p.second) newTup.push_back(tupB.at(t));
+                    newDatas.insert(newTup); // save tuple
+                }
+            }
+        }
+    }
+    string newName = nameA + nameB; // make name
+    return Relation(newName, newSchema, newDatas);
 }
 
 Relation Querier::cProduct(vector<Relation> rels)

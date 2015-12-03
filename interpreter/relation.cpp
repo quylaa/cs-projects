@@ -37,12 +37,14 @@ Relation Relation::Project(vector<Param> items)
         if (items.at(t).isID) {
             indexes.push_back(t);
             newSchema.push_back(schema.at(t));
+            // cout << "projecting on " << schema.at(t) << endl;
         }
     }
     for (auto rt : datas) {
         vector<string> newtup;
         for (size_t it = 0; it < indexes.size(); ++it) {
             newtup.push_back(rt.at(indexes.at(it)));
+            // cout << "got value " << rt.at(indexes.at(it)) << endl;
         }
         results.insert(newtup);
     }
@@ -160,4 +162,16 @@ int Relation::getSize()
 set< vector<string> > Relation::getDatas()
 {
     return datas;
+}
+
+string Relation::dprint()
+{
+    ostringstream d;
+    for (auto t : datas) {
+        for (auto i : t) {
+            d << i;
+        }
+        d << endl;
+    }
+    return d.str();
 }

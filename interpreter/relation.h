@@ -49,6 +49,8 @@ class Relation
         set< vector<string> > getDatas();
 
         vector<string> getSchema();
+
+        string dprint();
 };
 
 #endif

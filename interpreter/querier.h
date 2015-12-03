@@ -25,6 +25,9 @@ public:
 
     Relation join(Relation first, Relation second);
 
+    Relation dJoin(vector< pair<int,int> > &dupes, vector<string> &schA, vector<string> &schB,
+        set< vector<string> > &datA, set< vector<string> > &datB, string nameA, string nameB);
+
     // Relation natJoin(Relation rel);
 
     void Union(Relation result, Relation orig, Database &db);
