@@ -26,10 +26,13 @@ public:
     Relation join(Relation first, Relation second);
 
     Relation dJoin(vector< pair<int,int> > &dupes, vector<string> &schA, vector<string> &schB,
-        set< vector<string> > &datA, set< vector<string> > &datB, string nameA, string nameB);
+        set< vector<string> > datA, set< vector<string> > datB, string nameA, string nameB);
 
     Relation nJoin(vector<string> &schA, set< vector<string> > &datA,
         set< vector<string> > &datB, string nameA, string nameB);
+
+    set< vector<string> > deDupe(set< vector<string> > &datA, set< vector<string> > &datB,
+        vector< pair<int, int> > &dupes, vector<int> &dubs);
 
     // Relation natJoin(Relation rel);
 

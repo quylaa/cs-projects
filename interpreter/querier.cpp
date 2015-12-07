@@ -178,9 +178,10 @@ Relation Querier::nJoin(vector<string> &schA, set< vector<string> > &datA, set< 
 }
 
 Relation Querier::dJoin(vector< pair<int,int> > &dupes, vector<string> &schA, vector<string> &schB,
-    set< vector<string> > &datA, set< vector<string> > &datB, string nameA, string nameB)
+    set< vector<string> > datA, set< vector<string> > datB, string nameA, string nameB)
 {
-    set< vector<string> > newDatas; // init new datas
+    // set< vector<string> > newDatasA; // init new datas
+    // set< vector<string> > newDatasB; // init new datas
     vector<string> newSchema = schA; // init new schema w/schema of A
     vector<int> dubs;
     for (auto p : dupes) dubs.push_back(p.second);
@@ -189,21 +190,71 @@ Relation Querier::dJoin(vector< pair<int,int> > &dupes, vector<string> &schA, ve
     for (size_t b = 0; b < dubs.size(); ++b) schB.erase(schB.begin() + dubs.at(b)); // erase duplicate in schema B
     newSchema.insert(newSchema.end(), schB.begin(), schB.end()); // save rest of schema B
 
+    // for (auto p : dupes) { // iterate over duplicates found
+    //     for (auto tupA : datA) { // iterate over tuples
+    //         for (auto tupB : datB) {
+    //             if (tupA.at(p.first) == tupB.at(p.second)) { // if duplicate
+    //                 // tupB.erase(tupB.begin() + p.second); // erase second version
+    //                 // vector<string> newTup = tupA; // init new tuple
+    //                 // newTup.insert(newTup.end(), tupB.begin(), tupB.end()); // store the rest of tuple B
+    //                 // for (size_t t = 0; t < tupB.size(); ++t) if (t != p.second) newTup.push_back(tupB.at(t));
+    //                 newDatasA.insert(tupA); // save tuple
+    //                 newDatasB.insert(tupB); // save tuple
+    //             }
+    //         }
+    //     }
+    //     datA = newDatasA;
+    //     datB = newDatasB;
+    // }
+    set< vector<string> > newDatas = deDupe(datA, datB, dupes, dubs);
+    string newName = nameA + nameB; // make name
+    return Relation(newName, newSchema, newDatas);
+}
+
+set< vector<string> > Querier::deDupe(set< vector<string> > &datA, set< vector<string> > &datB,
+    vector< pair<int, int> > &dupes, vector<int> &dubs)
+{
     for (auto p : dupes) { // iterate over duplicates found
+        set< vector<string> > newDatasA; // init new datas
+        set< vector<string> > newDatasB; // init new datas
         for (auto tupA : datA) { // iterate over tuples
             for (auto tupB : datB) {
                 if (tupA.at(p.first) == tupB.at(p.second)) { // if duplicate
-                    tupB.erase(tupB.begin() + p.second); // erase second version
-                    vector<string> newTup = tupA; // init new tuple
-                    newTup.insert(newTup.end(), tupB.begin(), tupB.end()); // store the rest of tuple B
-                    // for (size_t t = 0; t < tupB.size(); ++t) if (t != p.second) newTup.push_back(tupB.at(t));
-                    newDatas.insert(newTup); // save tuple
+                    //tupB.erase(tupB.begin() + p.second); // erase second version
+                    //vector<string> newTup = tupA; // init new tuple
+                    //newTup.insert(newTup.end(), tupB.begin(), tupB.end()); // store the rest of tuple B
+                    newDatasA.insert(tupA); // save tuple
+                    newDatasB.insert(tupB); // save tuple
+                }
+            }
+        }
+        datA = newDatasA;
+        datB = newDatasB;
+    }
+    // set< vector<string> > nDatB;
+    // for (auto s : dubs) {
+    //     for (auto t : datB) {
+    //         t.erase(t.begin()+s);
+    //         nDatB.insert(t);
+    //     }
+    // }
+    // datB = nDatB;
+    set< vector<string> > newDatas;
+    for (auto d : dupes) {
+        for (auto a : datA) {
+            for (auto b : datB) {
+                if (a.at(d.first) == b.at(d.second)) {
+                    for (auto s : dubs) {
+                        b.erase(b.begin()+s);
+                    }
+                    vector<string> newTup = a;
+                    newTup.insert(newTup.end(), b.begin(), b.end());
+                    newDatas.insert(newTup);
                 }
             }
         }
     }
-    string newName = nameA + nameB; // make name
-    return Relation(newName, newSchema, newDatas);
+    return newDatas;
 }
 
 Relation Querier::cProduct(vector<Relation> rels)

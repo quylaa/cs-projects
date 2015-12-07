@@ -12,7 +12,6 @@ Facts:
 Rules:
    r(E,F):-f(E,F).
    g(C,D):-f(C,X),r(X,D).
-   g(C,X):-f(C,X),r(X,C).
 
 Queries:
    g('4',B)?
