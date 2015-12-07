@@ -172,14 +172,6 @@ set< vector<string> > Querier::deDupe(set< vector<string> > &datA, set< vector<s
                     newTup.insert(newTup.end(), b.begin(), b.end());
                     newDatas.insert(newTup);
                 }
-                datA = newDatasA;
-                datB = newDatasB;
-            }
-            vector<int> dFirst;
-            vector<int> dSecond;
-            for (auto d : dupes) {
-                dFirst.push_back(d.first);
-                dSecond.push_back(d.second);
             }
         }
     }
