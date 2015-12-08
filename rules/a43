@@ -1,0 +1,12 @@
+Schemes populated after 4 passes through the Rules.
+F(a,b)? Yes(4)
+  a='1', b='2'
+  a='2', b='1'
+  a='2', b='3'
+  a='3', b='2'
+G(a,b)? Yes(2)
+  a='2', b='3'
+  a='3', b='2'
+H(a,b)? Yes(2)
+  a='2', b='3'
+  a='3', b='2'
