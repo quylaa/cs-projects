@@ -3,18 +3,21 @@
 #ifndef NODE_H_
 #define NODE_H_
 
-#include <string>
+#include <set>
 #include "rule.h"
 
 class Node
 {
 public:
     bool visited;
+    bool revisit;
     int poNum;
-    std::string name;
+    int ruleNum;
     Rule rule;
+    std::set<int> deps;
 
-    Node(/*bool v, int p, */std::string n, Rule r) : visited(false),/* poNum(p),*/ name(n), rule(r) {};
+    Node(/*bool v, int p, */int n/*, Rule r*/) :
+        visited(false), revisit(false),/* poNum(p), rule(r),*/ ruleNum(n) {};
 };
 
 #endif

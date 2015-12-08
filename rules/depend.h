@@ -18,7 +18,8 @@ class Depend
 private:
     // map<int, set<int> > base;
     // map<int, set<int> > reverse;
-    // map<int, set<Node> > depGraph;
+    map<int, set<Node> > forward;
+    map<int, set<Node> > reverse;
 
 public:
 
@@ -27,11 +28,13 @@ public:
 
     vector<int> optimize(vector<Rule> rules);
 
-    map<int, set<int> > drawGraph(vector<Rule> rules);
+    vector<Node> drawGraph(vector<Rule> rules);
 
-    map<int, set<int> > revGraph(map<int, set<int> > base);
+    vector<Node> revGraph(vector<Node> base);
 
     set<int> getDepends(Rule r, vector<Rule> rules);
+
+    vector<Node> DFS(map<int, set<int> > graph, vector<Node> &nodes);
 
 };
 
