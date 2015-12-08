@@ -9,6 +9,21 @@ vector<int> Depend::optimize(vector<Rule> rules)
 {
     vector<int> order;
     vector<Node> rev = revGraph(drawGraph(rules));
+    PO = 0;
+    for (int d = 0; (size_t)d < reverse.size(); ++d) DFS(d);
+
+    // The entire following section is debugging output
+    cout << endl;
+    cout << "PO\t|\tRULE\n";
+    for (auto f : reverse) {
+        cout << f.poNum << "\t\t" << "R" << f.ruleNum << ":";
+        for (auto n : f.deps) {
+            cout << "R" << n;
+            if (n != (*--f.deps.end())) cout << ",";
+        }
+        cout << endl;
+    }
+    cout << "-----\n";
 
     return order;
 }
@@ -26,17 +41,17 @@ vector<Node> Depend::drawGraph(vector<Rule> rules)
         nodes.at(i).deps = getDepends(rules.at(i), rules);
     }
 
-    for (auto n : nodes) {
-        cout << "R" << n.ruleNum << ": ";
-        for (auto d : n.deps) { // debugging
-            cout << "R" << d;
-            if (d != (*--n.deps.end())) cout << ",";
-        }
-        cout << endl;
-    }
-    cout << "//" << endl;
+    // for (auto n : nodes) {
+    //     cout << "R" << n.ruleNum << ": ";
+    //     for (auto d : n.deps) { // debugging
+    //         cout << "R" << d;
+    //         if (d != (*--n.deps.end())) cout << ",";
+    //     }
+    //     cout << endl;
+    // }
+    // cout << "//" << endl;
 
-    // baseGraph = deps;
+    forward = nodes;
     return nodes;
 }
 
@@ -55,16 +70,17 @@ vector<Node> Depend::revGraph(vector<Node> nodes)
         rev.at(b).deps = de;
     }
 
-    for (auto n : rev) {
-        cout << "R" << n.ruleNum << ": ";
-        for (auto d : n.deps) { // debugging
-            cout << "R" << d;
-            if (d != (*--n.deps.end())) cout << ",";
-        }
-        cout << endl;
-    }
-    cout << "//" << endl;
+    // for (auto n : rev) {
+    //     cout << "R" << n.ruleNum << ": ";
+    //     for (auto d : n.deps) { // debugging
+    //         cout << "R" << d;
+    //         if (d != (*--n.deps.end())) cout << ",";
+    //     }
+    //     cout << endl;
+    // }
+    // cout << "//" << endl;
 
+    reverse = rev;
     return rev;
 }
 
@@ -79,11 +95,12 @@ set<int> Depend::getDepends(Rule r, vector<Rule> rules)
     return deps;
 }
 
-vector<Node> Depend::DFS(map<int, set<int> > graph, vector<Node> &nodes)
+void Depend::DFS(int node)
 {
-    vector<Node> n;
+    if (reverse.at(node).visited) return;
+    reverse.at(node).visited = true;
 
-
-
-    return n;
+    for (auto d : reverse.at(node).deps) DFS(d);
+    reverse.at(node).poNum = PO;
+    PO++;
 }

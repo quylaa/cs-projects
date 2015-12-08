@@ -10,14 +10,14 @@ class Node
 {
 public:
     bool visited;
-    bool revisit;
+    // bool revisit;
     int poNum;
     int ruleNum;
     Rule rule;
     std::set<int> deps;
 
     Node(/*bool v, int p, */int n/*, Rule r*/) :
-        visited(false), revisit(false),/* poNum(p), rule(r),*/ ruleNum(n) {};
+        visited(false),/* revisit(false), poNum(p), rule(r),*/ ruleNum(n) {};
 };
 
 #endif
