@@ -5,25 +5,39 @@
 Depend::Depend() {};
 Depend::~Depend() {};
 
-vector<int> Depend::optimize(vector<Rule> rules)
+vector< set<int> > Depend::optimize(vector<Rule> rules)
 {
-    vector<int> order;
-    vector<Node> rev = revGraph(drawGraph(rules));
-    PO = 0;
-    for (int d = 0; (size_t)d < reverse.size(); ++d) DFS(d);
+    vector< set<int> > order;
+    vector<Node> rev = revGraph(drawGraph(rules)); // get both graph and reverse graph
+    PO = 0; // init post-order number counter
+    for (int d = 0; (size_t)d < reverse.size(); ++d) DFS(d); // do depth-first search
 
-    // The entire following section is debugging output
-    cout << endl;
-    cout << "PO\t|\tRULE\n";
-    for (auto f : reverse) {
-        cout << f.poNum << "\t\t" << "R" << f.ruleNum << ":";
-        for (auto n : f.deps) {
-            cout << "R" << n;
-            if (n != (*--f.deps.end())) cout << ",";
+    for (int f = 0; (size_t)f < forward.size(); ++f) { // save post-order numbers to original graph nodes
+        for (int r = 0; (size_t)r < reverse.size(); ++r) {
+            if (forward.at(f).ruleNum == reverse.at(r).ruleNum)
+                forward.at(f).poNum = reverse.at(r).poNum;
         }
-        cout << endl;
     }
-    cout << "-----\n";
+
+    for (int p = (PO-1); p >= 0; --p) {
+        SCC.clear();
+        dfs(p);
+        order.push_back(SCC); // do second DFS
+    }
+
+    // begin debug output
+    cout << endl;
+    for (auto scc : order) {
+        if (scc.empty()) continue;
+        cout << "{";
+        for (auto v : scc) {
+            cout << v;
+            if (v != (*--scc.end())) cout << ",";
+        }
+        cout << "}\n";
+    }
+    cout << "---------\n";
+    // end debug output
 
     return order;
 }
@@ -103,4 +117,33 @@ void Depend::DFS(int node)
     for (auto d : reverse.at(node).deps) DFS(d);
     reverse.at(node).poNum = PO;
     PO++;
+}
+
+void Depend::dfs(int node)
+{
+    if (forward.at(node).visited) return;
+    forward.at(node).visited = true;
+
+    for (auto d : forward.at(node).deps) dfs(d);
+
+    SCC.insert(forward.at(node).ruleNum);
+}
+
+void Depend::scc(int ponum)
+{
+    int k = getIndex(ponum);
+
+    if (k == -1 || forward.at(k).visited) return;
+    forward.at(k).visited = true;
+
+    for (auto d : forward.at(k).deps) dfs(d);
+
+    SCC.insert(forward.at(k).ruleNum);
+}
+
+int Depend::getIndex(int ponum)
+{
+    for (int p = 0; (size_t)p < forward.size(); ++p)
+        if (forward.at(p).poNum == ponum) return p;
+    return -1;
 }

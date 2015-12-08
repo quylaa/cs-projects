@@ -13,7 +13,7 @@ public:
     // bool revisit;
     int poNum;
     int ruleNum;
-    Rule rule;
+    // Rule rule;
     std::set<int> deps;
 
     Node(/*bool v, int p, */int n/*, Rule r*/) :

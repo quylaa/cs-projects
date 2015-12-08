@@ -21,13 +21,14 @@ private:
     vector<Node> forward;
     vector<Node> reverse;
     int PO;
+    set<int> SCC;
 
 public:
 
     Depend();
     ~Depend();
 
-    vector<int> optimize(vector<Rule> rules);
+    vector< set<int> > optimize(vector<Rule> rules);
 
     vector<Node> drawGraph(vector<Rule> rules);
 
@@ -37,6 +38,12 @@ public:
 
     // Usage:- for n in nodes: DFS(n)
     void DFS(int node);
+
+    void dfs(int node);
+
+    void scc(int ponum);
+
+    int getIndex(int ponum);
 
 };
 
