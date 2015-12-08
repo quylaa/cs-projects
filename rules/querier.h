@@ -6,6 +6,7 @@
 #include <utility>
 #include "datalogProgram.h"
 #include "database.h"
+#include "depend.h"
 
 class Querier
 {

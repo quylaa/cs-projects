@@ -3,11 +3,13 @@
 #ifndef DEPEND_H_
 #define DEPEND_H_
 
-#include "node.h"
 #include <string>
 #include <vector>
 #include <map>
 #include <set>
+#include <utility>
+#include <iostream>
+#include "node.h"
 
 using namespace std;
 
@@ -21,9 +23,9 @@ public:
     Depend();
     ~Depend();
 
-    map<int, set<Node> > drawGraph(vector<Rule> rules);
+    map<int, set<int> > drawGraph(vector<Rule> rules);
 
-    vector<int> getDepends(Rule r, vector<Rule> rules);
+    set<int> getDepends(Rule r, vector<Rule> rules);
 
 };
 

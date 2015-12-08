@@ -14,7 +14,7 @@ public:
     std::string name;
     Rule rule;
 
-    Node(bool v, int p, std::string n, Rule r) : visited(v), poNum(p), name(n), rule(r) {};
+    Node(/*bool v, int p, */std::string n, Rule r) : visited(false),/* poNum(p),*/ name(n), rule(r) {};
 };
 
 #endif
