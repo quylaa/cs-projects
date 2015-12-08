@@ -59,7 +59,7 @@ void Querier::doRules(vector<Rule> rules, Database &db)
     int newcnt; // new tuple count
     int passes = 0;
     Depend d;
-    d.drawGraph(rules);
+    d.optimize(rules);
     do {
         relcnt  = db.size(); // save initial database size
         for (auto rt : rules) {

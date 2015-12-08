@@ -5,6 +5,14 @@
 Depend::Depend() {};
 Depend::~Depend() {};
 
+vector<int> Depend::optimize(vector<Rule> rules)
+{
+    vector<int> order;
+    map<int, set<int> > rev = revGraph(drawGraph(rules));
+
+    return order;
+}
+
 map<int, set<int> > Depend::drawGraph(vector<Rule> rules)
 {
     map<int, set<int> > deps; // map of rule -> dependencies, where the set is the rule numbers that are depended on
@@ -22,12 +30,41 @@ map<int, set<int> > Depend::drawGraph(vector<Rule> rules)
         cout << "R" << d.first << ": ";
         for (auto n = d.second.begin(); n != d.second.end(); ++n) {
             cout << "R" << (*n);
-            if (next(n) != d.second.end()) cout << ", ";
+            if (next(n) != d.second.end()) cout << ",";
         }
         cout << endl;
     }
+    cout << "//" << endl;
 
+    // baseGraph = deps;
     return deps;
+}
+
+map<int, set<int> > Depend::revGraph(map<int, set<int> > base)
+{
+    map<int, set<int> > rev;
+
+    for (int b = 0; (size_t)b < base.size(); ++b) {
+        set<int> de;
+        for (auto r : base) {
+            for (auto d : r.second) {
+                if (b == d) de.insert(r.first);
+            }
+        }
+        rev.insert(pair<int, set<int> >(b, de));
+    }
+
+    for (auto d : rev) { // debugging
+        cout << "R" << d.first << ": ";
+        for (auto n = d.second.begin(); n != d.second.end(); ++n) {
+            cout << "R" << (*n);
+            if (next(n) != d.second.end()) cout << ",";
+        }
+        cout << endl;
+    }
+    cout << "//" << endl;
+
+    return rev;
 }
 
 set<int> Depend::getDepends(Rule r, vector<Rule> rules)
