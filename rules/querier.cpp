@@ -57,37 +57,53 @@ void Querier::doRules(vector<Rule> rules, Database &db)
 {
     int relcnt; // old tuple count
     int newcnt; // new tuple count
-    int passes = 0;
+    // int passes = 0;
     Depend d;
-    d.optimize(rules);
-    do {
-        relcnt  = db.size(); // save initial database size
-        for (auto rt : rules) {
-            Predicate head = rt.head;
-            vector<Predicate> right = rt.rules;
-            vector<Relation> rels;
-            vector<string> headVals;
+    vector< set<int> > order =  d.optimize(rules); // get all SCCs
+    vector<int> evalCnt (order.size(), 0); // tracks how many times each SCC is evaluated
+    for (size_t s = 0; s < order.size(); ++s) {
+        do {
+            relcnt  = db.size(); // save initial database size
+            for (auto r : order.at(s)) {
+                // for (auto rt : rules) {
+                Rule rt = rules.at(r);
+                Predicate head = rt.head;
+                vector<Predicate> right = rt.rules;
+                vector<Relation> rels;
+                vector<string> headVals;
 
-            for (auto hp : head.params) headVals.push_back(hp.value);
+                for (auto hp : head.params) headVals.push_back(hp.value);
 
-            for (auto pred : right) rels.push_back(doQuery(pred, db, false));
-            Relation result = Join(rels).Project(headVals);
-            Relation orig = db.getRelation(head.id);
-            vector<string> rSchema = result.getSchema();
-            for (size_t ridx = 0; ridx < head.params.size(); ++ridx) {
-                for (size_t sidx = 0; sidx < rSchema.size(); ++sidx) {
-                    if (head.params.at(ridx).value == rSchema.at(sidx)) {
-                        rSchema.at(sidx) = orig.getSchema().at(ridx);
+                for (auto pred : right) rels.push_back(doQuery(pred, db, false));
+                Relation result = Join(rels).Project(headVals);
+                Relation orig = db.getRelation(head.id);
+                vector<string> rSchema = result.getSchema();
+                for (size_t ridx = 0; ridx < head.params.size(); ++ridx) {
+                    for (size_t sidx = 0; sidx < rSchema.size(); ++sidx) {
+                        if (head.params.at(ridx).value == rSchema.at(sidx)) {
+                            rSchema.at(sidx) = orig.getSchema().at(ridx);
+                        }
                     }
                 }
+                Relation final = Relation(result.getName(), rSchema, result.getDatas());
+                Union(final, orig, db);
+                // }
             }
-            Relation final = Relation(result.getName(), rSchema, result.getDatas());
-            Union(final, orig, db);
+            newcnt = db.size(); // get new database size
+            evalCnt.at(s)++;
+        } while (newcnt > relcnt); // continue until db doesnt change
+    }
+    // cout << "Schemes populated after " << passes << " passes through the Rules." << endl;
+    cout << "Rule Evaluation\n";
+    for (size_t i = 0; i < order.size(); ++i) {
+        cout << evalCnt.at(i) << " passes: ";
+        for (auto r : order.at(i)) {
+            cout << "R" << r;
+            if (r != (*--order.at(i).end())) cout << ",";
         }
-        newcnt = db.size(); // get new database size
-        passes++;
-    } while (newcnt > relcnt); // continue until db doesnt change
-    cout << "Schemes populated after " << passes << " passes through the Rules." << endl;
+        cout << endl;
+    }
+    cout << endl;
 }
 
 void Querier::Union(Relation result, Relation orig, Database &db)

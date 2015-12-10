@@ -21,22 +21,22 @@ vector< set<int> > Depend::optimize(vector<Rule> rules)
 
     for (int p = (PO-1); p >= 0; --p) {
         SCC.clear();
-        dfs(p);
-        order.push_back(SCC); // do second DFS
+        scc(p);
+        if (!SCC.empty()) order.push_back(SCC); // do second DFS
     }
 
-    // begin debug output
-    cout << endl;
-    for (auto scc : order) {
-        if (scc.empty()) continue;
-        cout << "{";
-        for (auto v : scc) {
-            cout << v;
-            if (v != (*--scc.end())) cout << ",";
-        }
-        cout << "}\n";
-    }
-    cout << "---------\n";
+    // begin output
+    // cout << "Dependency Graph" << endl;
+    // for (auto scc : order) {
+    //     if (scc.empty()) continue;
+    //     cout << "{";
+    //     for (auto v : scc) {
+    //         cout << v;
+    //         if (v != (*--scc.end())) cout << ",";
+    //     }
+    //     cout << "}\n";
+    // }
+    // cout << "---------\n";
     // end debug output
 
     return order;
@@ -55,15 +55,16 @@ vector<Node> Depend::drawGraph(vector<Rule> rules)
         nodes.at(i).deps = getDepends(rules.at(i), rules);
     }
 
-    // for (auto n : nodes) {
-    //     cout << "R" << n.ruleNum << ": ";
-    //     for (auto d : n.deps) { // debugging
-    //         cout << "R" << d;
-    //         if (d != (*--n.deps.end())) cout << ",";
-    //     }
-    //     cout << endl;
-    // }
-    // cout << "//" << endl;
+    cout << "Dependency Graph" << endl;
+    for (auto n : nodes) {
+        cout << "R" << n.ruleNum << ":";
+        for (auto d : n.deps) { // debugging
+            cout << "R" << d;
+            if (d != (*--n.deps.end())) cout << ",";
+        }
+        cout << endl;
+    }
+    cout << endl;
 
     forward = nodes;
     return nodes;
