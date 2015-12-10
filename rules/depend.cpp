@@ -11,13 +11,7 @@ vector<SCC> Depend::optimize(vector<Rule> rules)
     vector<Node> rev = revGraph(drawGraph(rules)); // get both graph and reverse graph
     PO = 0; // init post-order number counter
     for (int d = 0; (size_t)d < reverse.size(); ++d) DFS(d); // do depth-first search
-
-    for (int f = 0; (size_t)f < forward.size(); ++f) { // save post-order numbers to original graph nodes
-        for (int r = 0; (size_t)r < reverse.size(); ++r) {
-            if (forward.at(f).ruleNum == reverse.at(r).ruleNum)
-                forward.at(f).poNum = reverse.at(r).poNum;
-        }
-    }
+    poSave();
 
     for (int p = (PO-1); p >= 0; --p) {
         S.clear();
@@ -86,6 +80,16 @@ set<int> Depend::getDepends(Rule r, vector<Rule> rules)
         }
     }
     return deps;
+}
+
+void Depend::poSave()
+{
+    for (int f = 0; (size_t)f < forward.size(); ++f) { // save post-order numbers to original graph nodes
+        for (int r = 0; (size_t)r < reverse.size(); ++r) {
+            if (forward.at(f).ruleNum == reverse.at(r).ruleNum)
+                forward.at(f).poNum = reverse.at(r).poNum;
+        }
+    }
 }
 
 void Depend::DFS(int node)

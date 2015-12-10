@@ -37,6 +37,8 @@ public:
 
     set<int> getDepends(Rule r, vector<Rule> rules);
 
+    void poSave();
+
     // Usage:- for n in nodes: DFS(n)
     void DFS(int node);
 
