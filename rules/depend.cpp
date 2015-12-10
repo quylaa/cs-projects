@@ -5,9 +5,9 @@
 Depend::Depend() {};
 Depend::~Depend() {};
 
-vector< set<int> > Depend::optimize(vector<Rule> rules)
+vector<SCC> Depend::optimize(vector<Rule> rules)
 {
-    vector< set<int> > order;
+    vector<SCC> order;
     vector<Node> rev = revGraph(drawGraph(rules)); // get both graph and reverse graph
     PO = 0; // init post-order number counter
     for (int d = 0; (size_t)d < reverse.size(); ++d) DFS(d); // do depth-first search
@@ -20,24 +20,13 @@ vector< set<int> > Depend::optimize(vector<Rule> rules)
     }
 
     for (int p = (PO-1); p >= 0; --p) {
-        SCC.clear();
+        S.clear();
         scc(p);
-        if (!SCC.empty()) order.push_back(SCC); // do second DFS
-    }
+        if (S.empty()) continue;
 
-    // begin output
-    // cout << "Dependency Graph" << endl;
-    // for (auto scc : order) {
-    //     if (scc.empty()) continue;
-    //     cout << "{";
-    //     for (auto v : scc) {
-    //         cout << v;
-    //         if (v != (*--scc.end())) cout << ",";
-    //     }
-    //     cout << "}\n";
-    // }
-    // cout << "---------\n";
-    // end debug output
+        if (S.size() == 1 && trivial(p)) order.push_back(SCC(S, true));
+        else order.push_back(SCC(S, false));
+    }
 
     return order;
 }
@@ -81,19 +70,8 @@ vector<Node> Depend::revGraph(vector<Node> nodes)
                 if (b == d) de.insert(r.ruleNum);
             }
         }
-        // rev.insert(pair<int, set<int> >(b, de));
         rev.at(b).deps = de;
     }
-
-    // for (auto n : rev) {
-    //     cout << "R" << n.ruleNum << ": ";
-    //     for (auto d : n.deps) { // debugging
-    //         cout << "R" << d;
-    //         if (d != (*--n.deps.end())) cout << ",";
-    //     }
-    //     cout << endl;
-    // }
-    // cout << "//" << endl;
 
     reverse = rev;
     return rev;
@@ -127,7 +105,7 @@ void Depend::dfs(int node)
 
     for (auto d : forward.at(node).deps) dfs(d);
 
-    SCC.insert(forward.at(node).ruleNum);
+    S.insert(forward.at(node).ruleNum);
 }
 
 void Depend::scc(int ponum)
@@ -139,7 +117,7 @@ void Depend::scc(int ponum)
 
     for (auto d : forward.at(k).deps) dfs(d);
 
-    SCC.insert(forward.at(k).ruleNum);
+    S.insert(forward.at(k).ruleNum);
 }
 
 int Depend::getIndex(int ponum)
@@ -147,4 +125,14 @@ int Depend::getIndex(int ponum)
     for (int p = 0; (size_t)p < forward.size(); ++p)
         if (forward.at(p).poNum == ponum) return p;
     return -1;
+}
+
+bool Depend::trivial(int ponum)
+{
+    int k = getIndex(ponum);
+
+    if (k == -1) return false;
+
+    for (auto d : forward.at(k).deps) if (k == d) return false;
+    return true;
 }

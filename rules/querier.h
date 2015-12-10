@@ -22,6 +22,10 @@ public:
 
     void doRules(vector<Rule> rules, Database &db);
 
+    bool trivial(int ruleNum, set<int> scc);
+
+    void ruleLoop(Rule rule, Database &db);
+
     Relation Join(vector<Relation> &rels);
 
     Relation join(Relation first, Relation second);
@@ -31,6 +35,9 @@ public:
 
     set< vector<string> > deDupe(set< vector<string> > &datA, set< vector<string> > &datB,
         vector< pair<int, int> > &dupes, vector<int> &dubs);
+
+    void refine(set< vector<string> > &datA, set< vector<string> > &datB,
+        vector< pair<int, int> > &dupes);
 
     // Relation natJoin(Relation rel);
 

@@ -10,6 +10,7 @@
 #include <utility>
 #include <iostream>
 #include "node.h"
+#include "scc.h"
 
 using namespace std;
 
@@ -21,14 +22,14 @@ private:
     vector<Node> forward;
     vector<Node> reverse;
     int PO;
-    set<int> SCC;
+    set<int> S;
 
 public:
 
     Depend();
     ~Depend();
 
-    vector< set<int> > optimize(vector<Rule> rules);
+    vector<SCC> optimize(vector<Rule> rules);
 
     vector<Node> drawGraph(vector<Rule> rules);
 
@@ -44,6 +45,8 @@ public:
     void scc(int ponum);
 
     int getIndex(int ponum);
+
+    bool trivial(int ponum);
 
 };
 

@@ -57,53 +57,66 @@ void Querier::doRules(vector<Rule> rules, Database &db)
 {
     int relcnt; // old tuple count
     int newcnt; // new tuple count
-    // int passes = 0;
     Depend d;
-    vector< set<int> > order =  d.optimize(rules); // get all SCCs
+    vector<SCC> order =  d.optimize(rules); // get all SCCs
     vector<int> evalCnt (order.size(), 0); // tracks how many times each SCC is evaluated
     for (size_t s = 0; s < order.size(); ++s) {
-        do {
-            relcnt  = db.size(); // save initial database size
-            for (auto r : order.at(s)) {
-                // for (auto rt : rules) {
-                Rule rt = rules.at(r);
-                Predicate head = rt.head;
-                vector<Predicate> right = rt.rules;
-                vector<Relation> rels;
-                vector<string> headVals;
-
-                for (auto hp : head.params) headVals.push_back(hp.value);
-
-                for (auto pred : right) rels.push_back(doQuery(pred, db, false));
-                Relation result = Join(rels).Project(headVals);
-                Relation orig = db.getRelation(head.id);
-                vector<string> rSchema = result.getSchema();
-                for (size_t ridx = 0; ridx < head.params.size(); ++ridx) {
-                    for (size_t sidx = 0; sidx < rSchema.size(); ++sidx) {
-                        if (head.params.at(ridx).value == rSchema.at(sidx)) {
-                            rSchema.at(sidx) = orig.getSchema().at(ridx);
-                        }
-                    }
-                }
-                Relation final = Relation(result.getName(), rSchema, result.getDatas());
-                Union(final, orig, db);
-                // }
-            }
-            newcnt = db.size(); // get new database size
+        if (order.at(s).trivial) {
+            ruleLoop(rules.at((*order.at(s).scc.begin())), db);
             evalCnt.at(s)++;
-        } while (newcnt > relcnt); // continue until db doesnt change
+        } else {
+            do {
+                relcnt  = db.size(); // save initial database size
+                for (auto r : order.at(s).scc) {
+                    ruleLoop(rules.at(r), db);
+                }
+                newcnt = db.size(); // get new database size
+                evalCnt.at(s)++;
+            } while (newcnt > relcnt); // continue until db doesnt change
+        }
     }
-    // cout << "Schemes populated after " << passes << " passes through the Rules." << endl;
     cout << "Rule Evaluation\n";
     for (size_t i = 0; i < order.size(); ++i) {
         cout << evalCnt.at(i) << " passes: ";
-        for (auto r : order.at(i)) {
+        for (auto r : order.at(i).scc) {
             cout << "R" << r;
-            if (r != (*--order.at(i).end())) cout << ",";
+            if (r != (*--order.at(i).scc.end())) cout << ",";
         }
         cout << endl;
     }
-    cout << endl;
+    cout << endl << "Query Evaluation\n";
+}
+
+bool Querier::trivial(int ruleNum, set<int> scc)
+{
+    for (auto s : scc) {
+        if (ruleNum == s) return false;
+    }
+    return true;
+}
+
+void Querier::ruleLoop(Rule rule, Database &db)
+{
+    Predicate head = rule.head;
+    vector<Predicate> right = rule.rules;
+    vector<Relation> rels;
+    vector<string> headVals;
+
+    for (auto hp : head.params) headVals.push_back(hp.value);
+
+    for (auto pred : right) rels.push_back(doQuery(pred, db, false));
+    Relation result = Join(rels).Project(headVals);
+    Relation orig = db.getRelation(head.id);
+    vector<string> rSchema = result.getSchema();
+    for (size_t ridx = 0; ridx < head.params.size(); ++ridx) {
+        for (size_t sidx = 0; sidx < rSchema.size(); ++sidx) {
+            if (head.params.at(ridx).value == rSchema.at(sidx)) {
+                rSchema.at(sidx) = orig.getSchema().at(ridx);
+            }
+        }
+    }
+    Relation final = Relation(result.getName(), rSchema, result.getDatas());
+    Union(final, orig, db);
 }
 
 void Querier::Union(Relation result, Relation orig, Database &db)
@@ -164,20 +177,7 @@ Relation Querier::Join(vector< pair<int,int> > &dupes, vector<string> &schA, vec
 set< vector<string> > Querier::deDupe(set< vector<string> > &datA, set< vector<string> > &datB,
     vector< pair<int, int> > &dupes, vector<int> &dubs)
 {
-    for (auto p : dupes) { // iterate over duplicates found
-        set< vector<string> > newDatasA; // init new datas
-        set< vector<string> > newDatasB; // init new datas
-        for (auto tupA : datA) { // iterate over tuples
-            for (auto tupB : datB) {
-                if (tupA.at(p.first) == tupB.at(p.second)) { // if duplicate
-                    newDatasA.insert(tupA); // save tuple
-                    newDatasB.insert(tupB); // save tuple
-                }
-            }
-        }
-        datA = newDatasA;
-        datB = newDatasB;
-    }
+    refine(datA, datB, dupes);
     set< vector<string> > newDatas;
     for (auto d : dupes) {
         for (auto a : datA) {
@@ -194,6 +194,25 @@ set< vector<string> > Querier::deDupe(set< vector<string> > &datA, set< vector<s
         }
     }
     return newDatas;
+}
+
+void Querier::refine(set< vector<string> > &datA, set< vector<string> > &datB,
+    vector< pair<int, int> > &dupes)
+{
+    for (auto p : dupes) { // iterate over duplicates found
+        set< vector<string> > newDatasA; // init new datas
+        set< vector<string> > newDatasB; // init new datas
+        for (auto tupA : datA) { // iterate over tuples
+            for (auto tupB : datB) {
+                if (tupA.at(p.first) == tupB.at(p.second)) { // if duplicate
+                    newDatasA.insert(tupA); // save tuple
+                    newDatasB.insert(tupB); // save tuple
+                }
+            }
+        }
+        datA = newDatasA;
+        datB = newDatasB;
+    }
 }
 
 Relation Querier::cProduct(vector<Relation> rels)
